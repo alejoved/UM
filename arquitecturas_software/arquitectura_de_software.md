@@ -192,29 +192,6 @@ Lección: La deuda arquitectónica se acumula con interés. Pagar temprano es m�
 
 ---
 
-### Actividades prácticas (25 minutos)
-
-**Actividad 1: Identificar estructuras (12 min)**
-
-Sistema de gestión hospitalaria (descripción textual). Identificar:
-- 5 módulos principales.
-- 3 componentes en tiempo de ejecución.
-- Infraestructura de despliegue mínima.
-
-Dibujar cada estructura en notación libre.
-
-**Actividad 2: Auditoría de deuda (13 min)**
-
-E-commerce con 4 "atajos":
-1. BD compartida entre 3 servicios.
-2. Lógica de descuentos en triggers SQL.
-3. Sin circuit breaker en llamadas externas.
-4. Config hardcodeada en código.
-
-Clasificar: ¿Deuda arquitectónica o técnica? Impacto (1-5). ¿Cuánto costaría pagar?
-
----
-
 ### Preguntas de reflexión
 
 1. ¿Puede haber "buena" deuda arquitectónica? ¿Cuándo es estratégica?

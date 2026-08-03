@@ -55,18 +55,31 @@
 ### Bloque 1 (50 min) — Presentación del curso y desarrollo iterativo
 
 #### ¿Por qué fracasan los proyectos de software?
-Algunos datos históricos del Chaos Report (Standish Group):
-- Solo el 29% de los proyectos se completan en tiempo, costo y alcance acordados.
-- Las causas principales: requisitos incompletos o cambiantes, falta de feedback temprano.
 
-**La respuesta: el modelo iterativo-incremental**
+Imagina que tu jefe te encarga construir un edificio. Hay dos formas de hacerlo:
 
-El desarrollo de software moderno se organiza en torno a la idea de **entregar valor de forma incremental**. En lugar de construir todo el sistema antes de mostrarlo al cliente, se trabaja en ciclos cortos llamados **iteraciones** (o *sprints*), al final de los cuales se tiene un incremento de producto potencialmente entregable.
+**Forma antigua (cascada):** Planeamos TODO, diseñamos TODO, construimos TODO, y solo al final lo mostramos al cliente. Si al terminar el cliente dice "esto no es lo que quería", fue porque la comunicación falló hace meses.
 
-**Conceptos clave:**
-- **Producto:** El sistema de software completo que se desea construir.
-- **Incremento:** Porción funcional y verificada del producto, construida en una iteración.
-- **Flujo iterativo:** Ciclo planificar → construir → verificar → retroalimentar.
+**Forma moderna (iterativa):** Entregamos el proyecto en pequeñas fases. Cada mes hacemos una demo: "Mira lo que tenemos." El cliente da feedback → ajustamos → continuamos. Mucho menos riesgo.
+
+Los datos muestran que solo el 29% de los proyectos terminan a tiempo y presupuesto. La razón principal: la gente no entendió bien qué quería el cliente, y se descubrió cuando era demasiado tarde.
+
+**La respuesta: entregar valor en pequeños pasos**
+
+En lugar de construir todo el sistema en 6 meses y mostrarlo al cliente, trabajamos en ciclos cortos de 1–2 semanas. Cada ciclo entrega algo que funciona y el cliente puede usar.
+
+| Aspecto | Cascada (antiguo) | Iterativo (moderno) |
+|---|---|---|
+| **Cómo empezamos** | Analizamos TODO por 2 meses | Analizamos lo más importante |
+| **Qué mostramos** | Nada por 5 meses | Algo funcional cada 2 semanas |
+| **Si nos equivocamos** | Descubrimos en mes 6 (muy tarde) | Descubrimos en semana 2 (tiempo de arreglar) |
+| **Cambios del cliente** | Cuesta mucho, requiere re-análisis completo | Se agregan al backlog del siguiente ciclo |
+
+**Ventajas prácticas:**
+- ✅ Riesgo menor: ves avance real cada 2 semanas.
+- ✅ Feedback temprano: el cliente valida cada entrega.
+- ✅ Flexibilidad: cambios se manejan naturalmente.
+- ✅ Motivación: el equipo ve su trabajo funcionando, no solo "en papel."
 
 ```
 Cascada (waterfall)                  Iterativo-incremental
@@ -91,16 +104,16 @@ Deploy
 
 ---
 
-#### Repaso de orientación a objetos
+#### Repaso: Los 4 pilares de la orientación a objetos
 
-La **orientación a objetos (OO)** es el paradigma central de este curso. Sus cuatro pilares:
+La **orientación a objetos** es la forma de pensar en la que organizamos el código. Imagina que estás modelando el mundo real en código:
 
-| Pilar | Definición | Ejemplo |
-|---|---|---|
-| **Abstracción** | Modelar solo los aspectos relevantes de una entidad | `Cuenta` tiene saldo y titular, no color ni peso |
-| **Encapsulamiento** | Ocultar el estado interno; exponer solo operaciones | `cuenta.depositar(100)` en lugar de `cuenta.saldo += 100` |
-| **Herencia** | Reutilizar y extender comportamiento de una clase base | `CuentaCorriente extends Cuenta` |
-| **Polimorfismo** | El mismo mensaje produce comportamiento distinto según el tipo real | `pago.procesar()` sobre `PagoTarjeta` o `PagoTransferencia` |
+| Pilar | ¿Qué es? | Ejemplo del mundo real | En código |
+|---|---|---|---|
+| **Abstracción** | Modelar solo lo importante, ignorar lo irrelevante | Una cuenta bancaria tiene saldo y titular, pero no "color de plástico" | `Cuenta` tiene `saldo` y `titular`, no `colorTarjeta` |
+| **Encapsulamiento** | Proteger el estado interno; permitir cambios solo a través de operaciones válidas | No puedes restar directamente de tu cuenta; debes hacer un retiro formal | `saldo` es privado; solo `depositar()` y `retirar()` pueden modificarlo |
+| **Herencia** | Reutilizar comportamiento común en una jerarquía | Autos, motos y camiones son todos "vehículos" con propiedades comunes | `Auto` y `Moto` heredan de `Vehiculo` |
+| **Polimorfismo** | El mismo mensaje produce distinto comportamiento según el tipo | Si dices "avanza," un auto acelera pero un avión despega | `Vehiculo.avanzar()` se comporta diferente en `Auto` vs `Avion` |
 
 **Principio fundamental:** Los objetos colaboran enviándose mensajes. Cada objeto es responsable de su propio estado.
 
@@ -793,15 +806,23 @@ Leer el siguiente caso de uso real: un sistema de e-commerce básico (carrito, p
 
 #### ¿Qué es un caso de uso?
 
-Un **caso de uso** (Ivar Jacobson, 1992) describe la interacción entre un **actor** y el **sistema** para alcanzar un **objetivo de valor**. No describe tecnología ni implementación: describe comportamiento observable desde afuera.
+Un **caso de uso** describe una interacción entre una persona (o sistema) y tu sistema para alcanzar un objetivo.
 
-**Actor:** Rol que juega una persona, sistema externo o dispositivo al interactuar con el sistema.
-- Actor primario: quien inicia el caso de uso para alcanzar su objetivo.
-- Actor secundario: quien apoya la ejecución (p. ej., un servicio de pagos externo).
+**NO es:**
+- Un paso a paso técnico de botones.
+- Cómo se implementa ("usa base de datos MySQL").
 
-**Objetivo:** Debe estar expresado en términos de valor para el actor.
-- ❌ "El usuario hace clic en el botón Pagar" (acción de UI, no objetivo)
-- ✅ "El cliente realiza el pago de su pedido" (objetivo de negocio)
+**SÍ es:**
+- Una descripción del flujo de negocio.
+- "Un estudiante busca un libro, lo reserva y recibe confirmación."
+
+| Concepto | Qué es | Ejemplo |
+|---|---|---|
+| **Actor** | Quién interactúa con el sistema | Estudiante, bibliotecario, sistema de emails |
+| **Objetivo** | Qué quiere lograr | Reservar un libro disponible |
+| **Flujo principal** | El camino feliz sin problemas | Busca → encuentra → reserva → confirma |
+| **Flujo alternativo** | Otro camino válido | Busca por autor en lugar de título |
+| **Excepción** | Lo que sale mal | Libro no existe, ya está reservado |
 
 #### Estructura completa de un caso de uso
 
@@ -1366,94 +1387,221 @@ Revisar el modelo del dominio construido en la clase 4 y aplicar los patrones GR
 
 ### Bloque 1 (50 min) — SOLID y diagramas de secuencia
 
-#### Principios SOLID
+#### Los 5 pilares de buen diseño — SOLID
 
-| Principio | Nombre completo | Esencia |
-|---|---|---|
-| **S** | Single Responsibility Principle | Una clase tiene una sola razón para cambiar |
-| **O** | Open/Closed Principle | Abierto a extensión, cerrado a modificación |
-| **L** | Liskov Substitution Principle | Un subtipo puede reemplazar a su supertipo sin romper el programa |
-| **I** | Interface Segregation Principle | Interfaces pequeñas y específicas; no forzar implementar lo que no se usa |
-| **D** | Dependency Inversion Principle | Depender de abstracciones, no de implementaciones |
+**¿Qué es SOLID?** Son 5 principios que ayudan a escribir código que es fácil de entender y modificar. Cada uno resuelve un problema común.
 
-**SRP — Señal de violación:**
+---
+
+##### 1. S — "Una persona, un trabajo" (Single Responsibility Principle)
+
+**Idea simple:** Cada clase hace UNA cosa bien. Si le pides que haga dos cosas, algo va a fallar.
+
+**Analogía:** En un restaurante:
+- ❌ "El mesero toma pedidos, cocina, cobra y limpia" → Caos total
+- ✅ "Mesero toma pedidos. Cocinero cocina. Contador cobra. Limpiador limpia." → Funciona
+
+**Problema:** Si cambias cómo se cobra, solo modificas `CajeroService`. Si cambias cómo se cocina, solo modificas `CocineroService`.
+
+**Código:**
+
 ```java
-// ❌ Una clase con múltiples razones para cambiar
+// ❌ Una clase haciendo todo
 public class PrestamoService {
-    public void crearPrestamo(Estudiante e, Libro l) { /* lógica de negocio */ }
-    public void enviarEmailConfirmacion(Prestamo p) { /* lógica de email */ }
-    public void guardarEnDB(Prestamo p) { /* SQL directo */ }
-    public byte[] generarPDF(Prestamo p) { /* generación de PDF */ }
+    public void crearPrestamo(Estudiante e, Libro l) { /* lógica */ }
+    public void enviarEmail(Prestamo p) { /* envío de email */ }
+    public void guardarEnBD(Prestamo p) { /* SQL */ }
+    public byte[] generarPDF(Prestamo p) { /* PDF */ }
 }
+// Si falla el email, ¿PrestamoService es culpable o EmailService?
 
-// ✅ Responsabilidades separadas
-public class PrestamoService { void crearPrestamo(...) { ... } }
-public class NotificacionService { void enviarConfirmacion(Prestamo p) { ... } }
-public class PrestamoRepository { void save(Prestamo p) { ... } }
-public class PrestamoReporteService { byte[] generarPDF(Prestamo p) { ... } }
+// ✅ Cada clase con una responsabilidad
+public class PrestamoService { /* solo crea préstamos */ }
+public class EmailService { /* solo envía emails */ }
+public class PrestamoRepository { /* solo guarda en BD */ }
+public class PrestamoReportService { /* solo genera PDFs */ }
 ```
 
-**OCP — Extensión sin modificación:**
+---
+
+##### 2. O — "Fácil de expandir, difícil de romper" (Open/Closed Principle)
+
+**Idea simple:** Puedes AGREGAR nuevas características sin MODIFICAR el código viejo.
+
+**Analogía:** Un restaurante bien diseñado:
+- ❌ "Agregar un nuevo tipo de plato requiere remodelación" ← Difícil
+- ✅ "Agregar un nuevo plato es simplemente un nuevo receta" ← Fácil
+
+**Problema:** Si cada vez que agregas un tipo de notificación tienes que modificar `NotificacionService`, eventualmente esa clase tendrá 100 líneas de `if-else`.
+
+**Código:**
+
 ```java
-// ❌ Agregar un nuevo tipo de notificación requiere modificar esta clase
-public void notificar(Prestamo prestamo, String canal) {
-    if (canal.equals("email")) { /* ... */ }
-    else if (canal.equals("sms")) { /* ... */ }
-    // Agregar "push" requiere modificar aquí ← violación OCP
+// ❌ Romper esto cada vez que llega un nuevo canal
+public void notificar(Prestamo p, String canal) {
+    if (canal.equals("email")) { /* envía por email */ }
+    else if (canal.equals("sms")) { /* envía por SMS */ }
+    else if (canal.equals("whatsapp")) { /* envía por WhatsApp */ }
+    // ← Mañana: agregar Telegram requiere modificar AQUÍ
 }
 
-// ✅ Extensible sin modificar la clase existente
-public interface CanalNotificacion { void enviar(Prestamo prestamo); }
-public class EmailNotificacion implements CanalNotificacion { ... }
-public class SMSNotificacion implements CanalNotificacion { ... }
-// Agregar PushNotificacion solo requiere crear una nueva clase
+// ✅ Usar una interfaz para permitir nuevos tipos SIN modificar nada
+public interface CanalNotificacion {
+    void enviar(Prestamo p);
+}
+public class EmailNotificacion implements CanalNotificacion { /* ... */ }
+public class SMSNotificacion implements CanalNotificacion { /* ... */ }
+public class WhatsAppNotificacion implements CanalNotificacion { /* ... */ }
+// Mañana: agregar TelegramNotificacion es solo crear una clase nueva
 ```
 
-**LSP — Sustitución sin sorpresas:**
+---
+
+##### 3. L — "Reemplazo sin sorpresas" (Liskov Substitution Principle)
+
+**Idea simple:** Si un código espera una `Figura`, debería funcionar igual con un `Rectangulo`, `Cuadrado` o `Círculo`.
+
+**Analogía:**
+- ❌ Esperas que el nuevo cocinero haga lo que el anterior, pero cocina todo de forma extraña
+- ✅ El nuevo cocinero sigue la misma receta y nadie nota la diferencia
+
+**Problema:** Si la subclase cambia el comportamiento de una manera inesperada, el código que la usa se rompe.
+
+**Código:**
+
 ```java
-// ❌ Viola LSP: el subtipo cambia el comportamiento esperado
+// ❌ Viola el principio: Cuadrado cambia el comportamiento esperado
 public class Rectangulo {
     protected int ancho, alto;
-    public void setAncho(int a) { ancho = a; }
-    public void setAlto(int a) { alto = a; }
+    public void setAncho(int a) { this.ancho = a; }
+    public void setAlto(int a) { this.alto = a; }
     public int area() { return ancho * alto; }
 }
 public class Cuadrado extends Rectangulo {
-    @Override public void setAncho(int a) { ancho = alto = a; } // sorpresa!
-    @Override public void setAlto(int a) { ancho = alto = a; }  // sorpresa!
-}
-// Si alguien tiene un Rectangulo y lo reemplaza por un Cuadrado, el área se calcula distinto
-
-// ✅ No forzar herencias que violan el contrato; usar composición o rediseñar
-```
-
-**ISP — Interfaces específicas:**
-```java
-// ❌ Una interfaz enorme obliga a implementar lo que no se usa
-public interface GestorBiblioteca {
-    void reservar(Libro l); void devolver(Prestamo p); void agregarLibro(Libro l);
-    void generarReporte(); void enviarNotificacion(String msg); void exportarCSV();
+    @Override
+    public void setAncho(int a) { ancho = alto = a; } // ← Sorpresa!
+    @Override
+    public void setAlto(int a) { ancho = alto = a; }  // ← Sorpresa!
 }
 
-// ✅ Interfaces pequeñas y cohesivas
-public interface GestorPrestamos { void reservar(Libro l); void devolver(Prestamo p); }
-public interface GestorCatalogo { void agregarLibro(Libro l); }
-public interface GeneradorReportes { void generarReporte(); void exportarCSV(); }
+// Si alguien hace:
+Rectangulo r = new Cuadrado();
+r.setAncho(5); r.setAlto(10);
+System.out.println(r.area()); // Espera 50, obtiene 100 ← Roto
+
+// ✅ No forzar herencias que no tienen sentido
+// Cuadrado y Rectángulo son formas; ambas son figuras
+public interface Figura { int area(); }
+public class Rectangulo implements Figura { /* ... */ }
+public class Cuadrado implements Figura { /* ... */ }
 ```
 
-**DIP — Depender de abstracciones:**
+---
+
+##### 4. I — "Pide solo lo que necesitas" (Interface Segregation Principle)
+
+**Idea simple:** No fuerces a una clase a implementar métodos que no usa. Haz interfaces pequeñas y específicas.
+
+**Analogía:**
+- ❌ "El cocinero debe saber limpiar, tomar pedidos, cobrar y hacer postres" ← Imposible
+- ✅ "El cocinero solo cocina platos salados. Alguien más cocina postres." ← Especialización
+
+**Problema:** Si le pides a una clase que implemente `GestorBibliotecaCompleto` con 20 métodos, pero solo necesita 3, está forzada a implementar 17 métodos que no usa.
+
+**Código:**
+
 ```java
-// ❌ El servicio de dominio depende de una implementación concreta de infraestructura
+// ❌ Una interfaz gigante
+public interface GestorBibliotecaCompleto {
+    void reservarLibro(Libro l);
+    void devolverLibro(Prestamo p);
+    void agregarLibro(Libro l);
+    void eliminarLibro(String isbn);
+    void generarReporte();
+    void enviarNotificacion(String msg);
+    void exportarCSV();
+    void importarExcel(File f);
+    void verificarMultas();
+    void bloquearEstudiante(String id);
+}
+
+// Un repositorio de préstamos no necesita generar reportes, enviar notificaciones, etc.
+
+// ✅ Interfaces pequeñas y focalizadas
+public interface RepositorioPrestamos {
+    Prestamo findById(UUID id);
+    void save(Prestamo p);
+}
+public interface GeneradorReportes {
+    void generarReporte();
+    void exportarCSV();
+}
+public interface NotificadorPrestamos {
+    void enviarConfirmacion(Prestamo p);
+}
+```
+
+---
+
+##### 5. D — "Depende de conceptos, no de implementaciones" (Dependency Inversion Principle)
+
+**Idea simple:** Tu código debería depender de "qué hace" (interfaz), no de "quién lo hace" (implementación).
+
+**Analogía:**
+- ❌ Tu café depende de "máquina De Longhi modelo XYZ" → Si se rompe, no hay café
+- ✅ Tu café depende de "una máquina que hace café" → Puedes cambiarla por otra marca sin problema
+
+**Problema:** Si tu `PrestamoService` directamente usa `MySQLPrestamoRepository`, está atado a MySQL. Si mañana necesitas PostgreSQL, tienes que modificar el servicio.
+
+**Código:**
+
+```java
+// ❌ Dependencia de implementación concreta
 public class PrestamoService {
     private MySQLPrestamoRepository repo = new MySQLPrestamoRepository();
+    
+    public void crearPrestamo(Estudiante e, Libro l) {
+        Prestamo p = new Prestamo(e, l);
+        repo.save(p); // acoplado a MySQL
+    }
 }
 
-// ✅ Depende de la abstracción (interfaz del dominio)
-public class PrestamoService {
-    private final PrestamoRepository repo; // interfaz
-    public PrestamoService(PrestamoRepository repo) { this.repo = repo; }
+// ✅ Dependencia de abstracción (interfaz)
+public interface PrestamoRepository {
+    void save(Prestamo p);
+    Prestamo findById(UUID id);
 }
+
+public class PrestamoService {
+    private final PrestamoRepository repo; // interfaz del dominio
+    
+    public PrestamoService(PrestamoRepository repo) {
+        this.repo = repo; // inyectada por constructor
+    }
+    
+    public void crearPrestamo(Estudiante e, Libro l) {
+        Prestamo p = new Prestamo(e, l);
+        repo.save(p); // funciona con cualquier implementación
+    }
+}
+
+// Ahora puedes usar:
+service = new PrestamoService(new MySQLPrestamoRepository());
+service = new PrestamoService(new PostgreSQLPrestamoRepository());
+service = new PrestamoService(new InMemoryPrestamoRepository()); // para pruebas
 ```
+
+---
+
+**Resumen en una tabla:**
+
+| Principio | Problema que resuelve | Lo que cambias | Cómo |
+|---|---|---|---|
+| **S** | Clases haciendo demasiadas cosas | Una clase hace una sola cosa | Separar responsabilidades |
+| **O** | Modificar código viejo cada vez que agregas algo | Abierto a extensión sin modificación | Usar polimorfismo + interfaces |
+| **L** | Los subtipos rompen el código que los usa | Garantizar que reemplazo seguro | Respetar el contrato de la clase padre |
+| **I** | Interfaces grandes obligan a implementar lo no usamos | Interfaces pequeñas y focalizadas | Segregar en interfaces de negocio |
+| **D** | Acoplamiento a implementaciones concretas | Depender de abstracciones | Inyectar interfaces, no clases concretas |
 
 #### Diagramas de secuencia
 
@@ -1606,34 +1754,26 @@ private void registrarDevolucion(Prestamo prestamo, BigDecimal multa) {
 }
 ```
 
-#### Nombres expresivos
+#### Nombres que hablan por sí solos
 
-**Para funciones (verbos):** `calcular`, `validar`, `buscar`, `procesar`, `registrar`, `notificar`.
-**Para clases (sustantivos):** `Prestamo`, `Biblioteca`, `CatalogoService`, `PrestamoRepository`.
-**Para booleanos:** `esVencido()`, `tieneDisponibilidad()`, `estaActivo()`.
-**Para colecciones:** `prestamosActivos`, `librosDisponibles`.
+¿Cuál de estas dos líneas entienden mejor?
 
-**Anti-patrones de nombres:**
-| Nombre malo | Problema | Nombre mejor |
-|---|---|---|
-| `data` | ¿Datos de qué? | `prestamoActual`, `librosDisponibles` |
-| `manager` | ¿Qué gestiona exactamente? | `CoordinadorDePrestamos` |
-| `helper` | Comodín genérico | La responsabilidad específica |
-| `tmp`, `x`, `obj` | Sin semántica | Nombre del concepto que representa |
-| `d` | Fecha, duración, ¿qué? | `diasDeRetraso`, `fechaVencimiento` |
-
-**Números mágicos:**
 ```java
-// ❌ ¿Qué significan estos números?
-if (prestamo.getRenovaciones() >= 1) ...
-if (diasRetraso > 0) multa = diasRetraso * 50;
-if (prestamos.size() >= 3) ...
+// ❌ ¿Qué es `d`? ¿Qué es `t`?
+if (t.equals("dev")) { long d = ChronoUnit.DAYS.between(fv, LocalDate.now()); ... }
 
-// ✅ Constantes con nombre
-private static final int MAX_RENOVACIONES = 1;
-private static final BigDecimal MULTA_POR_DIA = BigDecimal.valueOf(50);
-private static final int MAX_PRESTAMOS_SIMULTANEOS = 3;
+// ✅ El nombre dice exactamente qué es
+if (tipo.equals("devolucion")) { 
+    long diasDeRetraso = ChronoUnit.DAYS.between(fechaVencimiento, LocalDate.now()); 
+}
 ```
+
+**Reglas de nombres:**
+- **Funciones:** verbos que describen qué hacen → `calcular()`, `validar()`, `guardar()`, `notificar()`.
+- **Clases:** sustantivos que describen qué son → `Prestamo`, `Biblioteca`, `NotificadorEmail`.
+- **Booleanos:** preguntas → `esVencido()`, `tieneDisponibilidad()`, `estaActivo()`.
+- **Listas/colecciones:** plural → `prestamosActivos`, `librosDisponibles`, `estudiantesSuscritos`.
+- **Números mágicos:** nunca → siempre constantes con nombre.
 
 #### Comentarios: cuándo sí, cuándo no
 
@@ -1904,12 +2044,41 @@ Investigar la diferencia entre `checked exceptions` y `unchecked exceptions` en 
 
 ### Bloque 1 (50 min) — Persistencia sin acoplar el dominio
 
-#### El problema del acoplamiento con la base de datos
+#### El problema: la base de datos "contamina" el código
 
-Cuando el dominio depende directamente de la tecnología de persistencia, se producen varios problemas:
-- Imposible probar el dominio sin una base de datos.
-- Cambiar de tecnología (MySQL → PostgreSQL → MongoDB) requiere cambiar el dominio.
-- El código de negocio se contamina con detalles técnicos (anotaciones JPA, SQL, etc.).
+Imagina que mezclas código de negocio con código de base de datos:
+
+```java
+// ❌ Problema: el dominio depende de la BD
+public class PrestamoService {
+    public void guardarPrestamo(Prestamo p) {
+        database.connection.update("UPDATE prestamos SET estado = 'activo' WHERE id = ?", p.getId());
+    }
+}
+```
+
+Si mañana cambias de MySQL a PostgreSQL, ¿qué código cambia? **TODO.** Eso es acoplamiento.
+
+**La solución:** El patrón Repository
+
+El repositorio es un intermediario que "esconde" cómo se guarda en la base de datos. El dominio solo conoce la interfaz, no la implementación.
+
+```
+┌─────────────────────────────────────────────────┐
+│  Dominio (no sabe nada de base de datos)        │
+│  PrestamoRepository repo;                       │
+│  repo.save(prestamo);                           │
+└──────────────┬──────────────────────────────────┘
+               │ usa
+               ▼
+┌──────────────────────────────────────┐
+│ Infraestructura                      │
+│ MySQLPrestamoRepository              │
+│ (implementa guardar en MySQL)        │
+└──────────────────────────────────────┘
+```
+
+Si cambias a PostgreSQL, solo cambias la implementación del repositorio. El dominio no se entera.
 
 **Separación mediante el patrón Repository:**
 
@@ -2047,43 +2216,71 @@ public class PrestamoJpaEntity {
 
 ### Bloque 1 (50 min) — Transacciones y servicios externos
 
-#### Transacciones: qué son y dónde van
+#### Transacciones: "Todo o Nada"
 
-Una **transacción** garantiza que un conjunto de operaciones se aplica **todo o nada** (atomicidad ACID).
+Una **transacción** es una promesa: "Yo haré múltiples cambios en la base de datos, y si algo falla, revierto todos ellos."
 
-**Propiedades ACID:**
-- **Atomicidad:** Todo o nada.
-- **Consistencia:** El sistema pasa de un estado válido a otro estado válido.
-- **Aislamiento:** Las transacciones concurrentes no se interfieren.
-- **Durabilidad:** Lo confirmado persiste aunque el sistema falle.
+**Analogía:** Transferencia bancaria
+- ❌ Sin transacción: Se debita de cuenta A ($500 menos), pero falla al acreditar en cuenta B → Dinero desaparece
+- ✅ Con transacción: "Debita de A Y acredita en B" juntos. Si falla en B, vuelvo a dejar A como estaba
 
-**Dónde administrar transacciones:**
-- En la **capa de aplicación** (caso de uso), no en el dominio ni en el repositorio.
-- Una operación de negocio completa = una transacción.
-- Mantener las transacciones lo más cortas posible.
+**Las 4 características (ACID — fácil de recordar):**
+
+| Característica | ¿Qué significa? | Ejemplo |
+|---|---|---|
+| **Atomicidad** | Todo o nada. No hay medio término | Transfiero $500: Se debita Y se acredita, o NINGUNA de las dos cosas |
+| **Consistencia** | Después de terminar, los datos son válidos | Un préstamo siempre tiene estudiante + libro + estado válido |
+| **Aislamiento** | Dos transacciones simultáneas no se afectan | Yo transfiero de A a B; otro transfiere de B a C; no se estorban |
+| **Durabilidad** | Si termina bien, persiste aunque se apague la computadora | Guardé tu dinero; aunque haya un corte de luz, está guardado |
+
+**¿Dónde escribo transacciones en código?**
+
+No en el repositorio (que solo guarda datos). Las transacciones van en el **caso de uso** porque es el nivel que sabe "qué operación de negocio" se está haciendo:
 
 ```java
-// La anotación @Transactional va en el caso de uso, no en el repositorio
-@Transactional
-public PrestamoDto reservarLibro(UUID estudianteId, UUID libroId) {
+// ✅ La transacción va en el caso de uso (nivel de aplicación)
+@Transactional  // <- Aquí: promete que TODO se hace o NADA se hace
+public PrestamoDTO reservarLibro(UUID estudianteId, UUID libroId) {
     Libro libro = libroRepository.findById(libroId)
         .orElseThrow(() -> new LibroNotFoundException(libroId));
-    verificarDisponibilidad(libro);
-    verificarLimitePrestamos(estudianteId);
+    verificarQueLibroEstaDisponible(libro);
+    verificarQueEstudianteNoTieneDemasiadosPrestamos(estudianteId);
+    
     Prestamo prestamo = new Prestamo(UUID.randomUUID(), estudianteId, libro);
-    libro.marcarComoEnPrestamo();
-    prestamoRepository.save(prestamo);
-    libroRepository.save(libro); // todo dentro de la misma transacción
-    return PrestamoMapper.toDto(prestamo);
+    libro.marcarComoEnPrestamo();  // Cambio 1
+    prestamoRepository.save(prestamo);  // Cambio 2
+    libroRepository.save(libro);  // Cambio 3
+    
+    return PrestamoMapper.toDTO(prestamo);
+    // Si algo falla aquí, automáticamente revierto los 3 cambios
 }
+
+// ❌ Esto es INCORRECTO: poner @Transactional en el repositorio
+@Transactional
+public class PrestamoRepository {
+    public void save(Prestamo p) { /* ... */ }
+}
+// Los repositorios simplemente guardan; no saben qué operación de negocio estamos haciendo
 ```
 
-**Problemas comunes de transacciones:**
-- **N+1 queries:** Consultar la colección de elementos y luego cada elemento individualmente dentro de un bucle.
-- **Deadlocks:** Dos transacciones esperándose mutuamente.
-- **Long transactions:** Transacciones que incluyen llamadas a servicios externos (bloqueadoras).
+**Regla importante:** 
+- ✅ Haz transacciones CORTAS (solo los cambios que necesitas, bien definidos)
+- ❌ Nunca hagas una transacción que incluya una llamada a un servicio externo (HTTP a otra API)
 
-**Regla de oro:** No incluir llamadas a servicios externos dentro de una transacción de base de datos.
+¿Por qué? Porque si llamas a un servicio externo y tarda 5 segundos, tienes la base de datos bloqueada 5 segundos. Eso causa caos.
+
+**Si necesitas avisar a otro servicio:**
+1. Guarda tu datos en la transacción
+2. DESPUÉS de terminar, llama al servicio externo por separado
+3. Si el servicio externo falla, el tuyo ya quedó guardado
+
+**Problemas comunes:**
+
+| Problema | Causa | Solución |
+|---|---|---|
+| **"N+1 queries"** | Leo lista de 10 préstamos, luego por cada uno consulto 1 llamada (1 + 10 = 11 queries) | Usar `fetch` en el query de la lista, traer todo en 1 query |
+| **Deadlock** | Dos transacciones quieren lo mismo al mismo tiempo y se bloquean | Ordenar accesos siempre en el mismo orden |
+| **Transacción muy larga** | Incluyo 100 cosas en una transacción | Dividir en transacciones más pequeñas |
 
 #### Integración con servicios externos
 
@@ -2187,56 +2384,92 @@ public record NotificacionDto(
 
 ### Bloque 1 (50 min) — DTOs, Mappers y IA
 
-#### DTOs como contratos
+#### DTOs: "¿Por qué no simplemente devuelvo la entidad?"
 
-Un **DTO (Data Transfer Object)** es un objeto plano para mover datos entre capas o sistemas. No contiene lógica de negocio.
+**Problema:** Cuando devuelves directamente la entidad del dominio, expones toda su estructura interna.
 
-**Por qué no exponer directamente las entidades del dominio:**
-- Las entidades tienen comportamiento; los DTOs son solo datos.
-- La estructura de la respuesta de la API puede diferir de la entidad (incluir/excluir campos).
-- Cambiar la entidad no debe afectar el contrato de la API (y viceversa).
+**Ejemplo del problema:**
 
 ```java
-// DTO de respuesta (lo que el controller devuelve al cliente)
-public record PrestamoResponseDto(
+// ❌ Devolviendo la entidad directamente
+@GetMapping("/prestamos/{id}")
+public Prestamo getPrestamo(@PathVariable UUID id) {
+    return prestamoRepository.findById(id).orElse(null);
+}
+
+// El cliente recibe TODA la entidad, incluyendo cosas que no debería ver:
+{
+    "id": "123-456",
+    "estudiante": {
+        "legajo": "12345",
+        "nombre": "Juan",
+        "password": "hashed-secret", // ← NO debería estar aquí!
+        "email": "juan@uni.edu",
+        "numeroCuenta": "1234-5678-9012-3456" // ← Información sensible
+    },
+    "libro": { ... },
+    "fechaVencimiento": "2025-12-31"
+}
+```
+
+**¿Qué salió mal?**
+1. Expusiste datos sensibles (contraseña, número de cuenta).
+2. Si la entidad `Estudiante` cambia internamente, el cliente se rompe.
+3. El cliente ve más información de la que necesita (ruido).
+
+**¿Cómo lo arreglas? Usando un DTO.**
+
+Un **DTO (Data Transfer Object)** es simplemente una clase que contiene solo los datos que quieres mostrar:
+
+```java
+// ✅ DTO: solo los datos que el cliente necesita ver
+public record PrestamoResponseDTO(
     UUID id,
     String tituloLibro,
     String autorLibro,
-    String nombreEstudiante,
+    String nombreEstudiante,  // ← solo el nombre, no el legajo ni password
     LocalDate fechaVencimiento,
     String estado,
     int renovacionesRestantes
 ) {}
 
-// DTO de request (lo que el cliente envía)
-public record ReservarLibroRequest(
-    @NotNull UUID libroId,
-    @NotNull UUID estudianteId
-) {}
-```
+// El controller usa el DTO:
+@GetMapping("/prestamos/{id}")
+public PrestamoResponseDTO getPrestamo(@PathVariable UUID id) {
+    Prestamo prestamo = prestamoRepository.findById(id).orElse(null);
+    return PrestamoMapper.toDTO(prestamo);  // ← Convierte a DTO
+}
 
-#### Mappers
-
-El **mapper** convierte entre la entidad de dominio y su DTO correspondiente.
-
-```java
-public class PrestamoMapper {
-
-    public static PrestamoResponseDto toDto(Prestamo prestamo) {
-        return new PrestamoResponseDto(
-            prestamo.getId(),
-            prestamo.getLibro().getTitulo(),
-            prestamo.getLibro().getAutor(),
-            prestamo.getEstudiante().getNombreCompleto(),
-            prestamo.getFechaVencimiento(),
-            prestamo.getEstado().name(),
-            Prestamo.MAX_RENOVACIONES - prestamo.getRenovaciones()
-        );
-    }
+// El cliente recibe SOLO lo que debe ver:
+{
+    "id": "123-456",
+    "tituloLibro": "Don Quijote",
+    "autorLibro": "Cervantes",
+    "nombreEstudiante": "Juan",  // ← sin password, sin número de cuenta
+    "fechaVencimiento": "2025-12-31",
+    "estado": "ACTIVO",
+    "renovacionesRestantes": 1
 }
 ```
 
-**Alternativa:** Usar MapStruct (generación automática de mappers en tiempo de compilación).
+**Ventajas de usar DTOs:**
+
+| Ventaja | Beneficio |
+|---|---|
+| **Seguridad** | No expones datos sensibles de la entidad |
+| **Flexibilidad** | Cambiar la entidad no rompe el cliente (la API es un contrato) |
+| **Clarity** | El cliente ve exactamente lo que necesita, sin ruido |
+| **Separación de conceptos** | Dominio ≠ API. Son dos cosas distintas |
+
+**¿Cuándo crear un DTO?**
+- Siempre que devuelvas datos a través de una API REST o web service.
+- Si el cliente necesita diferentes campos que la entidad tiene.
+- Para proteger datos sensibles.
+
+**¿Cuándo NO necesitas DTO?**
+- En métodos internos entre capas (puedes pasar la entidad).
+- En utilidades o cálculos internos.
+- Cuando el cliente y la entidad son idénticos (raro, pero sucede).
 
 #### Uso de IA para código repetitivo
 

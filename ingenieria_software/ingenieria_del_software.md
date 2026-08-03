@@ -2,7 +2,7 @@
 
 > Material de referencia — Universidad de Manizales  
 > Última actualización: agosto 2026 | Versión: 3.0 (Completo)  
-> **Duración total: 40 horas** | Público: Ingenieros de software, líderes técnicos
+> **Duración total: 40 horas** | Dirigido a: Estudiantes de 4° semestre de Ingeniería de Sistemas
 
 ---
 
@@ -58,104 +58,109 @@ Al finalizar esta clase, el estudiante será capaz de:
 
 ### Contenido teórico (40 minutos)
 
-#### 1. Procesos del ciclo de vida — ISO/IEC/IEEE 12207:2017
+#### 1. ¿Qué procesos hay en un proyecto de software? — ISO/IEC/IEEE 12207:2017
 
-ISO/IEC/IEEE 12207:2017 es el estándar internacional que define procesos del ciclo de vida del software. Agrupa los procesos en **tres categorías principales**:
+Cuando construyes software profesional, no solo escribes código. Hay muchas otras actividades: acordar qué vas a hacer, planificar el trabajo, gestionar cambios, y operar el sistema una vez desplegado.
 
-| Grupo | Objetivo | Procesos | Responsables |
+El estándar ISO/IEC/IEEE 12207 es un **documento oficial internacional** que dice: "Estos son todos los procesos que debes considerar al desarrollar software." Es como un mapa completo de todo lo que pasa en un proyecto, desde que el cliente dice lo que quiere hasta que el usuario usa el sistema.
+
+Agrupa los procesos en **tres categorías**:
+
+| Grupo | ¿Para qué sirve? | Ejemplos de actividades | ¿Quién lo hace? |
 |---|---|---|---|
-| **Acuerdo** | Relación comprador-proveedor | Adquisición, Suministro | PM, Legal, Procura |
-| **Proyecto** | Planificación y control | Planificación, Control, Riesgos, Configuración | PM, ScrumMaster |
-| **Técnicos** | Especificación y realización | Requisitos, Diseño, Implementación, Pruebas, Operación | Arquitecto, Dev, QA, SRE |
+| **Acuerdo** | Formalizar qué se va a construir y quién lo hará | Firmar contrato, definir alcance, precio | Gerente de proyecto, área legal |
+| **Proyecto** | Planificar y controlar el trabajo diario | Crear cronograma, gestionar riesgos, controlar versiones | Gerente de proyecto, Scrum Master |
+| **Técnicos** | Construir y verificar el software | Analizar requisitos, diseñar, codificar, probar, desplegar | Desarrolladores, QA, arquitecto |
 
-**¿Por qué importa?** Clarifica que ingeniería del software no es solo codificar; incluye acuerdos, gestión y aseguramiento técnico.
+**Clave:** Ingeniería del software **no es solo codificar**. Los acuerdos y la gestión son tan importantes como el código.
 
 #### 2. Modelos de proceso
 
-**Cascada (Waterfall)**
+**Cascada (Waterfall) — "Todo planeado desde el inicio"**
 
 Flujo: `Requisitos → Diseño → Implementación → Pruebas → Despliegue`
 
-- Fases secuenciales. Cambios tardíos = costo alto.
-- Documentación exhaustiva.
-- Pruebas al final.
+Cada fase debe terminar antes de empezar la siguiente. Si el cliente cambia de opinión en el mes 4, es muy caro volver atrás.
 
-*Cuándo:* Requisitos estables, sistemas regulados, contexto crítico.  
-*Ejemplo:* Control de semáforos, software aeroespacial.
+| Característica | Detalle |
+|---|---|
+| ¿Cuándo terminas de hablar con el cliente? | Al inicio. Luego no cambia nada |
+| ¿Cuándo el cliente ve algo funcionando? | Al final del proyecto (meses o años después) |
+| ¿Qué pasa si los requisitos cambian? | Costoso y complicado |
 
-**Ventajas:** Predecibilidad, documentación.  
-**Desventajas:** Feedback tardío, inflexibilidad, alto riesgo.
+*Cuándo usarlo:* Cuando los requisitos son fijos y no van a cambiar. Ej: software de control de semáforos, aviones.  
+*Cuándo NO usarlo:* Si el cliente todavía está descubriendo qué quiere.
+
+✅ **Ventajas:** Muy predecible, fácil de presupuestar, mucha documentación.  
+❌ **Desventajas:** Si algo sale mal, se descubre tarde (muy caro arreglarlo).
 
 ---
 
-**Incremental / Iterativo**
+**Incremental / Iterativo — "Entregamos en partes"**
 
 Flujo: `Sprint 1 → Feedback → Sprint 2 → Feedback → ...`
 
-- Entregas pequeñas cada 1-4 semanas.
-- Feedback temprano.
-- Adaptación a cambios.
+En lugar de construir todo y mostrarlo al final, entregamos partes pequeñas que funcionan cada 1-4 semanas. El cliente puede usar cada entrega y dar opiniones.
 
-*Cuándo:* Requisitos parciales, ROI temprano necesario.  
-*Ejemplo:* Plataforma e-commerce (catálogo → carrito → pagos).
+*Cuándo usarlo:* Cuando los requisitos pueden cambiar, o se necesita valor pronto.  
+*Ejemplo:* App de delivery: primero solo catálogo → después carrito → después pagos.
 
-**Ventajas:** Riesgo bajo, satisfacción usuario, adaptable.  
-**Desventajas:** Arquitectura puede degradarse, estimación difícil.
+✅ **Ventajas:** Riesgo bajo (si algo falla, lo descubres pronto), el cliente ve avances reales.  
+❌ **Desventajas:** La arquitectura puede deteriorarse si no se cuida, más difícil estimar fecha de fin.
 
 ---
 
-**Espiral (Boehm, 1986)**
+**Espiral (Boehm, 1986) — "Iterativo pero con énfasis en riesgos"**
 
-Combina cascata + iterativo. Énfasis en gestión de riesgos.
+Combina cascada + iterativo. En cada ciclo (espiral) se analiza qué puede salir mal y se mitiga antes de continuar.
 
-*Cuándo:* Proyectos complejos, riesgos técnicos altos.  
-*Ejemplo:* Migración de sistemas aeroportuarios.
+*Cuándo usarlo:* Proyectos complejos con muchas incertidumbres técnicas. Ej: Migración de sistemas críticos de un aeropuerto.  
 
-**Ventajas:** Control de riesgos, prototipado temprano.  
-**Desventajas:** Costoso, requiere experiencia.
-
----
-
-**Ágil (Agile Manifesto, 2001)**
-
-Valores: Individuos > procesos, software > documentación, cambio > plan.
-
-- Sprints 1-4 semanas.
-- Standup diario.
-- Tests automatizadas.
-
-*Cuándo:* Requisitos evolucionan, feedback rápido, equipo ágil.  
-*Ejemplo:* App fintech startup.
-
-**Ventajas:** Entrega rápida, adaptabilidad, satisfacción equipo.  
-**Desventajas:** Difícil escalar, requiere disponibilidad PO.
+✅ **Ventajas:** Detecta y gestiona riesgos temprano, prototipa antes de comprometerse.  
+❌ **Desventajas:** Caro y requiere un equipo con mucha experiencia. No es práctico para startups o proyectos pequeños.
 
 ---
 
-**DevOps sociotécnico**
+**Ágil (Agile Manifesto, 2001) — "Rápido, colaborativo y adaptable"**
 
-Integra Dev + Ops + Seguridad. Responsabilidad compartida.
+Nació como respuesta a los problemas de cascada. Prioriza personas y software funcionando sobre documentación exhaustiva.
 
-Flujo: `Código → CI → CD → Prod → Monitoreo → Feedback`
+- Ciclos cortos (sprints) de 1-4 semanas.
+- El equipo se reune diariamente (standup) para ver bloqueos.
+- Tests automatizadas para detectar problemas pronto.
 
-Principios:
-- **Flujo:** Lead time corto.
-- **Retroalimentación:** Métricas en tiempo real.
-- **Aprendizaje:** Postmortems sin culpa.
-- **Responsabilidad:** Compartida.
+*Cuándo usarlo:* Cuando los requisitos cambian, se necesita feedback rápido del usuario.  
+*Ejemplo:* Una startup construyendo una app financiera.
 
-*Impacto:* Deployment 1/trimestre → múltiples/día. Lead time semanas → horas.
+✅ **Ventajas:** Entrega rápida, fácil de adaptarse a cambios, equipo motivado.  
+❌ **Desventajas:** Difícil escalar a equipos grandes (>50 personas), requiere que el cliente esté disponible todo el tiempo.
 
-*Ejemplo:* Amazon (1 cambio cada 2 segundos), Netflix (99.99% uptime).
+---
 
-#### 3. Comparativa
+**DevOps — "Desarrollo + Operaciones juntos"**
 
-| Aspecto | Cascata | Incremental | Espiral | Ágil | DevOps |
-|---|---|---|---|---|---|
-| Tiempo valor | Muy largo | Medio | Medio | Corto | Muy corto |
-| Flexibilidad | Baja | Media | Media | Alta | Muy alta |
-| Costo cambio | Alto | Medio | Medio | Bajo | Bajo |
-| Riesgo técnico | Alto | Medio | Bajo | Bajo | Bajo |
+Tradicional: Programadores (Dev) crean el software y lo "lanzan por encima de la pared" a Operaciones (Ops) para que lo desplieguen. Resultado: conflictos y culpas.
+
+DevOps: **El mismo equipo** construye, despliega y opera el software. La responsabilidad es compartida.
+
+Flujo: `Código → CI (pruebas automáticas) → CD (despliegue) → Producción → Monitoreo → Feedback`
+
+Principios clave:
+- **Flujo rápido:** Un cambio llega a usuarios en horas, no meses.
+- **Retroalimentación continua:** Ves en tiempo real si algo falló.
+- **Aprendizaje continuo:** Cuando algo falla, se aprende cómo mejorarlo.
+
+*Ejemplo real:* Amazon despliega un cambio cada 2 segundos. Netflix tiene 99.99% disponibilidad.
+
+#### 3. Comparativa — ¿Cuál modelo uso para cada proyecto?
+
+| Aspecto | Cascada | Incremental | Ágil | DevOps |
+|---|---|---|---|---|
+| **¿Cuándo ves algo funcionando?** | Al final (meses) | Cada pocas semanas | Cada 1-2 semanas | En horas |
+| **¿Qué pasa si el cliente cambia de opinión?** | Muy caro | Se puede manejar | Fácil de adaptar | Fácil de adaptar |
+| **¿Cuán rápido llegas al mercado?** | Muy lento | Medio | Rápido | Muy rápido |
+| **¿Cuál es el riesgo técnico?** | Alto (problemas al final) | Medio | Bajo | Bajo |
+| **¿Cuándo usarlo?** | Requisitos fijos (aviones, bancos) | Cuando se necesita valor pronto | Startups, apps de usuarios | Equipos maduros con CI/CD |
 
 ---
 
@@ -197,9 +202,9 @@ Dibuja flujo completo (requisito → mantenimiento) para modelo elegido. Identif
 
 ### Preguntas de reflexión
 
-1. ¿Cascata es obsoleto? ¿Hay contextos donde sigue siendo apropiado?
-2. ¿DevOps requiere Ágil? ¿Puedes hacer DevOps en cascata?
-3. ¿Cómo escalarías Ágil a 20 equipos simultáneamente?
+1. ¿Cascada es obsoleto o todavía tiene sentido en algún proyecto?
+2. ¿Puedes usar DevOps en un proyecto de cascada? ¿Ou DevOps requiere Agile?
+3. Si tienes 20 equipos trabajando en el mismo producto, ¿cómo organizas los sprints?
 
 ---
 
@@ -212,16 +217,16 @@ Dibuja flujo completo (requisito → mantenimiento) para modelo elegido. Identif
 
 ---
 
-## Clase 02: DevOps sociotécnico y transformación cultural
+## Clase 02: DevOps — Más allá de herramientas (dimensión humana)
 
 **Duración:** 2 horas | **Unidad:** 1 | **Semana:** 1
 
 ### Objetivos de aprendizaje
 
-- Explicar pilares sociotécnicos de DevOps (personas, procesos, técnica).
+- Explicar que DevOps no es solo herramientas: personas + procesos + técnica.
 - Identificar barreras culturales comunes en organizaciones.
-- Diseñar estrategia de transformación (top-down, bottom-up, hybrid).
-- Comparar métricas pre/post transformación.
+- Comparar diferentes estrategias de transformación (liderazgo, equipos, híbrida).
+- Entender qué métricas indican que la transformación está funcionando.
 
 ---
 
@@ -246,52 +251,63 @@ autonomía, aprendizaje)      responsabilidad)
 
 Ignorar un vértice → Fracaso.
 
-#### 2. El pilar "Personas"
+#### 2. El pilar "Personas" — El más importante y el más difícil
 
-**Silos tradicionales:**
+**El problema clásico (silos):**
 
-Dev: "Necesito desplegar cada 2 horas".  
-Ops: "Okay, 1 cambio por mes".  
-Resultado: Conflicto, culpa.
+Dev: "Necesito desplegar ahora, tengo urgencia del cliente."  
+Ops: "Lo siento, los deploys son el primer martes de cada mes."  
+Resultado: Conflicto, culpa, software desactualizado, cliente insatisfecho.
 
-**DevOps:**
-- SLO compartido: 99.9% uptime.
-- Si se viola: ambos responsables.
-- Confianza mediante automatización.
+**Con DevOps:**
+- Ambos equipos comparten el mismo objetivo: "El sistema debe funcionar 99.9% del tiempo."
+- Si el sistema cae, ambos son responsables (no solo Ops).
+- La confianza se construye mediante automatización (si el deploy tiene pruebas automáticas, Ops confía en dejarlo pasar).
 
-**Autonomía:** Squad (6-10 personas) dueño end-to-end (requisitos → soporte).
+**Equipos autónomos:** Un equipo pequeño (6-10 personas) es dueño completo de su funcionalidad: desde los requisitos hasta el soporte en producción.
 
-**Blameless postmortem:**
-- ¿Qué condiciones lo permitieron? (No: ¿Quién?).
-- Resultado: Reportan problemas temprano.
+**Postmortem sin culpa (Blameless postmortem):**  
+Cuando algo falla, en lugar de preguntar "¿Quién tuvo la culpa?", se pregunta "¿Qué condiciones del sistema permitieron este error?"  
+Resultado: Las personas reportan errores temprano porque no temen castigo.
 
-#### 3. El pilar "Proceso"
+#### 3. El pilar "Proceso" — Cuánto tarda una idea en llegar al usuario
 
-**Flujo de valor:** Requisito → Código → Commit → CI → CD → Producción.
+**Flujo de valor:** Desde que un desarrollador escribe una línea de código hasta que el usuario lo usa.
 
-Cascata: 6 meses.  
-DevOps: < 1 hora.
+- Cascada tradicional: 6 meses.
+- DevOps bien implementado: menos de 1 hora.
 
-**Feedback loops:**
-- Nivel 1 (segundos): IDE muestra errores.
-- Nivel 2 (minutos): CI ejecuta tests.
-- Nivel 3 (horas): Monitoreo muestra métricas.
-- Nivel 4 (días): Usuarios usan feature.
+**Ciclos de retroalimentación (feedback loops) — Qué tan rápido sabes que algo está mal:**
 
-#### 4. El pilar "Técnica"
+| Velocidad | ¿Qué detecta? | Ejemplo |
+|---|---|---|
+| Segundos | Errores de sintaxis | El IDE subraya en rojo |
+| Minutos | Pruebas unitarias fallan | CI ejecuta tests y falla |
+| Horas | El sistema se comportó raro en producción | Monitoreo muestra métricas anómalas |
+| Días | Los usuarios usan la nueva función | Analytics muestra adopción |
 
-- **CI:** Build automático, tests, análisis.
-- **CD:** Deploy automático, estrategias seguras (canary, blue-green).
-- **Observabilidad:** Logs, métricas, trazas.
-- **IaC:** Infraestructura como código.
+**Regla:** Mientras más rápido detectas un error, más barato es arreglarlo.
 
-#### 5. Patrones de transformación
+#### 4. El pilar "Técnica" — Las herramientas que habilitan todo
 
-**Top-Down:** Liderazgo impone. Riesgo: Herramientas sin cambio cultural.
+| Herramienta | ¿Qué hace? | Ejemplo |
+|---|---|---|
+| **CI** (Integración Continua) | Compila y ejecuta pruebas automáticamente cada vez que alguien hace un commit | GitHub Actions ejecuta 200 pruebas en 5 minutos |
+| **CD** (Despliegue Continuo) | Despliega el software automáticamente si las pruebas pasan | Nuevo código en producción en 10 minutos |
+| **Observabilidad** | Ver en tiempo real cómo se comporta el sistema | Grafana muestra que la latencia subió 200ms |
+| **IaC** (Infraestructura como Código) | Los servidores se configuran con archivos, no a mano | Terraform crea 10 servidores en 3 minutos |
 
-**Bottom-Up:** Equipos experimentan. Ventaja: Cambio genuino. Desventaja: Lento.
+#### 5. ¿Cómo adoptan DevOps las empresas?
 
-**Hybrid:** Liderazgo crea incentivos + Equipos adoptan. Balance óptimo.
+**Desde arriba (Top-Down):** La gerencia decide: "Hacemos DevOps." Compran herramientas, hacen capacitaciones.  
+⚠️ Riesgo: Herramientas nuevas, misma cultura vieja. No cambia nada real.
+
+**Desde abajo (Bottom-Up):** Los mismos equipos experimentan con nuevas prácticas porque ven el beneficio.  
+✅ Ventaja: El cambio es genuino porque viene de quienes trabajan.  
+❌ Desventaja: Muy lento, sin apoyo de dirección.
+
+**Híbrido (el mejor):** La dirección crea el entorno (herramientas, presupuesto, permiso para experimentar) y los equipos adoptan a su ritmo.  
+✅ Balance entre velocidad y adopción real.
 
 ---
 
@@ -364,11 +380,17 @@ Presupuesto $2M. Presenta: ¿Por qué este plan?
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Product Backlog y Product Owner
+#### 1. Product Backlog — La lista de TODO lo que queda por hacer
 
-**Product Backlog:** Lista priorizada de requisitos (features, bugs, tech debt).
+**Product Backlog:** Lista ordenada por importancia de todo lo que el equipo debe construir. Lo más importante está arriba. El equipo siempre trabaja en lo que está arriba.
 
-**Responsable:** Product Owner (PO) representa usuario/negocio.
+**Product Owner (PO):** La persona responsable de esta lista. Representa a los usuarios y al negocio. Decide qué entra, qué es más urgente y qué se puede postergar.
+
+**Tipos de items en el backlog:**
+- **Épica:** Una función grande que se divide en historias más pequeñas. Ej: "Autenticación de usuarios"
+- **Historia de usuario:** Una función pequeña que entrega valor al usuario. Ej: "Login por email"
+- **Bug:** Algo que está roto y hay que arreglarlo. Ej: "Timeout de sesión no funciona"
+- **Deuda técnica:** Código que funciona pero está mal escrito y hay que refactorizarlo.
 
 **Estructura típica:**
 
@@ -388,19 +410,31 @@ Presupuesto $2M. Presenta: ¿Por qué este plan?
    ...
 ```
 
-#### 2. Matriz Value/Effort
+#### 2. Matriz Valor vs. Esfuerzo — ¿Qué hacemos primero?
+
+Con 20 funciones pedidas y solo tiempo para hacer 5, ¿cómo decides cuáles hacer?  
+La respuesta: elige las que tienen **alto valor** y **poco esfuerzo**.
 
 ```
-High Value              │  Quick Wins  │  Strategic
-High Effort             │  Fill-Ins    │  Initiatives
-────────────────────────┼──────────────┼────────────
-Low Value   Low Effort  │ Speculative  │
+            Alto valor
+                |
+  "Planificar   |  "HAZ ESTO PRIMERO"
+   para después"|  (valor alto, esfuerzo bajo)
+                |
+________________|________________→ Bajo esfuerzo
+                |
+   "Descartar"  |  "Si hay tiempo sobrante"
+   (valor bajo, |  (valor bajo, esfuerzo bajo)
+   esfuerzo alto)
+            Bajo valor
 ```
 
-**Quick Wins:** Alto valor, bajo esfuerzo. Prioridad máxima.  
-**Strategic:** Alto valor, alto esfuerzo. Para después.  
-**Fill-Ins:** Bajo valor, bajo esfuerzo. Entre sprints.  
-**Speculative:** Bajo valor, alto esfuerzo. Evitar.
+| Cuadrante | Valor | Esfuerzo | ¿Qué hacer? |
+|---|---|---|---|
+| 🟢 **Quick Wins** | Alto | Bajo | ¡Hazlo primero! Máximo retorno con poco trabajo |
+| 🔵 **Strategic** | Alto | Alto | Planificar para más adelante; vale la pena pero requiere recursos |
+| 🟡 **Fill-Ins** | Bajo | Bajo | Llenar tiempo entre sprints; fácil de hacer pero no urgente |
+| 🔴 **Speculative** | Bajo | Alto | Evitar; mucho trabajo, poco valor |
 
 #### 3. Roadmap
 
@@ -411,9 +445,9 @@ Plan 6-12 meses con entregas incrementales.
 **Q3:** Integraciones con terceros.  
 **Q4:** Performance + escalabilidad.
 
-#### 4. Definition of Ready (DoR)
+#### 4. Definition of Ready (DoR) — ¿Está lista la historia para que el equipo la trabaje?
 
-Criterios antes de que Story entre a sprint:
+Antes de que un programador empiece a codificar, la historia debe estar suficientemente clara. Si falta información, el equipo pierde tiempo. El DoR es el checklist mínimo:
 
 - [ ] Criterios de aceptación claros
 - [ ] Estimación consensuada
@@ -422,9 +456,9 @@ Criterios antes de que Story entre a sprint:
 - [ ] Mockups (si UI)
 - [ ] No bloqueadores
 
-#### 5. Definition of Done (DoD)
+#### 5. Definition of Done (DoD) — ¿Está realmente terminada la historia?
 
-Criterios antes de marcar Story como "Hecho":
+"Terminado" no significa "el código corre en mi máquina". Una historia está hecha cuando cumple TODOS estos criterios:
 
 - [ ] Código review (2 aprobaciones)
 - [ ] Tests unitarios (>= 80% coverage)
@@ -508,36 +542,48 @@ Story elegida por grupo. Escribir:
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Story Points vs Horas
+#### 1. Story Points vs Horas — ¿Por qué no estimamos en horas?
 
-**Horas:** "Esto toma 8 horas".
-- Optimista. No incluye contexto, interrupciones, tests.
+**El problema con las horas:**  
+"Esta tarea toma 8 horas" — ¿Cuáles 8 horas? ¿Con interrupciones? ¿Sin? ¿El Senior o el Junior? Las horas son subjetivas y no contemplan complejidad real.
 
-**Story Points:** "Esto es 5 puntos".
-- Relativo. Compara con historias previas.
-- Incluye incertidumbre.
+**Story Points:** Número relativo que mide **complejidad + esfuerzo + incertidumbre** en comparación con otras historias ya conocidas.
 
-**Equivalencia (equipo específico):**
-Equipo A: 1 SP = 4 horas promedio.  
-Equipo B: 1 SP = 6 horas promedio.  
-*Varía por equipo, lenguaje, experiencia.*
+**Analogía:** Un equipo de construcción no mide en horas exactas. Compara: "Esto es más fácil que poner una puerta (5 puntos) pero más difícil que cambiar un foco (1 punto), entonces es 3 puntos."
 
-#### 2. Escala de Fibonacci
+| Horas | Story Points |
+|---|---|
+| "Esto toma 8 horas" | "Esto es 5 SP" |
+| Suena exacto pero no lo es | Suena relativo porque LO ES |
+| No considera incertidumbre | Incluye: complejidad + riesgo + duda |
+| Varía por persona | El equipo llega a un consenso |
+
+**Equivalencia (solo de referencia, varía por equipo):**  
+1 SP = ~2-4 horas en promedio para ese equipo.
+
+#### 2. Escala de Fibonacci — Por qué usamos 1, 2, 3, 5, 8, 13, 21...
 
 1, 2, 3, 5, 8, 13, 21, 34, ...
 
-**Razón:** Diferencia entre 8 y 13 es significativa (65% más); diferencia entre 1 y 2 también (100%). Escala logarítmica.
+**Razón práctica:** A medida que algo es más grande, la incertidumbre crece de forma no lineal.
+- La diferencia entre 1 y 2 SP la percibes bien (doble de trabajo).
+- La diferencia entre 20 y 21 SP es imposible de percibir.
+- Así, la escala gaps grandes ayudan a forzar una decisión real en lugar de una precisión falsa.
 
-#### 3. Planning Poker
+**Regla práctica:** Si una historia es 21 SP o más, dívídela en historias más pequeñas.
+
+#### 3. Planning Poker — El equipo llega a un consenso
+
+**¿Por qué no simplemente le preguntas al líer?** Porque el Senior y el Junior ven la misma historia de forma diferente. Planning Poker obliga a que todos piensen antes de ver las estimaciones de otros (evita que alguien influence a los demás).
 
 **Proceso:**
 
-1. PO lee story.
-2. Q&A (equipo pregunta, PO clarifica).
-3. Cada dev/QA estima (1-21 SP) en privado.
-4. Revelan simultáneamente.
-5. Si consensus (todos dentro 1 número): Done. Si divergencia, debate.
-6. Re-estiman si es necesario.
+1. El PO lee la historia y explica qué hace.
+2. El equipo pregunta todo lo que no entiende.
+3. Cada persona escribe su estimación **en privado** (1, 2, 3, 5, 8, 13 o 21 SP).
+4. Todos muestran su número al mismo tiempo.
+5. Si todos están cerca: la estimación queda.
+6. Si hay divergencia: el de mayor y menor número explican por qué. Se debate y se vuelve a estimar.
 
 **Ejemplo:**
 
@@ -555,29 +601,37 @@ Debate:
 
 **Nueva ronda:** 5, 5, 8, 8 → Consensus en 5 (Dev3 y QA bajan, otros suben). **Decisión:** 8 SP.
 
-#### 4. Three-Point PERT
+#### 4. Three-Point PERT — Cómo estimar cuando hay mucha incertidumbre
 
-Para historias complejas/arriesgadas:
+A veces una historia tiene mucho riesgo: depende de una API externa, nadie del equipo la hizo antes, o los requisitos no están 100% claros. En ese caso, en lugar de dar un solo número, estimamos tres escenarios:
 
-**Optimista (O):** Si todo va bien. Ej: 5 SP.  
-**Realista (M):** Caso promedio. Ej: 13 SP.  
-**Pesimista (P):** Todo sale mal. Ej: 21 SP.
+| Escenario | Descripción | Ejemplo |
+|---|---|---|
+| **Optimista (O)** | Todo sale bien, sin problemas | 5 SP |
+| **Realista (M)** | Caso típico con algunos imprevistos | 13 SP |
+| **Pesimista (P)** | Todo sale mal, máximos problemas | 21 SP |
 
-**Fórmula:** (O + 4M + P) / 6 = (5 + 4×13 + 21) / 6 = (5 + 52 + 21) / 6 = 78/6 = **13 SP**.
+**Fórmula PERT:** `(O + 4×M + P) ÷ 6`
 
-Reduce sesgo optimista.
+Ejemplo: `(5 + 4×13 + 21) ÷ 6 = (5 + 52 + 21) ÷ 6 = 78 ÷ 6 = **13 SP**`
 
-#### 5. Velocidad del equipo
+**¿Por qué ×4 al realista?** Porque el caso típico pesa más que los extremos. Esta fórmula reduce el sesgo optimista que todos tenemos.
 
-**Velocidad:** Promedio SP entregados por sprint.
+#### 5. Velocidad del equipo — Cuánto puede hacer el equipo por sprint
 
-Sprint 1: 20 SP.  
-Sprint 2: 25 SP.  
-Sprint 3: 18 SP.  
-Sprint 4: 22 SP.  
-**Velocidad promedio:** (20+25+18+22)/4 = 21.25 SP/sprint.
+**Velocidad:** Promedio de Story Points terminados por sprint. Se calcula con datos históricos reales del equipo.
 
-**Usar para planificar:** Si roadmap tiene 100 SP, y velocidad es 21 SP/sprint, timeline ≈ 5 sprints (2.5 meses si sprints 2 semanas).
+**Ejemplo:**
+- Sprint 1: 20 SP terminados
+- Sprint 2: 25 SP terminados
+- Sprint 3: 18 SP terminados
+- Sprint 4: 22 SP terminados
+- **Velocidad promedio:** (20+25+18+22) ÷ 4 = **21 SP por sprint**
+
+**¿Para qué sirve?** Para estimar cuánto tiempo tomará el roadmap completo:  
+Si el backlog tiene 100 SP y la velocidad es 21 SP/sprint → necesitarás ~5 sprints (10 semanas a 2 semanas por sprint).
+
+**Importante:** La velocidad varía entre equipos. No uses la velocidad de otro equipo para planificar el tuyo.
 
 ---
 
@@ -705,38 +759,37 @@ Define 8 características principales:
 | Mantenibilidad | Code coverage | >= 80% |
 | Usabilidad | Tasks completadas | >= 90% |
 
-#### 3. Quality Gates
+#### 3. Quality Gates — "El código no pasa si no cumple estos criterios"
 
-Criterios que deben cumplirse para merge/deploy:
+Un quality gate es un conjunto de condiciones que tu código debe cumplir para poder integrarse al proyecto. Es como un semafóro: si algo falla, el merge queda bloqueado hasta arreglarlo.
 
+**Ejemplo de quality gates típicos:**
 ```yaml
 Quality Gates:
-  - Test coverage >= 80%
-  - No bugs críticos (SonarQube)
-  - No vulnerabilidades CVSS > 7
-  - Performance P95 < 200ms
-  - Code style pasa linting
-  - Deuda técnica < 5 días
+  - Cobertura de pruebas >= 80%       # Si menos del 80% del código está probado, bloquea
+  - Sin bugs críticos (SonarQube)      # Ningún bug grave sin resolver
+  - Sin vulnerabilidades de seguridad  # Ningún hueco de seguridad de nivel alto
+  - Latencia P95 < 200ms               # El 95% de las solicitudes responden en 200ms
+  - Estilo de código pasa el linter    # Código consistente con el estándar del equipo
+  - Deuda técnica < 5 días             # Máximo 5 días-persona de refactorización pendiente
 ```
 
-Si Quality Gate falla → Bloquea merge. Dev debe arreglar.
+**Si falla el quality gate:** El merge se bloquea. El desarrollador debe arreglarlo antes de continuar.
 
-#### 4. Deuda técnica
+#### 4. Deuda técnica — El costo de los atajos
 
-**Concepto:** Código que "funciona" pero compromete calidad futura.
+**Analogía:** Es como endeudarse con una tarjeta de crédito. Funciona rápido ahora, pero si no pagas, los intereses crecen. Cuanta más deuda acumulas, más difícil y costoso es cada cambio futuro.
 
-**Ejemplos:**
-- Tests manuales en lugar de automatizadas.
-- Duplicación de código.
-- Funciones muy largas (200+ líneas).
-- Dependencias desactualizadas.
+**Ejemplos comunes:**
+- Pruebas manuales en lugar de automatizadas.
+- Código duplicado en 5 lugares distintos.
+- Funciones de 300 líneas que nadie entiende.
+- Librerías con versiones viejas y vulnerabilidades conocidas.
 
-**Costo:** Cada día que no la corriges, costo de cambios futuros sube.
+**Cómo se mide (SonarQube):**  
+"Deuda: 15 días" significa que si dedicaras a limpiar ese código exclusivamente, tardarías 15 días-persona.
 
-**Medición (SonarQube):**
-- "Deuda: 15 días" = equivalente a 15 días-persona de refactorización.
-
-**Política:** Dedicar 20% tiempo por sprint a reducir deuda.
+**Recomendación:** Dedicar el 15-20% del tiempo de cada sprint a pagar deuda técnica. Si no lo haces, el equipo se va frenando gradualmente.
 
 ---
 
@@ -801,28 +854,31 @@ Diseña 6-8 quality gates específicos para proyecto elegido. Define métricas, 
 
 ---
 
-## Clase 06: Gestión de configuración, branching y SemVer
+## Clase 06: Control de versiones, ramas y versionamiento semántico
 
 **Duración:** 2 horas | **Unidad:** 2 | **Semana:** 3
 
 ### Objetivos de aprendizaje
 
-- Implementar estrategia de branching (trunk-based, GitHub Flow, Git Flow).
-- Aplicar versionamiento semántico (SemVer).
-- Construir changelogs que comunican cambios.
-- Resolver conflictos de merge sin perder historia.
+- Elegir la estrategia de ramas adecuada para cada contexto (flujo simple, GitHub Flow, Git Flow).
+- Entender qué es el versionamiento semántico y por qué importa.
+- Escribir changelogs que comuniquen los cambios a usuarios y equipo.
+- Resolver conflictos de merge cuando dos personas cambiaron el mismo código.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Gestión de Configuración (SCM) — ISO/IEC/IEEE 828
+#### 1. Control de versiones — ¿Qué guardamos y por qué?
 
-**Objetivo:** Trazabilidad completa: ¿Quién? ¿Qué? ¿Cuándo? ¿Por qué?
+**Objetivo:** Siempre poder responder: ¿Quién cambió este código? ¿Cuándo? ¿Por qué? Y poder volver atrás si algo sale mal.
 
-**4 Actividades clave:**
-
-**1.1 Identificación:** Qué versionamos (código, tests, BD migrations, IaC, docs).
+**¿Qué versionamos?** No solo el código. Todo lo que necesitas para reproducir el sistema:
+- Código fuente
+- Pruebas automatizadas
+- Migraciones de base de datos
+- Configuración de infraestructura (IaC)
+- Documentación
 
 **1.2 Control de cambios:**
 
@@ -837,60 +893,66 @@ En Ágil: PR, 2-3 reviewers, 24 horas.
 
 **Trunk-Based Development (TBD):**
 
-Todos a `main`. Feature branches < 1 día. CI rápido detecta conflictos.
+**Trunk-Based Development (Flujo en rama principal) — "Todos en la misma rama"**
 
-Cuándo: Equipos maduros, testing fuerte, deploy frecuente (> 1/día).
+Todos los desarrolladores trabajan en ramas muy cortas (menos de 1 día de vida) y hacen merge a `main` constantemente. El CI detecta conflictos en minutos.
 
-Ejemplo: Stripe (1000+ commits/día).
+Cuándo usarlo: Equipos experimentados con muchas pruebas automáticas, que despliegan más de una vez por día.  
+Ejemplo: Stripe (más de 1,000 commits por día).
 
 ---
 
 **GitHub Flow:**
 
-Rama feature corta (1-2 días). PR → Review → Merge → Deploy.
+**GitHub Flow — "Ramas cortas, deploy frecuente"**
 
-Cuándo: SaaS, deploy frecuente, equipos pequeños.
+Cada funcionalidad vive en su propia rama (1-2 días). Cuando está lista, abres un Pull Request, alguien revisa, se aprueba y se despliega automáticamente.
 
+Cuándo usarlo: Apps web/móvil donde despliegas frecuentemente, equipos pequeños-medianos.  
 Ejemplo: GitHub mismo.
 
 ---
 
 **Git Flow:**
 
-`main` (producción) + `develop` (integración) + `feature/*` + `release/*` + `hotfix/*`.
+**Git Flow — "Múltiples versiones en paralelo"**
 
-Cuándo: Múltiples versiones simultáneas, ciclos de release largos.
+Tiene varias ramas de larga duración: `main` (lo que está en producción), `develop` (trabajo en curso), ramas de `feature`, `release` y `hotfix`.
 
-Ejemplo: WordPress (v1.0 y v2.0 en producción).
+Cuándo usarlo: Software que tiene múltiples versiones activas al mismo tiempo, o ciclos de lanzamiento largos (meses).  
+Ejemplo: WordPress tiene v1.x y v2.x en producción simultáneamente.
 
-#### 3. Versionamiento Semántico (SemVer)
+#### 3. Versionamiento Semántico (SemVer) — ¿Qué significa cada número?
 
-Formato: `MAJOR.MINOR.PATCH[-prerelease][+build]`
+Formato: `MAJOR.MINOR.PATCH`
 
-- **MAJOR:** Breaking changes.
-- **MINOR:** Nuevas features, backward compatible.
-- **PATCH:** Bug fixes.
+| Número | ¿Qué significa? | Ejemplo de cambio | Ejemplo |
+|---|---|---|---|
+| **MAJOR** | Cambió algo y el código viejo ya no funciona | Eliminaste un endpoint de la API | `1.0.0` → `2.0.0` |
+| **MINOR** | Nueva función, pero lo de antes sigue funcionando | Agregaste un endpoint nuevo | `1.0.0` → `1.1.0` |
+| **PATCH** | Solo arreglaste un bug, nada nuevo | Corregiste un error de cálculo | `1.0.0` → `1.0.1` |
 
-Ejemplo: `1.2.3-beta.1+build.42`.
+**Regla clave:** Si usas una librería y ves que su MAJOR cambió (ej: de `3.x.x` a `4.x.x`), revisa si tu código sigue compatible antes de actualizar.
 
-#### 4. Changelog
+#### 4. Changelog — "Qué cambió en esta versión"
 
-Documento (CHANGELOG.md) que lista cambios por versión en lenguaje humano.
+Es un archivo (`CHANGELOG.md`) que lista en lenguaje humano qué cambió en cada versión. Lo leen los usuarios, desarrolladores y equipos de soporte.
 
-Formato: Keep a Changelog.
-
+**Secciones típicas:**
 ```markdown
 ## [1.2.0] - 2026-08-15
 
-### Added
-- Support multiple currencies in payment API
+### Agregado (Added)
+- Soporte para múltiples monedas en la API de pagos
 
-### Fixed
-- Division by zero error in tax calculation
+### Corregido (Fixed)
+- Error de división por cero en el cálculo de impuestos
 
-### Removed
-- Legacy XML endpoint
+### Eliminado (Removed)
+- Endpoint XML de legado (ya deprecado desde v1.1)
 ```
+
+**¿Por qué es importante?** Si un cliente actualiza tu librería y algo se rompe, el changelog le dice exactamente qué cambió y por qué.
 
 ---
 
@@ -965,57 +1027,61 @@ v1.3.0 → v1.4.0. Cambios: nuevo endpoint, bug fix, deprecation. Escribe entrad
 
 ---
 
-## Clase 07: Integración continua y pipeline como código
+## Clase 07: Integración Continua (CI) — Verificación automática del código
 
 **Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
 
 ### Objetivos de aprendizaje
 
-- Diseñar pipeline de CI (stages: build, test, security, artifact).
-- Implementar "Pipeline as Code" (GitHub Actions, GitLab CI, Jenkins).
-- Configurar quality gates automáticos.
-- Optimizar tiempo de pipeline.
+- Entender qué es la Integración Continua y para qué sirve.
+- Diseñar un pipeline de CI con sus fases (compilación, pruebas, calidad, seguridad).
+- Escribir un pipeline como código con GitHub Actions.
+- Identificar y aplicar estrategias para hacer un pipeline más rápido.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Qué es CI
+#### 1. ¿Qué es la Integración Continua (CI)?
 
-**Definición:** Integrar cambios de múltiples devs a repositorio compartido varias veces/día. Cada integración verificada automáticamente.
+**Problema sin CI:** 10 desarrolladores trabajan en ramas separadas por 2 semanas. Cuando unen el código, hay conflictos masivos, bugs inesperados y nadie sabe qué rompió qué. Se llama "Integration Hell" (infierno de integración).
 
-**3 Pilares:**
-- Automatización (no manual).
-- Verificación (tests, análisis, seguridad).
-- Rapidez (feedback en minutos).
+**Con CI:** Cada desarrollador integra su código al repositorio varias veces por día. Un sistema automático verifica inmediatamente que nada se rompió.
 
-#### 2. Pipeline típico
+**Los 3 pilares de CI:**
+- 🤖 **Automatización:** El sistema compila, prueba y analiza sin que nadie lo haga a mano.
+- ✅ **Verificación:** Si algo falla, el sistema avisa inmediatamente (en minutos, no días).
+- ⚡ **Rapidez:** El feedback llega rápido para que puedas corregir mientras recuerdas qué cambiaste.
+
+#### 2. Cómo funciona un pipeline de CI
+
+Un **pipeline** es una serie de pasos automáticos que se ejecutan cada vez que alguien hace un commit. Si cualquier paso falla, el pipeline para y notifica al desarrollador.
 
 ```
 git push
   ↓
-GitHub webhook → CI Server
+GitHub notifica al servidor CI
   ↓
-Stage 1: Build (2 min) - npm install, webpack
+Paso 1: Compilar (2 min) ─ instala dependencias, compila
   ↓
-Stage 2: Test (5 min) - unit tests, integration
+Paso 2: Pruebas (5 min) ─ pruebas unitarias e integración
   ↓
-Stage 3: Quality (3 min) - SonarQube, lint
+Paso 3: Calidad (3 min) ─ SonarQube analiza, linting
   ↓
-Stage 4: Security (3 min) - SAST, SCA
+Paso 4: Seguridad (3 min) ─ busca vulnerabilidades en el código
   ↓
-Stage 5: Artifact (2 min) - Docker build, push
+Paso 5: Empaquetado (2 min) ─ crea imagen Docker lista para desplegar
   ↓
-PASS ✓ (código listo para merge/deploy)
+✅ LISTO ─ El código está listo para hacer merge/deploy
 ```
 
-Total: ~15 minutos.
+**Total: ~15 minutos.** En 15 minutos sabes si tu cambio rompió algo o no.
 
-#### 3. Pipeline as Code
+#### 3. Pipeline como código — El pipeline también se versiona
 
-**Antes (Bad):** Pipeline en UI de Jenkins. No versionado. Desorganizado.
+**Antes (Malo):** El pipeline se configuraba en la interfaz gráfica de Jenkins. Si alguien lo cambiaba, nadie sabía qué cambió. No quedaba historial.
 
-**Ahora (Good):** Pipeline en `.yml` en repo.
+**Ahora (Bien):** El pipeline se escribe en un archivo `.yml` que vive en el mismo repositorio que el código. Ventajas: se versiona con git, se revisa con Pull Request, es reproducible.
 
 ```yaml
 # .github/workflows/ci.yml
@@ -1127,71 +1193,73 @@ GitHub Actions workflow para proyecto anterior. Archivo `.github/workflows/ci.ym
 
 ---
 
-## Clase 08: Entrega continua y estrategias de despliegue
+## Clase 08: Despliegue continuo y estrategias para lanzar sin apagar el sistema
 
 **Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
 
 ### Objetivos de aprendizaje
 
-- Distinguir entre CD (Continuous Delivery) y CDeployment.
-- Implementar estrategias: rolling, blue-green, canary.
-- Diseñar rollback plan.
-- Monitorear despliegues post-release.
+- Entender la diferencia entre Entrega Continua y Despliegue Continuo.
+- Aplicar las 3 estrategias de despliegue: rolling, blue-green y canary.
+- Diseñar un plan de rollback (cómo volver atrás si algo falla).
+- Monitorear un despliegue para detectar problemas pronto.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. CD vs CDeployment
+#### 1. Entrega Continua vs. Despliegue Continuo
 
-**Continuous Delivery (CD):** Código listo para producción en cada commit. Deploy es decisión manual.
+Ambas se llaman "CD" pero son distintas:
 
-**Continuous Deployment:** Código automáticamente a producción si tests pasan.
-
-Spectrum: Manual → CD → CDeployment.
+| | Entrega Continua | Despliegue Continuo |
+|---|---|---|
+| **¿Qué hace?** | Prepara el código para ir a producción automáticamente | Envia el código a producción automáticamente |
+| **¿Quién aprieta el botón?** | Una persona decide cuándo despliegar | Nadie — si las pruebas pasan, va solo |
+| **¿Cuándo usarlo?** | Cuando el negocio quiere control sobre el momento del lanzamiento | Cuando confías en tus pruebas y quieres velocidad máxima |
+| **Ejemplo** | Amazon tiene 100 despliegos/día pero aprobados por una persona | GitHub deploys cada commit que pasa todos los tests |
 
 #### 2. Estrategias de despliegue
 
-**Rolling Deploy:**
+**Rolling Deploy — "Reemplazar de a poco"**
 
-Reemplazar instancias gradualmente. Ej: 5 servidores, 1 por 1.
+Tienes 5 servidores corriendo V1. Los reemplazas de a uno con V2:
+- Servidor 1: V2 (los otros 4 siguen en V1)
+- Monitorear 2 minutos...
+- Servidor 2: V2 (los otros 3 siguen en V1)
+- ... y así hasta completar los 5.
 
-- V1 (5 instancias) → Reemplazar 1 con V2 (1 V2, 4 V1).
-- Monitor (2 min).
-- Reemplazar siguiente. (2 V2, 3 V1).
-- ...
-- Total: 10 minutos, downtime ~0.
+Tiempo total: ~10 minutos. Downtime: casi cero.
 
-Ventaja: Económico (no requiere 2x infraestructura).  
-Desventaja: Rollback más lento.
-
----
-
-**Blue-Green Deploy:**
-
-2 ambientes idénticos. Uno activo (Blue), otro en standby (Green).
-
-- Deploy V2 a Green.
-- Tests.
-- Switch router: Blue → Green.
-- V1 queda en Blue para rollback rápido.
-
-Ventaja: Rollback instantáneo.  
-Desventaja: 2x infraestructura.
+✅ **Ventaja:** Económico, no necesitas el doble de servidores.  
+❌ **Desventaja:** Volver atrás tarda (tienes que reemplazar todos de nuevo).
 
 ---
 
-**Canary Deploy:**
+**Blue-Green Deploy — "Cambiar el interruptor"**
 
-Desviar pequeño % tráfico a V2. Monitor. Si OK, aumentar gradualmente.
+Mantenes dos ambientes idénticos: **Blue** (el activo) y **Green** (en espera).
+- Despliegas V2 en Green (mientras Blue sigue funcionando).
+- Pruebas Green. Todo OK.
+- Cambias el enrutador: el tráfico ahora va a Green.
+- Blue queda como respaldo. Si algo falla, reviertes en segundos.
 
-- 5% tráfico → V2. Monitorear 30 min.
-- Si error rate OK: 25% → V2.
-- Si error rate OK: 100% → V2.
-- Si error rate SUBE: Rollback al 0% V2.
+✅ **Ventaja:** Rollback instantáneo (cambias el interruptor de vuelta).  
+❌ **Desventaja:** Necesitas el doble de servidores (costo más alto).
 
-Ventaja: Riesgo mínimo. Catch bugs con pocos usuarios.  
-Desventaja: Complejo de implementar.
+---
+
+**Canary Deploy — "Probar con pocos usuarios primero"**
+
+El nombre viene de los canarios que se usaban en minas de carbón: si el canario caía, había gas. Aquí, si el 5% de usuarios ve errores, paras antes de afectar al 100%.
+
+- 5% del tráfico → V2. Monitorear 30 minutos.
+- Si la tasa de errores está bien: 25% → V2.
+- Si sigue bien: 100% → V2.
+- Si sube la tasa de errores en cualquier momento: Rollback instantáneo al 0% V2.
+
+✅ **Ventaja:** Rísgo mínimo. Los bugs se detectan con muy pocos usuarios afectados.  
+❌ **Desventaja:** Más complejo de implementar. Necesitas buen monitoreo.
 
 ---
 
@@ -1273,93 +1341,74 @@ Proyecto elegido. Detalla: detección (¿cómo sabemos que falló?), decisión (
 
 ---
 
-## Clase 09: DevSecOps y OWASP Top 10
+## Clase 09: Seguridad en el desarrollo — DevSecOps y las 10 vulnerabilidades más comunes
 
 **Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
 
 ### Objetivos de aprendizaje
 
-- Integrar seguridad en el ciclo de vida (shift-left).
-- Identificar y mitigar OWASP Top 10 vulnerabilidades.
-- Implementar SAST/DAST en pipeline.
-- Crear cultura de seguridad en equipo.
+- Entender por qué la seguridad debe integrarse desde el inicio (no al final).
+- Identificar y mitigar las 10 vulnerabilidades más comunes según OWASP.
+- Distinguir SAST y DAST: dos formas de buscar vulnerabilidades.
+- Aplicar quality gates de seguridad en el pipeline de CI.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. DevSecOps: Seguridad desde el inicio
+#### 1. DevSecOps — Seguridad desde el día 1, no como paso final
 
-**Ciclo tradicional:**
+**El problema clásico:** Se construye todo, se entrega, y al final el equipo de seguridad dice "hay 50 vulnerabilidades." Arreglarlas en ese punto es 10 veces más caro que haberlas evitado desde el principio.
 
-Desarrollo → Ops → Seguridad (post-facto) → Remediación costosa.
-
-**DevSecOps:**
-
-Seguridad integrada desde Requisitos.
+**DevSecOps:** Integrar seguridad en cada paso del desarrollo. "La seguridad es responsabilidad de todos, no solo del equipo de seguridad."
 
 ```
-Requisitos de seguridad
+Requisitos: Definir qué datos deben protegerse
   ↓
-Secure code practices (durante dev)
+Código: Practicas seguras (no SQL injection, no credenciales en código)
   ↓
-SAST en CI (detección de código vulnerable)
+CI: SAST ─ busca vulnerabilidades automáticamente en cada commit
   ↓
-DAST en staging (pruebas dinámicas)
+Etapa de pruebas: DAST ─ simula ataques reales contra el sistema
   ↓
-SCA: dependencias vulnerables
+Dependencias: SCA ─ escanea librerías externas por vulnerabilidades conocidas
   ↓
-Deploy solo si security gates pasan
+Despliegue: Solo si pasan todos los quality gates de seguridad
   ↓
-WAF + IDS en producción
-  ↓
-Monitoreo continuo + response a incidentes
+Producción: Monitoreo continuo + respuesta a incidentes
 ```
 
-Filosofía: "Security is everyone's responsibility".
+**Beneficio:** Los problemas se detectan en minutos (en CI) en lugar de en semanas (en el equipo de seguridad).
 
-#### 2. OWASP Top 10 (2021)
+#### 2. OWASP Top 10 — Las 10 vulnerabilidades más comunes en la web (2021)
 
-1. **Broken Access Control:** Usuarios acceden datos que no deberían.
-   - Mitigación: Verificar permisos en cada operación.
+**OWASP** (Open Web Application Security Project) es una organización que publica las vulnerabilidades más frecuentes. Si conoces estas 10, evitas la mayoría de los ataques comunes:
 
-2. **Cryptographic Failures:** Datos sensibles no encriptados.
-   - Mitigación: Usar HTTPS (TLS), encriptar datos en BD.
+| # | Nombre | ¿Qué significa? | Ejemplo | Cómo prevenirlo |
+|---|---|---|---|---|
+| 1 | **Control de acceso roto** | Un usuario ve datos que no debería ver | Juan accede al perfil de María cambiando el ID en la URL | Verificar permisos en cada operación |
+| 2 | **Fallos criptográficos** | Datos sensibles viajan o se guardan sin cifrar | Contraseñas guardadas en texto plano en la BD | Usar HTTPS, cifrar datos sensibles |
+| 3 | **Inyección (SQL Injection)** | El atacante inyecta código malicioso en un formulario | `' OR 1=1 --` en el campo de contraseña | Usar prepared statements |
+| 4 | **Diseño inseguro** | La arquitectura tiene huecos de seguridad desde el inicio | Login sin límite de intentos | Modelado de amenazas desde el diseño |
+| 5 | **Configuración insegura** | Valores por defecto peligrosos activos | Contraseña admin `admin123` por defecto | Checklist de endurecimiento del servidor |
+| 6 | **Componentes vulnerables** | Librerías con vulnerabilidades conocidas sin actualizar | `lodash 3.x` con CVE conocido | Escanear y actualizar dependencias (SCA) |
+| 7 | **Fallos de autenticación** | Contraseñas débiles, sin 2FA, sesiones que no expiran | Usuario puede usar `1234` como contraseña | bcrypt, doble factor, tiempo de sesión |
+| 8 | **Fallos de integridad** | Código o datos manipulados sin detección | Plugin descargado de servidor no oficial modificado | Verificar firmas digitales |
+| 9 | **Sin registros ni monitoreo** | No hay forma de saber si hubo un ataque | Hacker accede por semanas sin que nadie lo sepa | Logs de acceso + alertas de anomalías |
+| 10 | **SSRF** | El servidor hace peticiones a URLs controladas por el atacante | API acepta una URL y el atacante apunta a un servicio interno | Validar URLs, lista blanca de dominios |
 
-3. **Injection:** SQL injection, command injection.
-   - Mitigación: Prepared statements, input validation.
+#### 3. SAST vs DAST — Dos formas de buscar vulnerabilidades
 
-4. **Insecure Design:** Arquitectura sin threat modeling.
-   - Mitigación: Threat modeling en diseño, security requirements.
+| | SAST — Análisis Estático | DAST — Análisis Dinámico |
+|---|---|---|
+| **¿Qué hace?** | Analiza el código fuente sin ejecutarlo | Ejecuta la aplicación e intenta atacarla |
+| **Analogía** | Revisar el plano de una casa buscando errores | Contratar a alguien para intentar entrar a robar |
+| **¿Cuándo corre?** | En cada commit, dentro del pipeline CI | En ambiente de pruebas antes del despliegue |
+| **Velocidad** | Rápido (1-2 minutos) | Lento (30+ minutos) |
+| **Problema** | Muchos falsos positivos (alerta cuando no hay problema) | Menos falsos positivos pero más lento |
+| **Herramientas** | SonarQube, Semgrep, Checkmarx | OWASP ZAP, Burp Suite |
 
-5. **Security Misconfiguration:** Defaults inseguros, headers faltantes.
-   - Mitigación: Hardening checklist, automated scanning.
-
-6. **Vulnerable & Outdated Components:** Dependencias con CVEs.
-   - Mitigación: SCA, update frecuentes.
-
-7. **Authentication Failures:** Password débil, 2FA faltante.
-   - Mitigación: bcrypt, 2FA obligatorio, session timeout.
-
-8. **Data Integrity Failures:** Deserialization insegura.
-   - Mitigación: No desserialize untrusted data, usar JSON.
-
-9. **Logging & Monitoring Failures:** No hay audit trail.
-   - Mitigación: Logs de acceso, alertas de anomalías.
-
-10. **SSRF:** Server-Side Request Forgery.
-    - Mitigación: Validar URLs, whitelist dominios.
-
-#### 3. SAST vs DAST
-
-**SAST (Static Application Security Testing):**
-- Analiza código sin ejecutarlo.
-- Herramientas: SonarQube, Checkmarx, Fortify.
-- Rápido (~1-2 min). Falsos positivos altos.
-- Runs: En CI después de commit.
-
-**DAST (Dynamic Application Security Testing):**
-- Ejecuta app, intenta ataques.
+**Usados juntos:** SAST detecta vulnerabilidades comunes rápido. DAST valida que las vulnerabilidades reales no estén presentes en el sistema.
 - Herramientas: OWASP ZAP, Burp Suite, Nessus.
 - Lento (~30+ min). Fewer false positives.
 - Runs: En staging pre-deploy.
@@ -1460,16 +1509,16 @@ Diseña quality gates de seguridad para pipeline CI:
 
 ---
 
-## Clase 10: SAST/DAST/SCA, SBOM y gestión de secretos
+## Clase 10: Herramientas de seguridad automática y manejo seguro de contraseñas
 
 **Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
 
 ### Objetivos de aprendizaje
 
-- Implementar herramientas SAST, DAST, SCA en pipeline.
-- Generar y validar SBOM (Software Bill of Materials).
-- Gestionar secretos (API keys, DB passwords) de forma segura.
-- Responder a CVEs encontradas.
+- Configurar herramientas SAST, DAST y SCA en el pipeline.
+- Entender qué es un SBOM ("lista de ingredientes" del software) y para qué sirve.
+- Manejar contraseñas y llaves de API de forma segura (sin poner nada en el código).
+- Responder a vulnerabilidades (CVEs) detectadas por las herramientas.
 
 ---
 
@@ -1508,47 +1557,44 @@ sonarqube:
 
 **Resultado:** Vulnerabilidades encontradas. Severity. Proof-of-concept.
 
-#### 3. SCA en profundidad
+#### 3. SCA — Escanear las librerías que usas
+
+**SCA (Software Composition Analysis):** Verifica que las librerías externas que usa tu proyecto no tengan vulnerabilidades conocidas.
+
+**¿Por qué?** Tu aplicación puede tener código perfecto, pero si usa una librería con un hueco de seguridad, tu sistema también es vulnerable.
 
 **Herramientas:**
+- **Snyk:** Se integra con npm, Python, Maven. Monitoreo continuo.
+- **Dependabot:** Nativa de GitHub. Crea Pull Requests automáticos para actualizar librerías vulnerables.
+- **WhiteSource:** Para empresas grandes.
 
-- **Snyk:** Integración npm, Python, Maven. Monitoreo continuo.
-- **Dependabot:** GitHub nativa.
-- **WhiteSource:** Enterprise.
+**Flujo típico:**
+1. Agregas librería: `npm install lodash@4.17.0`.
+2. SCA escanea: "lodash@4.17.0 tiene vulnerabilidad CVE-2021-23337 (nivel ALTO)."
+3. Tienes dos opciones:
+   - **A:** Actualizar a la versión que corrige el problema.
+   - **B:** Aceptar el riesgo temporalmente (documéntalo y créa un plan de actualización).
 
-**Flujo:**
+#### 4. SBOM — La "lista de ingredientes" de tu software
 
-1. Dev agrega dependencia: `npm install lodash@4.17.0`.
-2. SCA escanea: "lodash@4.17.0 tiene CVE-2021-23337 (severity HIGH)".
-3. Opción A: Bloquea instalación.
-4. Opción B: Permite, pero crea issue. Dev debe upgradear.
+**Analogía:** Un producto alimenticio tiene una lista de ingredientes. Un SBOM es lo mismo pero para el software: lista exactamente qué librerías externas usa tu sistema, en qué versión y con qué licencia.
 
-#### 4. SBOM (Software Bill of Materials)
+**¿Para qué sirve?**
+- **Auditoría:** "¿Qué librerías usamos?" Respuesta en segundos.
+- **Licencias:** "¿Usamos alguna librería con licencia que no podemos usar comercialmente?"
+- **Seguridad:** Si aparece una nueva vulnerabilidad en `lodash`, sabes automáticamente si tu sistema la tiene.
 
-**Concepto:** Inventario completo de componentes (librerías, frameworks, tools) en software.
-
-**Formato:** CycloneDX, SPDX.
-
-**Ejemplo SBOM (formato JSON):**
-
+**Ejemplo de SBOM simplificado:**
 ```json
 {
-  "components": [
-    {
-      "name": "lodash",
-      "version": "4.17.21",
-      "license": "MIT",
-      "purl": "pkg:npm/lodash@4.17.21"
-    },
-    {
-      "name": "express",
-      "version": "4.18.0",
-      "license": "MIT",
-      "purl": "pkg:npm/express@4.18.0"
-    }
+  "componentes": [
+    { "nombre": "lodash", "versión": "4.17.21", "licencia": "MIT" },
+    { "nombre": "express", "versión": "4.18.0", "licencia": "MIT" }
   ]
 }
 ```
+
+**Cómo generarlo:** `npm install && cyclonedx-npm --output-format json`
 
 **Usos:**
 
@@ -1688,90 +1734,93 @@ Proyecto con 10 secretos (DB password, API keys, etc.). Diseña:
 
 ---
 
-## Clase 11: Los tres pilares de la observabilidad
+## Clase 11: ¿Cómo saber qué pasa dentro del sistema? — Logs, métricas y trazas
 
 **Duración:** 2 horas | **Unidad:** 3 | **Semana:** 6
 
 ### Objetivos de aprendizaje
 
-- Distinguir logs, métricas y trazas.
-- Implementar logging structured.
-- Configurar alertas basadas en métricas.
-- Usar distributed tracing para depurar request end-to-end.
+- Entender la diferencia entre logs, métricas y trazas: los tres pilares para observar un sistema.
+- Escribir logs estructurados (en JSON) que se puedan buscar fácilmente.
+- Configurar alertas basadas en métricas para detectar problemas automáticamente.
+- Usar trazas distribuidas para encontrar qué parte del sistema está causando lentitud.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Logs
+#### 1. Logs — El diario de eventos del sistema
 
-**Qué son:** Registros discretos de eventos.
+**¿Qué son?** Registros de todo lo que pasa: quién inició sesión, qué error ocurrió, qué operación se ejecutó.
 
-Ejemplo:
+Ejemplo de logs básicos:
 ```
-2026-08-15T10:30:45Z INFO auth: User login successful (user_id=123)
-2026-08-15T10:30:46Z ERROR payment: Transaction failed (error=timeout, retry=1)
+2026-08-15 10:30:45 INFO  [auth] Usuario 123 inició sesión exitosamente
+2026-08-15 10:30:46 ERROR [pagos] Transacción falló: timeout en servidor de pagos
 ```
 
-**Structured logging (JSON):**
+**Logs estructurados (en JSON) — Más buscables:**
 ```json
 {
   "timestamp": "2026-08-15T10:30:45Z",
-  "level": "INFO",
-  "service": "auth",
-  "message": "User login successful",
-  "user_id": 123,
-  "duration_ms": 45
+  "nivel": "INFO",
+  "servicio": "auth",
+  "mensaje": "Usuario inició sesión",
+  "usuario_id": 123,
+  "duracion_ms": 45
 }
 ```
 
-**Beneficio:** Parseable, queryable, analizable.
+**¿Por qué JSON?** Puedes buscar "todos los errores del servicio de pagos en los últimos 10 minutos" en segundos. Con texto plano, es imposible.
 
-**Agregación:** ELK Stack (Elasticsearch, Logstash, Kibana), Splunk, Datadog.
+**Herramientas de centralización:** Kibana, Datadog, Splunk (juntan los logs de todos los servidores en un solo lugar).
 
-#### 2. Métricas
+#### 2. Métricas — Números que cambian en el tiempo
 
-**Qué son:** Números que evolucionan en el tiempo.
+**¿Qué son?** Valores numéricos que mides continuamente para ver cómo se comporta el sistema.
 
-Ejemplos:
+Ejemplos de métricas importantes:
 - CPU: 45%
-- Memory: 2.1 GB / 8 GB
-- Requests/segundo: 1200
-- Error rate: 0.1%
-- Response time P95: 150ms
+- Memoria: 2.1 GB usados de 8 GB
+- Solicitudes por segundo: 1,200
+- Tasa de errores: 0.1%
+- Tiempo de respuesta P95: 150ms *(el 95% de las solicitudes responden en 150ms o menos)*
 
-**Monitoreo:**
+**Cómo funciona el monitoreo:**
 ```
-Prometheus scrapes app every 15 seconds:
-  cpu_usage: 45% → 46% → 45% → 47% → ...
-  
-Grafana visualiza:
-  [Graph] CPU over 1 hour
-  [Graph] Requests/sec
-  [Alert] CPU > 80% for 5 min → Slack notification
+Prometheus (cada 15 segundos): "CPU = 45%... 46%... 45%... 78%... 90%!"
+
+Grafana visualiza en gráficas:
+  [Gráfica] CPU última hora
+  [Gráfica] Solicitudes por segundo
+  [ALERTA] CPU > 80% por 5 minutos → Aviso a Slack
 ```
 
-#### 3. Trazas (Traces)
+**Valor:** Sin métricas, descubres que algo falló cuando un usuario te llama. Con métricas, lo sabes antes de que el usuario lo note.
 
-**Qué son:** Request end-to-end a través de servicios.
+#### 3. Trazas — El camino completo de una solicitud
 
-Ejemplo request: "usuario hace login"
+**¿Qué son?** Registran todo el recorrido de una solicitud del usuario a través de todos los servicios del sistema.
+
+**¿Para qué sirven?** Si una solicitud tarda 2 segundos y debería tardar 200ms, ¿dónde está el problema? Las trazas te lo dicen exactamente:
 
 ```
 POST /api/login (100ms total)
   │
-  ├─ auth-service (50ms)
-  │  ├─ validate credentials (10ms)
-  │  ├─ query DB (20ms)
-  │  └─ generate token (20ms)
+  ├─ servicio-auth (50ms)
+  │  ├─ validar credenciales (10ms)
+  │  ├─ consultar BD (20ms)
+  │  └─ generar token (20ms)
   │
-  ├─ audit-service (30ms)
-  │  ├─ log login (15ms)
-  │  └─ notify (15ms)
+  ├─ servicio-auditoria (30ms)
+  │  ├─ registrar evento (15ms)
+  │  └─ enviar notificación (15ms)
   │
-  └─ cache-service (20ms)
-     └─ store session (20ms)
+  └─ servicio-cache (20ms)
+     └─ guardar sesión (20ms)
 ```
+
+Si algo empieza a tardar 1,500ms en lugar de 20ms, lo ves inmediatamente en la traza.
 
 **Herramientas:** Jaeger, Zipkin, DataDog APM.
 
@@ -1838,96 +1887,85 @@ App de comercio. 10 alertas críticas (error rate, latencia, etc.). Define thres
 
 ---
 
-## Clase 12: Golden Signals, SLI, SLO y Error Budgets
+## Clase 12: Las 4 métricas clave y cómo definir objetivos de servicio
 
 **Duración:** 2 horas | **Unidad:** 3 | **Semana:** 6
 
 ### Objetivos de aprendizaje
 
-- Entender los 4 Golden Signals (latencia, errores, tráfico, saturación).
-- Definir SLI (Service Level Indicators) y SLO (Service Level Objectives).
-- Implementar error budgets.
-- Usar error budgets para tomar decisiones (deploy vs. confiabilidad).
+- Entender las 4 métricas clave para monitorear un sistema (latencia, errores, tráfico y saturación).
+- Diferenciar SLI, SLO y SLA con ejemplos prácticos.
+- Calcular y usar el error budget de forma simple.
+- Tomar decisiones de despliegue según confiabilidad, no por intuición.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Golden Signals (Google SRE)
+#### 1. Las 4 métricas clave (Golden Signals) — Lo que siempre debes monitorear
 
-**4 métricas universales:**
+Google diseñó estos 4 indicadores como las métricas mínimas para saber si un sistema está saludable. Cualquier sistema, sin importar su complejidad, se puede evaluar con estas 4:
 
-1. **Latencia:** ¿Cuánto tarda una request?
-   - Target: P50 < 100ms, P95 < 200ms, P99 < 500ms.
+| Métrica | ¿Qué mide? | Ejemplo | Objetivo típico |
+|---|---|---|---|
+| **Latencia** | Cuánto tarda el sistema en responder | "95% de solicitudes responden en menos de 200ms" | P95 < 200ms |
+| **Errores** | Qué porcentaje de solicitudes fallan | "Solo 1 de cada 1000 solicitudes da error" | < 0.1% |
+| **Tráfico** | Cuántas solicitudes recibe por segundo | "En hora pico: 8,500 solicitudes/seg" | Monitorear baseline |
+| **Saturación** | Cuánto recurso está ocupado | "CPU al 65%" | CPU < 80%, Memoria < 85% |
 
-2. **Errores:** ¿Qué % de requests fallan?
-   - Target: < 0.1% (99.9% success rate).
-
-3. **Tráfico:** ¿Cuántas requests por segundo?
-   - Baseline: 5000 RPS. Pico: 50000 RPS.
-
-4. **Saturación:** ¿Cuánto recurso % está en uso?
-   - CPU < 70%, Memory < 80%, Disk < 85%.
-
-**Dashboard típico:**
-
+**Panel de monitoreo en tiempo real:**
 ```
-Latency         Error Rate      Traffic           Saturacion
-[Graph P95]     [Graph %]       [Graph RPS]       [Graph CPU%]
-150ms           0.05%           8500 RPS          65%
-✓ HEALTHY       ✓ HEALTHY       ✓ NORMAL          ✓ HEALTHY
+Latencia P95: 150ms ✅  |  Errores: 0.05% ✅  |  Tráfico: 8,500 RPS ✅  |  CPU: 65% ✅
 ```
+**Si alguno está en rojo, algo está mal en el sistema.**
 
-#### 2. SLI y SLO
+#### 2. SLI, SLO y SLA — De la métrica al contrato
 
-**SLI (Service Level Indicator):** Métrica que mide un aspecto del servicio.
+**SLI (Indicador del nivel de servicio):** La métrica real que mides. Ej: "Hoy la latencia P95 fue 163ms."
 
-Ejemplo: "Latencia P95 de payment API".
+**SLO (Objetivo del nivel de servicio):** El objetivo que te propones cumplir. Ej: "La latencia P95 debe ser menor a 200ms."
 
+**SLA (Acuerdo del nivel de servicio):** Contrato con el cliente. Si no cumples el SLO, hay consecuencias (crédito, penalización).
+
+**Relación:**
 ```
-Monday:   P95 = 150ms
-Tuesday:  P95 = 180ms
-Wednesday: P95 = 160ms
-Average:  P95 = 163ms
+SLI = lo que mides en la realidad
+SLO = lo que prometiste internamente (objetivo)
+SLA = lo que firmaste con el cliente (contrato)
+
+Si SLI no cumple SLO → El equipo trabaja para mejorar
+Si SLO no se cumple persistentemente → El SLA puede verse afectado
 ```
 
-**SLO (Service Level Objective):** Objetivo de qué debería ser el SLI.
+**Ejemplo banco:**
+- SLI: "Disponibilidad del mes: 99.92%"
+- SLO: "Disponibilidad debe ser >= 99.99%"
+- Estado: ❌ Fuera del objetivo. El equipo investiga las causas.
 
-Ejemplo: "Latencia P95 de payment API debe ser < 200ms en 99% de días".
+#### 3. Error Budget — "Cuánto puedo fallar este mes"
 
-```
-SLI medido: 163ms
-SLO target: < 200ms
-Status: ✓ CUMPLIDO (163 < 200)
-```
+**Analogía:** Como un presupuesto de dinero, pero para fallos. Si tu SLO es 99.9% de disponibilidad, tienes "presupuesto" para 0.1% de fallos.
 
-**SLA (Service Level Agreement):** Contrato. Si SLO se incumple, compensación.
-
-Ejemplo: "Si uptime < 99.9%, crédito de $100/mes al cliente".
-
-#### 3. Error Budget
-
-**Concepto:** Si SLO es 99.9%, tienes presupuesto de fallos 0.1%.
-
-**Cálculo:**
+**Cálculo para un mes:**
 
 ```
-SLO: 99.9% uptime
-Período: 30 días
+SLO: 99.9% disponibilidad
+Período: 30 días = 43,200 minutos totales
 
-Minutos totales: 30 × 24 × 60 = 43200 min
-Error budget: 43200 × (1 - 0.999) = 43.2 minutos
+Presupuesto de error: 43,200 × 0.001 = 43 minutos/mes
 
-Puedes tener ~43 minutos downtime en 30 días.
+→ Puedes tener hasta 43 minutos de caída al mes
 ```
 
-**Uso del error budget:**
+**¿Cómo se usa para tomar decisiones?**
 
-- **Quedan 40 min:** Deploy nuevo feature. Riesgo OK.
-- **Quedan 5 min:** Congelamos deploys. Solo hotfixes.
-- **Se agotó:** Prioridad máxima: confiabilidad. Sin deploys.
+| Presupuesto restante | Decisión |
+|---|---|
+| Queda 40 min (prácticamente todo) | ✅ Podemos desplegar nuevas funciones con riesgo normal |
+| Queda 5 min (casi agotado) | ⚠️ Congelamos nuevos deploys. Solo correcciones urgentes |
+| Agotado (0 min) | ❌ Prioridad: estabilidad. Sin ningún nuevo despliegue hasta el próximo mes |
 
-**Decisión científica:** No es "sentimiento". Es matemática.
+**Valor:** El equipo no debate por intuición si "hay que desplegarlo hoy". Lo decide con datos.
 
 ---
 
@@ -2001,50 +2039,39 @@ Escenario: Ya gastaste 80% del budget. Un feature arriesgado solicita deploy. ¿
 
 ---
 
-## Clase 13: Métricas DORA y medición del desempeño DevOps
+## Clase 13: Métricas DORA — ¿Cómo saber si tu equipo es eficiente?
 
 **Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
 
 ### Objetivos de aprendizaje
 
-- Entender las 4 métricas DORA.
-- Medir y comparar desempeño (baseline vs. actual).
-- Usar DORA para identificar bottlenecks.
-- Crear plan de mejora basado en DORA.
+- Entender las 4 métricas DORA y qué mide cada una.
+- Calcular las métricas a partir de datos reales del equipo.
+- Identificar cuál es el cuello de botella (bottleneck) principal del equipo.
+- Crear un plan de mejora concreto basado en esas métricas.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Métricas DORA (Forsgren et al., 2018)
+#### 1. Las 4 métricas DORA — El estándar de la industria para medir equipos de software
 
-**4 métricas que correlacionan con performance organizacional:**
+Forsgren, Humble y Kim investigaron miles de equipos y encontraron que estos 4 indicadores predicen qué tan bien funciona un equipo de desarrollo:
 
-1. **Deployment Frequency:** ¿Cuánto desplegamos?
-   - Low: 1/mes.
-   - Medium: 1/semana.
-   - High: 1/día.
-   - Elite: Múltiples/día.
+| Métrica | ¿Qué mide? | Bueno (“High”) | Excelente (“Elite”) |
+|---|---|---|---|
+| **Frecuencia de deploys** | ¿Cuántas veces despliegan a producción? | 1 vez por día | Varias veces al día |
+| **Lead time** | ¿Cuánto tarda un cambio desde el commit hasta producción? | 1 semana a 1 mes | Menos de 1 día |
+| **MTTR** (tiempo de recuperación) | Si algo falla, ¿cuánto tardan en arreglarlo? | Menos de 1 hora | Menos de 15 minutos |
+| **CFR** (tasa de fallos de cambio) | ¿Qué % de sus cambios causaron incidente o rollback? | 0-15% | 0-15% (con confianza para arreglar rápido) |
 
-2. **Lead Time for Changes:** ¿Cuánto tarda un cambio en llegar a producción?
-   - Low: > 6 meses.
-   - Medium: 1 mes a 6 meses.
-   - High: 1 semana a 1 mes.
-   - Elite: < 1 día.
+**Equipos "Elite" según los datos:** Son ~200 veces más rápidos y confiables que los de nivel bajo.
 
-3. **Mean Time to Recovery (MTTR):** Si algo falla, ¿cuánto tarda en recuperar?
-   - Low: > 6 horas.
-   - Medium: 1 hora a 6 horas.
-   - High: < 1 hora.
-   - Elite: < 15 minutos.
-
-4. **Change Failure Rate (CFR):** ¿Qué % de cambios causa incidente/rollback?
-   - Low: 46-60%.
-   - Medium: 16-30%.
-   - High: 0-15%.
-   - Elite: 0-15%. (+ confianza para arreglar rápido).
-
-**Hipótesis:** Equipos con DORA "Elite" son ~200x más rápidos y confiables.
+**Equipos tradicionales (nivel “Low”):**
+- Deploys: 1 vez por mes o menos
+- Lead time: De 1 mes a 6 meses
+- MTTR: Más de 6 horas
+- CFR: 30-60% de cambios causan problemas
 
 #### 2. Medir DORA
 
@@ -2156,67 +2183,59 @@ Plan de 6 meses para llevar equipo de "Medium" a "High" en todas métricas. Prop
 
 ---
 
-## Clase 14: Gestión de incidentes
+## Clase 14: Gestión de incidentes — ¿Qué hacer cuando algo falla en producción?
 
 **Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
 
 ### Objetivos de aprendizaje
 
-- Clasificar incidentes por severidad.
-- Implementar triage y escalación.
-- Calcular y usar RTO/RPO.
-- Ejecutar respuesta a incidentes coordinada.
+- Clasificar un incidente según su nivel de urgencia (severidad).
+- Saber qué hacer paso a paso cuando hay un fallo en producción.
+- Entender RTO y RPO: cuánto puede estar caído el sistema y cuántos datos puede perder.
+- Coordinar la respuesta entre el equipo.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Severidad de incidentes
+#### 1. Niveles de severidad — ¿Qué tan urgente es el problema?
 
-**SEV-1 (Crítico):** Pérdida total de funcionalidad. Impacto: todos los usuarios.
-- Ejemplo: "Todas las transacciones fallan".
-- RTO: < 15 minutos.
-- Action: Encender alarmas. Todos los hands on deck.
+No todos los fallos son iguales. Algunos paralizan el negocio; otros son un inconveniente menor. Esta escala (SEV) ayuda a decidir qué tan rápido y con cuántos recursos responder:
 
-**SEV-2 (Alto):** Funcionalidad parcial perdida. Impacto: muchos usuarios.
-- Ejemplo: "Pagos con tarjeta no funcionan (ACH sí)".
-- RTO: < 1 hora.
-- Action: Escalada urgente.
+| Nivel | Nombre | ¿Qué pasa? | Ejemplo | ¿Cuánto tiempo para resolver? |
+|---|---|---|---|---|
+| **SEV-1** | Crítico | Todo el sistema caído. Todos los usuarios afectados | "Ningún pago funciona" | Menos de 15 minutos |
+| **SEV-2** | Alto | Funcionalidad clave parcialmente caída | "Pagos con tarjeta fallan, pero transferencias sí funcionan" | Menos de 1 hora |
+| **SEV-3** | Medio | Función degradada, pero hay alternativa | "El filtro de búsqueda está lento" | Menos de 4 horas |
+| **SEV-4** | Bajo | Error menor, sin impacto real | "Hay un error tipográfico en la interfaz" | Menos de 1 semana |
 
-**SEV-3 (Medio):** Feature no funciona pero hay workaround. Impacto: algunos usuarios.
-- Ejemplo: "Filtro de búsqueda lento".
-- RTO: < 4 horas.
-- Action: Asignar ingenieros. Monitoreo.
+**Regla práctica:** SEV-1 y SEV-2 = todo el equipo para. SEV-3 = asignar una persona. SEV-4 = entra al backlog.
 
-**SEV-4 (Bajo):** Bug menor. Sin impacto. Ejemplo: Typo.
-- RTO: < 1 semana.
-- Action: Crear bug, asignar a sprint.
+#### 2. Triage — ¿Cómo determinar la severidad?
 
-#### 2. Triage
+Triage viene de la medicina: es la clasificación rápida de urgencia. Para un incidente de software, hazte estas 4 preguntas:
 
-**Objetivo:** Determinar severidad correcto.
+1. ¿Cuántos usuarios están afectados? (10% vs 100%)
+2. ¿Hay pérdida de dinero o datos?
+3. ¿Podría ser un ataque?
+4. ¿Hay una alternativa temporal (workaround)?
 
-**Preguntas:**
-1. ¿Cuántos usuarios afectados?
-2. ¿Impacto en revenue?
-3. ¿Puerta de entrada para el atacante?
-4. ¿Hay workaround?
+Con esas respuestas asignas el nivel SEV y el ingeniero de turno (on-call) empieza a actuar.
 
-**Resultado:** SEV-1/2/3/4. On-call engineer responde.
+#### 3. RTO y RPO — Los límites que el negocio define
 
-#### 3. RTO/RPO
+**RTO (Recovery Time Objective):** Máximo tiempo que el sistema puede estar caído antes de que el impacto sea inaceptable.
 
-**RTO (Recovery Time Objective):** ¿Cuánto tiempo máximo puede estar down?
-- Banco: 1 hora.
-- Fintech app: 15 minutos.
-- E-commerce Black Friday: < 1 minuto.
+**RPO (Recovery Point Objective):** Máxima cantidad de datos que puedes perder. Si el backup se hace cada hora, puedes perder hasta 1 hora de transacciones.
 
-**RPO (Recovery Point Objective):** ¿Cuántos datos podemos perder?
-- Banco: 0 (cero tolerance).
-- SaaS: < 1 hora (ej: backup cada hora).
-- Blog: < 1 día.
+| Tipo de sistema | RTO (tiempo máximo caído) | RPO (datos que pueden perderse) |
+|---|---|---|
+| Banco central | 15 minutos | Cero (ninguna transacción puede perderse) |
+| App financiera | 1 hora | Menos de 15 minutos |
+| Plataforma SaaS | Pocas horas | Menos de 1 hora (backup por hora) |
+| Blog o sitio informativo | 1 día | 1 día |
 
-**Implicación:** RTO/RPO pequeños requieren inversión (redundancia, backups).
+**Consecuencia práctica:** Un RTO muy bajo requiere inversión en infraestructura redundante. No todos los sistemas necesitan el mismo nivel.
 
 #### 4. Respuesta a incidentes
 
@@ -2306,59 +2325,52 @@ Diseña runbook para incidente SEV-1 de tu app. Pasos, quién hace qué, escalac
 
 ---
 
-## Clase 15: Análisis causal y postmortem sin culpabilización
+## Clase 15: Cómo aprender de los fallos — Análisis de causa raíz y postmortem
 
 **Duración:** 2 horas | **Unidad:** 3 | **Semana:** 8
 
 ### Objetivos de aprendizaje
 
-- Aplicar "Five Whys" para encontrar causa raíz.
-- Diferenciar causa directa vs. causas sistémicas.
-- Ejecutar postmortem blameless.
-- Crear accionables. Seguimiento.
+- Aplicar la técnica de los "5 Por qués" para encontrar la causa raíz de un fallo.
+- Diferenciar la causa directa (síntoma) de las causas sistémicas (el problema real).
+- Ejecutar un postmortem sin culpar a personas.
+- Crear acciones concretas para que el mismo fallo no vuelva a ocurrir.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Root Cause Analysis (RCA)
+#### 1. Los 5 Por qués — Encontrar el problema real, no el síntoma
 
-**Problema:** Servidor caído 30 minutos. ¿Por qué?
+**Problema:** Servidor caído 30 minutos. Si dices "el servidor se cayó" y listo, el problema volverá. La técnica es preguntar "¿por qué?" repetidamente hasta llegar a la causa que puedes cambiar:
 
-**Análisis causal (5 Whys):**
+| # | Pregunta | Respuesta |
+|---|---|---|
+| 1 | ¿Por qué se cayó el servidor? | Memoria llena. Error “Out of Memory” |
+| 2 | ¿Por qué se llenó la memoria? | Un memory leak en la versión 2.1.0 |
+| 3 | ¿Por qué hay memory leak? | El código no cierra la conexión a la BD |
+| 4 | ¿Por qué no se cerró la conexión? | El desarrollador olvidó el `.close()` |
+| 5 | ¿Por qué pasó sin detectarse? | El code review no cubrió ese camino y no había prueba para ese caso |
 
-1. ¿Por qué se cayó el servidor?
-   - "Memoria llena. Out of Memory error."
+**Causa real (sistémica):** Las pruebas no cubren todos los caminos + el code review fue superficial.  
+**No es:** "El desarrollador cometió un error."
 
-2. ¿Por qué se llena la memoria?
-   - "Leak de memoria en versión 2.1.0 de app."
+**Si arreglas sólo el síntoma:** Reinicias el servidor. Pero en 2 semanas vuelve a ocurrir.  
+**Si arreglas la causa:** Agregas prueba para ese caso, mejoras el proceso de code review. No vuelve a ocurrir.
 
-3. ¿Por qué hay leak?
-   - "En request handler, no liberamos conexión a BD."
+#### 2. Postmortem sin culpar a nadie (Blameless postmortem)
 
-4. ¿Por qué no se liberó?
-   - "Dev olvidó `.close()` en código."
+**Filosofía:** Los errores no ocurren porque las personas son malas. Ocurren porque el **sistema** lo permitió. Cuando culpas a una persona, no arreglas el sistema.
 
-5. ¿Por qué se pasó por alto?
-   - "Code review no cubrió ese path. Tests no ejercitan ese edge case."
+**Si culpas:** "El programador olvidó cerrar la conexión." → El programador tiene miedo de reportar futuros errores. El sistema sigue igual.
 
-**Causa raíz sistémica:** Tests incompletos + Code review superficial. No es "Dev cometió error".
+**Sin culpar:** "¿Qué condiciones del sistema permitieron que esta conexión no se cerrara?" → Encontramos el problema real. La gente reporta libremente.
 
-#### 2. Blameless postmortem
-
-**Filosofía:** "Buscamos entender el sistema, no culpar a personas."
-
-**Premisa:** Personas son inherentemente confiables. Errores ocurren porque **sistema permitió error**.
-
-**Preguntas correctas:**
-- ¿Qué condiciones permitieron este error?
-- ¿Cómo podemos prevenir en el futuro?
-- ¿Qué aprendimos?
-
-**Preguntas INCORRECTAS:**
-- ¿Quién cometió el error?
-- ¿Por qué Dev no testeo?
-- ¿Quién fue responsable?
+| Preguntas CORRECTAS | Preguntas INCORRECTAS |
+|---|---|
+| ¿Qué condiciones lo permitieron? | ¿Quién cometió el error? |
+| ¿Cómo podemos prevenir esto? | ¿Por qué el programador no hizo pruebas? |
+| ¿Qué aprendimos del sistema? | ¿Quién fue el responsable? |
 
 #### 3. Estructura de postmortem
 
@@ -2415,7 +2427,7 @@ Diseña runbook para incidente SEV-1 de tu app. Pasos, quién hace qué, escalac
 1. **Code change causó inefficient loop en recommendation engine.**
    - Código nuevo entra en bucle infinito si input vacío.
 
-2. **Teste no cubrió caso de input vacío.**
+2. **Tests no cubrieron el caso de input vacío.**
    - Coverage report: 85%, pero ese path específico no testeado.
 
 3. **Code review no detectó porque reviewer no correr tests localmente.**
@@ -2425,7 +2437,7 @@ Diseña runbook para incidente SEV-1 de tu app. Pasos, quién hace qué, escalac
 
 - Deploy en horario con tráfico (debería ser después de horas).
 - No hay circuit breaker (si recommendation falla, fallback a default).
-- Monitoring de CPU alertó, pero latency não alertó (debería ser primary métrica).
+- El monitoreo de CPU alertó, pero latencia no alertó (debería ser la métrica principal).
 
 **Accionables:**
 
@@ -2461,46 +2473,33 @@ Mismo incident. Escribe postmortem blameless con: timeline, root causes, contrib
 
 ---
 
-## Clase 16: Tipos de mantenimiento y refactorización
+## Clase 16: Mantenimiento del software — El trabajo que ocurre después de lanzar
 
 **Duración:** 2 horas | **Unidad:** 4 | **Semana:** 8
 
 ### Objetivos de aprendizaje
 
-- Clasificar mantenimiento (correctivo, adaptativo, perfectivo, preventivo).
-- Aplicar refactorización sin cambiar comportamiento.
-- Gestionar deuda técnica incremental.
-- Usar feature flags para refactorización segura.
+- Identificar los 4 tipos de mantenimiento (correctivo, adaptativo, perfectivo, preventivo).
+- Aplicar refactorización: mejorar el código sin cambiar lo que hace.
+- Gestionar la deuda técnica sin frenar el avance del equipo.
+- Usar feature flags para hacer cambios de forma segura.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Tipos de mantenimiento
+#### 1. Los 4 tipos de mantenimiento
 
-**Correctivo:** Arreglar bugs.
-- "Error en cálculo de impuestos → 3% dinero perdido."
-- Urgencia: Alta.
-- Ejemplo: Hotfix urgente.
+El software no termina cuando se lanza. La mayor parte de la vida del software es mantenimiento. Estos son los 4 tipos:
 
-**Adaptativo:** Cambiar software para entorno nuevo.
-- "Migrar de Python 2 a Python 3."
-- "Soportar iOS 16 + 17."
-- Urgencia: Media-alta.
-- Costo: Significativo.
+| Tipo | ¿Cuándo ocurre? | Ejemplo real | Urgencia |
+|---|---|---|---|
+| **Correctivo** | Algo está roto | "El cálculo de impuestos es incorrecto y el cliente pierde dinero" | Alta |
+| **Adaptativo** | El entorno cambió | "Migrar de Python 2 a Python 3 porque Python 2 ya no tiene soporte" | Media-alta |
+| **Perfectivo** | El sistema funciona pero puede mejorar | "Una consulta tarda 2 segundos; la optimizamos a 200ms" | Media |
+| **Preventivo** | Evitar problemas futuros | "Actualizamos dependencias antes de que queden obsoletas" | Baja |
 
-**Perfectivo:** Mejorar funcionalidad sin cambiar requisitos.
-- "Performance: query BD en 2s → 200ms."
-- "Usabilidad: UI rediseño."
-- Urgencia: Media.
-- ROI: Indirecto (mejor retención de usuarios).
-
-**Preventivo:** Evitar problemas futuros.
-- "Actualizaciones de dependencias."
-- "Refactorización de código frágil."
-- "Mejoras de observabilidad."
-- Urgencia: Baja.
-- ROI: Largo plazo.
+**Distribución típica:** En la práctica, más del 60% del esfuerzo de un equipo de software es mantenimiento (no nuevas funciones).
 
 #### 2. Refactorización
 
@@ -2636,48 +2635,39 @@ Código complejo dado. Refactoriza: extrae funciones, mejora tests, reduce coupl
 
 ---
 
-## Clase 17: Migración y sistemas heredados
+## Clase 17: Cómo reemplazar un sistema viejo sin apagarlo — Migración y sistemas heredados
 
 **Duración:** 2 horas | **Unidad:** 4 | **Semana:** 9
 
 ### Objetivos de aprendizaje
 
-- Estrategias de migración (big-bang vs. gradual).
-- Patrón Strangler Fig.
-- Gestionar datos en migración.
-- De-risk grandes cambios.
+- Entender cuándo un sistema heredado (legacy) necesita reemplazarse.
+- Comparar las estrategias Big-Bang vs. Strangler Fig.
+- Aplicar el patrón Strangler Fig para migrar gradualmente.
+- Planificar la migración de datos sin corrupción ni pérdida.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. Estrategias de migración
+#### 1. ¿Big-Bang o Gradual? Las dos estrategias de migración
 
-**Big-Bang:**
+**Big-Bang** (❌ Evitar): Apagas el sistema viejo, enciendes el nuevo, y cruzas los dedos.
+- Riesgo: Muy alto. Si falla, todo el sistema cae.
+- Cuándo usar: Prácticamente nunca en sistemas críticos.
 
-"Apagamos sistema viejo. Prendemos nuevo. Esperamos que funcione."
-
-Riesgo: Altísimo. Si falla, downtime total.
-
-Cuándo: Nunca. Evitar.
-
----
-
-**Gradual / Strangler Fig (Martin Fowler, 2004):**
-
-New system gradualmente "estrangula" (reemplaza) funcionalidad del viejo.
+**Strangler Fig — Migración gradual** (✅ Recomendado):
+El sistema nuevo "estrangula" al viejo poco a poco, como una higuera que crece alrededor de un árbol hasta reemplazarlo.
 
 ```
-Día 1: 90% viejo, 10% nuevo (login)
-Día 2: 80% viejo, 20% nuevo (login + users)
-Día 3: 70% viejo, 30% nuevo (... + payment)
-...
-Día 30: 0% viejo, 100% nuevo
+Día  1: 90% viejo, 10% nuevo (solo el login está migrado)
+Día 10: 70% viejo, 30% nuevo (login + usuarios)
+Día 20: 40% viejo, 60% nuevo (login + usuarios + pagos)
+Día 30:  0% viejo, 100% nuevo
 ```
 
-Ventaja: Bajo riesgo. Rollback fácil.
-
-Desventaja: Lento. Duplicación de código temporaria.
+**Ventaja:** Bajo riesgo. Si algo falla, reviertes solo ese componente.
+**Desventaja:** Es más lento y por un tiempo conviven dos sistemas.
 
 ---
 
@@ -2778,16 +2768,16 @@ Detalla: cómo transferir datos, validación, rollback, reconciliación.
 
 ---
 
-## Clase 18: Deuda técnica y ciclo de vida de componentes con IA
+## Clase 18: Deuda técnica y modelos de IA en producción
 
 **Duración:** 2 horas | **Unidad:** 4 | **Semana:** 9
 
 ### Objetivos de aprendizaje
 
-- Cuantificar deuda técnica (SonarQube, metraje).
-- Entender ciclo de vida de modelos IA (data drift, concept drift).
-- Monitorear modelos en producción.
-- MLOps practices.
+- Medir la deuda técnica con indicadores concretos (ej: SonarQube).
+- Entender el ciclo de vida de un modelo de IA en producción.
+- Diferenciar data drift y concept drift con ejemplos fáciles.
+- Aplicar prácticas básicas de MLOps para mantener modelos útiles en el tiempo.
 
 ---
 
@@ -2816,38 +2806,32 @@ SonarQube calcula:
 - Pagar 10-15% de sprint capacity.
 - Bloquear PR si agrega > 0.5 días de deuda nueva.
 
-#### 2. Ciclo de vida de componentes IA
+#### 2. Ciclo de vida de un modelo de IA
 
-**Componente:** Modelo de recomendación (ej: Netflix).
+**Ejemplo:** Un recomendador tipo Netflix. El modelo no es "entrenar y olvidar"; hay que cuidarlo durante toda su vida.
 
-**Fases:**
+1. **Entrenamiento inicial:**
+  - Recolectas datos históricos.
+  - Entrenas el modelo.
+  - Lo validas con datos de prueba.
 
-1. **Desarrollo (Mes 1-2):**
-   - Recolectar datos históricos.
-   - Entrenar modelo (TensorFlow).
-   - Validar en dataset test.
-   - Performance: 85% accuracy.
+2. **Salida a producción:**
+  - Activas el modelo para un porcentaje de usuarios (A/B test).
+  - Mides métricas reales (CTR, precisión, tiempo de respuesta).
 
-2. **Deployment (Mes 3):**
-   - Enviar modelo a producción.
-   - A/B test: 10% usuarios ven recomendaciones nuevas.
-   - Métrica: Click-through rate (CTR).
+3. **Monitoreo continuo:**
+  - Revisas si sigue funcionando bien con datos reales.
+  - Aquí aparecen dos riesgos clave:
 
-3. **Monitoreo (Mes 4+):**
-   - **Data drift:** Distribución de entrada cambió.
-     - Ej: Nuevas categorías de contenido. Modelo no vio antes.
-     - Detección: Input features estadísticamente divergentes.
-     - Acción: Re-train modelo.
-   
-   - **Concept drift:** Relación entre inputs y outputs cambió.
-     - Ej: Usuarios cambian preferencias de género.
-     - Detección: Model accuracy baja. CTR cae.
-     - Acción: Retrain con datos frescos.
+| Problema | ¿Qué cambia? | Ejemplo | ¿Qué hacer? |
+|---|---|---|---|
+| **Data drift** | Cambian los datos de entrada | Antes casi no había videos cortos; ahora sí. El modelo no vio ese patrón al entrenar | Reentrenar con datos recientes |
+| **Concept drift** | Cambia la relación entre entrada y salida | Antes a un usuario le gustaban dramas; ahora consume anime y comedia | Reentrenar y ajustar variables del modelo |
 
-4. **Degradación (Mes 12+):**
-   - Accuracy cae de 85% a 70%.
-   - Necesita re-diseño.
-   - Decisión: Retrain vs. nueva arquitectura.
+4. **Degradación:**
+  - Si la precisión cae de forma sostenida, decides entre:
+  - Reentrenar el modelo actual, o
+  - Diseñar una nueva arquitectura.
 
 #### 3. MLOps practices
 
@@ -2911,89 +2895,62 @@ Proyecto con 25 días de deuda técnica. Plan de pago en 6 sprints. Decisiones: 
 
 ---
 
-## Clase 19: Ética profesional, licencias y accesibilidad
+## Clase 19: Ética, licencias y accesibilidad — Decisiones técnicas con impacto real
 
 **Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
 
 ### Objetivos de aprendizaje
 
-- Aplicar ACM Code of Ethics.
-- Entender licencias de software (MIT, GPL, Apache).
-- Implementar WCAG 2.2 (accesibilidad).
-- Detectar sesgo y fairness en modelos IA.
+- Entender por qué la ética también es parte del trabajo de ingeniería.
+- Diferenciar licencias comunes (MIT, GPL, Apache, comercial) y su impacto legal.
+- Aplicar principios básicos de accesibilidad (WCAG 2.2) en interfaces.
+- Reconocer y reducir sesgos en sistemas de IA.
 
 ---
 
 ### Contenido teórico (45 minutos)
 
-#### 1. ACM Code of Ethics
+#### 1. Ética profesional (ACM) — Lo correcto también es ingeniería
 
-**1. Contribuir a bienestar de la sociedad.**
-- ¿Software causa daño (ej: vigilancia, desempleo)?
-- Responsabilidad ética, no solo técnica.
+La ética no es un tema "extra". Tus decisiones técnicas pueden afectar dinero, salud, privacidad y oportunidades de miles de personas.
 
-**2. Evitar daño.**
-- No desarrollar armas autónomas.
-- No participar en fraude, corrupción.
-- Reportar vulnerabilidades.
+| Principio | ¿Qué significa en la práctica? | Ejemplo |
+|---|---|---|
+| Contribuir al bienestar | Diseñar software que ayude, no que perjudique | Evitar prácticas manipuladoras para enganchar usuarios |
+| Evitar daño | No ignorar riesgos de seguridad o discriminación | Reportar una vulnerabilidad grave apenas se detecta |
+| Ser transparente | Decir límites reales del sistema | "Este modelo tiene 92% de precisión, no 100%" |
+| Trato justo | Evitar exclusiones por género, discapacidad, nivel económico | Revisar si una IA afecta peor a un grupo específico |
+| Respetar privacidad | Pedir solo los datos necesarios y protegerlos | No guardar ubicación si la app no la necesita |
 
-**3. Ser honesto y transparente.**
-- Competencia real (no oversell).
-- Limitaciones conocidas.
-- Incertidumbre. Comunicar riesgos.
+#### 2. Licencias de software — Qué puedes usar y bajo qué reglas
 
-**4. Justiciar.**
-- Software debe beneficiar a todos, no solo ricos.
-- Accesibilidad. No discriminación.
+| Licencia | ¿La puedes usar en proyectos comerciales? | ¿Puedes modificar? | Condición clave |
+|---|---|---|---|
+| **MIT** | Sí | Sí | Mantener aviso de copyright/licencia |
+| **GPL** | Sí, pero con obligación de compartir código derivado | Sí | Si distribuyes software derivado, también debe ser GPL |
+| **Apache 2.0** | Sí | Sí | Incluye protección explícita de patentes |
+| **Comercial/Propietaria** | Depende del contrato | Generalmente no | Pagas licencia y cumples el EULA |
 
-**5. Respeto por privacidad y confidencialidad.**
-- GDPR, CCPA, datos personales.
-- Consentimiento informado.
-- Minimizar recolección.
+**Para el equipo:** Revisar licencias de dependencias no es opcional. Una librería GPL puede obligar cambios legales en tu producto.
 
-#### 2. Licencias de software
+#### 3. Accesibilidad (WCAG 2.2) — Diseñar para todas las personas
 
-**MIT:**
-- Permisiva. Comercial OK. Cambios OK. Simplemente cita.
-- Usado: jQuery, Node.js.
+**Objetivo:** Que una persona pueda usar tu sistema aunque no vea bien, no escuche bien, tenga movilidad reducida o use lector de pantalla.
 
-**GPL (GNU Public License):**
-- Copyleft. Si usas GPL code, tu código también debe ser GPL.
-- No comercial (comercialmente si pagas).
-- Usado: Linux, WordPress.
+**Nivel recomendado en industria:** **AA**.
 
-**Apache 2.0:**
-- Permisiva. Comercial OK. Patent protection incluida.
-- Usado: Android, Kubernetes.
+Checklist práctico (AA):
 
-**Commercial/Proprietary:**
-- Código cerrado. Licencia paga. EULA.
-- Usado: Adobe, Microsoft.
+1. **Contraste suficiente:** texto legible sobre el fondo.
+2. **Texto alternativo en imágenes:** para lectores de pantalla.
+3. **Uso completo por teclado:** todo debe funcionar con Tab/Enter, sin mouse.
+4. **Subtítulos en videos:** para personas con discapacidad auditiva.
+5. **HTML semántico y ARIA:** para que tecnologías de apoyo entiendan la interfaz.
 
-**Implicación para Dev:**
-- Audita dependencias. ¿Licencia GPL? Afecta tu licencia.
-- Herramientas: SBOM, WhiteSource, Black Duck.
-
-#### 3. Accesibilidad (WCAG 2.2)
-
-**Definición:** Software usable por personas con discapacidades (vista, audición, movilidad, cognitiva).
-
-**Niveles:**
-- A: Mínimo.
-- AA: Recomendado.
-- AAA: Mejor en clase.
-
-**Requisitos comunes (AA):**
-
-1. **Contrast:** Texto/fondo ratio >= 4.5:1 (colores contrastantes).
-2. **Alt text:** Imágenes tienen descripción (screen readers).
-3. **Keyboard accessible:** Todo funciona sin mouse (Tab, Enter).
-4. **Captioning:** Videos tienen subtítulos.
-5. **ARIA labels:** HTML semántico + ARIA roles para asistentes.
-
-**Testing:**
-- Manual + herramientas: Axe, WAVE.
-- Usuarios reales (personas con discapacidades).
+**Cómo validarlo:**
+- Herramientas automáticas (Axe, WAVE).
+- Pruebas manuales.
+- Idealmente, pruebas con usuarios reales.
 
 #### 4. Sesgo en modelos IA
 
@@ -3066,16 +3023,16 @@ App dada. Auditoría manual + herramienta Axe. Lista de issues WCAG AA. Prioriza
 
 ---
 
-## Clase 20: Sostenibilidad, decisión go/no-go y sustentación
+## Clase 20: Lanzamiento responsable — Sostenibilidad, decisión go/no-go y sustentación
 
 **Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
 
 ### Objetivos de aprendizaje
 
-- Entender Green Software.
-- Aplicar checklist go/no-go antes de producción.
-- Preparar sustentación de proyecto.
-- Reflexionar sobre carrera en ingeniería de software.
+- Entender cómo el software también tiene impacto ambiental.
+- Usar una lista de verificación para decidir si un sistema está listo para producción.
+- Preparar una sustentación técnica clara y bien argumentada.
+- Reflexionar sobre decisiones profesionales y responsabilidad ética.
 
 ---
 
@@ -3186,7 +3143,7 @@ App de pagos.
 
 **Decision:** ⚠️ **GO-WITH-RISK**
 
-Razón: CVE high debe ser upgradeda, pero feature es crítica para lanzamiento. Plan: Upgrade en 48 horas post-deploy.
+Razón: Hay una vulnerabilidad alta (CVE) pendiente de actualización, pero la funcionalidad es crítica para el lanzamiento. Plan: actualizar la dependencia en 48 horas después del despliegue.
 
 ---
 

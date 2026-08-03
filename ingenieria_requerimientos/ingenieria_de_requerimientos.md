@@ -20,34 +20,56 @@
 #### Contenido teórico
 
 **¿Qué es un requisito?**  
-Un requisito es una condición o capacidad que un sistema debe cumplir para satisfacer una necesidad del negocio o de un usuario. La norma ISO/IEC/IEEE 29148 distingue entre:
-- **Requerimiento**: necesidad expresada informalmente por un stakeholder.
-- **Requisito**: expresión formal, verificable y completa de esa necesidad.
+Imagina que quieres construir una casa. Primero le dices al arquitecto: "quiero una casa con varias habitaciones y mucha luz." Eso es informal. Después él lo escribe en los planos: "3 habitaciones, con ventanas de 2m² en el lado norte, piso a techo de 2.8 metros." Eso es formal y verificable.
 
-**Niveles de requisitos**
+En software funciona igual:
+- **Requerimiento**: lo que el usuario expresa sin tecnicismos (ejemplo: "quiero poder ver mis calificaciones fácilmente").
+- **Requisito**: la versión formal, clara y verificable (ejemplo: "el estudiante accede a sus calificaciones en menos de 3 clics, en menos de 2 segundos después de iniciar sesión").
 
-| Nivel | Sigla | Descripción |
-|---|---|---|
-| Business Requirements Specification | BRS | Necesidades de alto nivel del negocio |
-| Stakeholder Requirements Specification | StRS | Qué necesitan los usuarios y partes interesadas |
-| System Requirements Specification | SyRS | Qué debe hacer el sistema completo |
-| Software Requirements Specification | SRS | Qué debe hacer el componente software |
+**Los 4 niveles de requisitos (de lo general a lo específico)**
 
-**Ciclo de la Ingeniería de Requerimientos**
+Como una pirámide, cada nivel es más detallado que el anterior:
+
+| Nivel | Quién lo escribe | La pregunta que responde | Ejemplo real |
+|---|---|---|---|
+| **1️⃣ Negocio** | Rector, Director | "¿Por qué hacemos esto? ¿Cuál es la meta?" | "Queremos que 500 nuevos estudiantes se inscriban este semestre" |
+| **2️⃣ Usuarios** | Estudiantes, docentes | "¿Qué necesito que el sistema me permita hacer?" | "Necesito inscribirme en línea sin ir a las oficinas" |
+| **3️⃣ Sistema** | Arquitectos | "¿Qué sistemas necesitan trabajar juntos?" | "Debe conectarse con el banco para procesar pagos" |
+| **4️⃣ Software** | Programadores | "¿Qué código específico escribo?" | "El botón 'Pagar' envía los datos al servidor" |
+
+**El ciclo de la Ingeniería de Requerimientos**
+
+La IR no es un evento puntual donde "escribes los requisitos y listo." Es un ciclo continuo:
 
 ```
-Elicitación → Análisis → Especificación → Validación → Gestión
-      ↑___________________________________________________|
+1. ELICITACIÓN: ¿Qué necesita el usuario? (Entrevistar, observar)
+        ↓
+2. ANÁLISIS: ¿Tiene sentido? ¿Es realista? (Revisar, cuestionar)
+        ↓
+3. ESPECIFICACIÓN: ¿Cómo lo escribo formalmente? (Documentar)
+        ↓
+4. VALIDACIÓN: ¿Esto es lo que realmente querías? (Mostrar al usuario)
+        ↓
+5. GESTIÓN: Controlar cambios, trazabilidad, prioridades
+        ↑_____________________________________________________↓
+        (si el usuario dice "no, yo quería otra cosa")
 ```
 
-Cada fase retroalimenta a las anteriores. La gestión de cambios es transversal a todo el ciclo.
+El ciclo es: capturar → entender → escribir → validar → ajustar → repetir si es necesario.
 
-**Problemas clásicos por mala IR**
-- El "Chaos Report" (Standish Group) históricamente ubica los requisitos incompletos o cambiantes como causa principal de fracasos en proyectos.
-- Costo de corrección: arreglar un error de requisitos en producción cuesta ~100x más que detectarlo en la fase de IR.
+**¿Por qué importa?** Porque un requisito capturado mal al inicio es muy costoso de arreglar después (hasta 100 veces más caro).
 
-**Alcance y límites del sistema**  
-El **diagrama de contexto** (también llamado diagrama de nivel 0 o context diagram) muestra el sistema como una caja negra y sus interfaces con actores externos. Define claramente qué está **dentro** y qué está **fuera** del sistema.
+**¿Qué va a hacer el sistema y qué no? (Alcance)**
+
+Es muy importante definir los límites: qué está DENTRO de tu sistema y qué está FUERA. Sino, los usuarios te pedirán de todo.
+
+Ejemplo: "Sistema de inscripción en línea"
+- ✅ DENTRO: estudiantes se registran, seleccionan cursos, pagan
+- ❌ FUERA: procesar pagos internacionales (eso lo hace el banco)
+- ❌ FUERA: crear nuevos programas académicos (eso lo hace coordinación)
+- ❌ FUERA: auditoría de fraude (lo hace otro sistema)
+
+Herramienta: **diagrama de contexto** (dibuja el sistema como una caja, y sus conexiones con el mundo exterior).
 
 #### Actividad práctica (45 min)
 
@@ -79,16 +101,18 @@ El **diagrama de contexto** (también llamado diagrama de nivel 0 o context diag
 
 #### Contenido teórico
 
-**Criterios de calidad de un requisito individual (SMART-V)**
+**Criterios de un requisito de calidad (SMART-V)**
 
-| Criterio | Descripción | Ejemplo de violación |
-|---|---|---|
-| **Específico** | Sin ambigüedad; un solo significado posible | "El sistema debe ser rápido" |
-| **Medible** | Permite verificación cuantitativa o cualitativa | "La respuesta debe ser aceptable" |
-| **Alcanzable** | Técnica y económicamente viable | "El sistema nunca fallará" |
-| **Relevante** | Alineado con los objetivos del negocio | Requisito que nadie solicitó |
-| **Trazable** | Con ID único y fuente identificada | Requisito sin origen |
-| **Verificable** | Existe un método para comprobar su cumplimiento | "El sistema será amigable" |
+Los 6 puntos que debe cumplir todo requisito para que sea bueno:
+
+| Criterio | ¿Qué significa? | ❌ Ejemplo malo | ✅ Ejemplo bueno |
+|---|---|---|---|
+| **Específico** | Claro, sin ambigüedades, una sola interpretación | "El sistema debe ser rápido" | "Las búsquedas devuelven resultados en máximo 2 segundos" |
+| **Medible** | Puedes verificar si cumple o no (con números o criterios concretos) | "La respuesta debe ser aceptable" | "Tiempo máximo de respuesta: 2 segundos en el 95% de casos" |
+| **Alcanzable** | Es posible hacerlo con la tecnología y dinero que tienes | "El sistema nunca tendrá errores, en 100 años" | "El sistema funcionará el 99% del tiempo (puede fallar máximo 7 horas/mes)" |
+| **Relevante** | Alguien realmente lo pidió y es importante para el negocio | Un requisito que inventaste sin que nadie lo pida | "Los docentes pidieron poder ver asistencia en tiempo real" |
+| **Identificable** | Tiene número único y sabes exactamente quién lo pidió | "Alguien me comentó sobre esto en el pasillo" | "REQ-001: Solicitado por coordinación, 20 de julio de 2024" |
+| **Verificable** | Hay una forma clara de probar que funciona | "El sistema será fácil de usar" | "En una prueba, 8 de 10 usuarios completan el registro sin ayuda en menos de 5 minutos" |
 
 **Errores frecuentes en requisitos**
 
@@ -98,8 +122,15 @@ El **diagrama de contexto** (también llamado diagrama de nivel 0 o context diag
 2. **Requisito compuesto (AND/OR implícito)**: "El sistema debe enviar un correo y actualizar el inventario al confirmar una venta."
    - *Corrección*: Separar en REQ-001 y REQ-002.
 
-3. **Requisito de diseño disfrazado**: "El sistema debe usar una base de datos Oracle 19c."
-   - *Corrección*: "El sistema debe persistir los datos de forma transaccional, garantizando ACID."
+3. **El cliente dice "cómo" en lugar de "qué" (Requisito de diseño)**
+
+Cuando el cliente dice exactamente "úsalo como hago yo," está impidiendo que busques soluciones mejores.
+
+❌ **Malo**: "El sistema debe usar una base de datos Oracle porque es la que tenemos."  
+*Problema*: Tal vez no sea la mejor opción. El cliente está especificando la solución, no el problema.
+
+✅ **Mejor**: "El sistema debe guardar datos de forma segura, permitir búsquedas rápidas en millones de registros, y permitir hacer respaldos sin detener el servicio."  
+*Beneficio*: Ahora el arquitecto puede elegir Oracle, PostgreSQL, o lo que sea mejor.
 
 4. **Lenguaje vago**: palabras prohibidas → *adecuado, razonable, eficiente, fácil de usar, flexible, robusto*.
 
@@ -329,13 +360,14 @@ Con acceso a un LLM (ChatGPT, Copilot, Gemini):
 
 #### Contenido teórico
 
-**Lenguaje ubicuo (Ubiquitous Language)**  
-Concepto de Domain-Driven Design (Eric Evans). Es el vocabulario compartido entre el equipo técnico y los stakeholders del dominio, expresado en el código, los documentos y las conversaciones.
+**Lenguaje común que todos entienden igual**
 
-*Principios:*
-- Un término = un concepto (no sinónimos).
-- El mismo término en el dominio y en el código.
-- Construido colaborativamente, no impuesto por TI.
+Cuando trabajas en un proyecto, todos deben entender exactamente lo mismo con cada palabra. Por ejemplo: ¿"cliente" y "usuario" son lo mismo? ¿Qué es un "suscriptor"? ¿Es diferente de "estudiante"? Si cada persona entiende algo distinto, la confusión es garantizada.
+
+Tu trabajo es crear un **diccionario oficial del proyecto** que todos respeten:
+- **Un término = un solo significado**. No puedes usar "cliente", "usuario" y "suscriptor" como si fueran lo mismo.
+- **La misma palabra en los documentos, en las conversaciones y en el código**.
+- **Construido entre todos** (usuarios, gerentes, programadores), no impuesto por una sola persona.
 
 **Glosario del dominio**
 
@@ -354,31 +386,25 @@ Las reglas de negocio son políticas o restricciones que gobiernan las decisione
 - **Derivación**: "El monto de multa = días de atraso × $0.50 por día."
 - **Proceso**: "Toda devolución tardía debe generar una notificación automática al socio."
 
-**BPMN 2.0 — Notación para procesos**
+**Cómo dibujar procesos con BPMN 2.0 (notación estándar)**
 
-Elementos fundamentales:
+BPMN es simplemente una forma estandarizada de dibujar procesos (pasos). Los elementos básicos son:
 
-| Elemento | Símbolo | Descripción |
-|---|---|---|
-| Evento de inicio | Círculo delgado | Dispara el proceso |
-| Tarea | Rectángulo redondeado | Unidad de trabajo |
-| Gateway exclusivo (XOR) | Rombo con X | Una sola rama se ejecuta |
-| Gateway paralelo (AND) | Rombo con + | Todas las ramas se ejecutan |
-| Evento de fin | Círculo grueso | Termina el proceso |
-| Pool / Lane | Banda horizontal | Actores / responsabilidades |
-| Flujo de secuencia | Flecha sólida | Orden de actividades |
-| Flujo de mensaje | Flecha discontinua | Comunicación entre pools |
+| Elemento | Símbolo | ¿Qué significa? | Ejemplo |
+|---|---|---|---|
+| **Inicio** | Círculo | "Aquí comienza el proceso" | El cliente llega a la tienda |
+| **Tarea** | Caja redondeada | "Alguien hace un trabajo" | El vendedor atiende al cliente |
+| **Decisión** | Rombo | "¿Cumple esta condición? Si sí, vamos por aquí; si no, por acá" | ¿El cliente es VIP? |
+| **Fin** | Círculo grande | "El proceso termina" | El cliente se va con su compra |
+| **Flecha** | → | "El orden de los pasos" | Paso 1 → Paso 2 → Paso 3 |
+| **Carril** | Banda horizontal | "Quién hace cada paso" | Vendedor | Cliente | Gerente |
 
-**AS-IS vs. TO-BE**
+**Comparar el proceso actual (AS-IS) con el proceso mejorado (TO-BE)**
 
-- **AS-IS**: proceso actual tal como existe, con sus ineficiencias y cuellos de botella. Objetivo: entender la realidad.
-- **TO-BE**: proceso futuro con el sistema nuevo. Objetivo: diseñar la mejora.
+- **AS-IS** = cómo es ahora (con sus problemas, pasos manuales lentos, duplicación).
+- **TO-BE** = cómo debe ser con el nuevo sistema (automatizado, rápido, sin pasos innecesarios).
 
-*Heurísticas para el paso AS-IS → TO-BE:*
-1. Eliminar pasos que solo existen por limitaciones del sistema actual.
-2. Automatizar decisiones que siguen reglas claras y repetibles.
-3. Paralelizar actividades que hoy son secuenciales sin dependencia real.
-4. Eliminar duplicación de datos entre áreas.
+La idea es identificar qué pasos se pueden automatizar, eliminar o hacer en paralelo.
 
 #### Actividad práctica (45 min)
 
@@ -418,11 +444,14 @@ Entregable: ambos diagramas BPMN exportados como imagen + tabla comparativa de m
 
 #### Contenido teórico
 
-**ISO/IEC/IEEE 29148:2018**  
-Estándar internacional que unifica y reemplaza a IEEE 830 (SRS) e IEEE 1233 (System Requirements). Define:
-- Proceso de ingeniería de requisitos.
-- Características de calidad de los requisitos.
-- Contenido de los documentos BRS, StRS, SyRS y SRS.
+**El estándar internacional para documentar requisitos**
+
+Existe un documento oficial (ISO/IEC/IEEE 29148) que dice: "así es cómo deben documentarse los requisitos en proyectos de software profesionales." Es como un manual de mejores prácticas que usan las grandes empresas de todo el mundo.
+
+Este estándar te dice:
+- **Cómo organizar** el documento de requisitos (qué secciones obligatorias tiene).
+- **Qué información debe incluir** cada requisito para que sea completo.
+- **Cuál debe ser la calidad** de cada requisito para que sea válido (recuerda SMART-V).
 
 **Jerarquía de documentos**
 
@@ -530,30 +559,41 @@ Dados los siguientes enunciados, clasifiquen a qué nivel pertenecen (BRS / StRS
 
 #### Contenido teórico
 
-**Patrones de redacción**
+#### Patrones de redacción — Escribe requisitos que todos entienden igual
 
-*Patrón básico (shall):*
-> "El sistema **deberá** [acción] [objeto] [condición]."
+En lugar de escribir algo vago, usa un patrón claro y consistente.
 
-*Patrón con actor:*
-> "El sistema **deberá permitir** al [actor] [acción] [objeto] cuando [condición]."
+**Patrón básico:**
+> "El sistema **debe** [acción] [qué]."
 
-*Patrón con respuesta al evento:*
-> "Cuando [evento], el sistema **deberá** [respuesta] en [tiempo/condición]."
+**Con condición (más realista):**
+> "El sistema **debe** [acción] cuando [condición]."
 
-Ejemplos correctos:
-- "El sistema deberá enviar una notificación por correo electrónico al estudiante dentro de los 5 minutos posteriores a la confirmación de una reserva."
-- "El sistema deberá permitir al administrador cancelar cualquier reserva activa con al menos 30 minutos de anticipación al inicio de la sesión."
-- "Cuando el tiempo restante de una sesión de reserva sea inferior a 15 minutos, el sistema deberá enviar una alerta al usuario registrado en la sala."
+**Ejemplos que funcionan:**
 
-**Tabla de verbos normativos (RFC 2119)**
+✅ "El sistema debe registrar una reserva cuando el estudiante confirme su selección y tenga menos de 3 préstamos activos."
 
-| Verbo | Nivel de obligatoriedad |
-|---|---|
-| **DEBE / SHALL / WILL** | Obligatorio |
-| **DEBERÍA / SHOULD** | Recomendado, con excepciones justificables |
-| **PUEDE / MAY / CAN** | Opcional |
-| **NO DEBE / SHALL NOT** | Absolutamente prohibido |
+✅ "El sistema debe enviar confirmación por email dentro de 5 minutos de que se registre la reserva."
+
+✅ "El sistema debe permitir que solo administradores cancelen una reserva que comenzó hace menos de 15 minutos."
+
+**Palabras prohibidas (demasiado vagas):**
+- ❌ "fácil", "rápido", "simple", "amigable" → usa números.
+- ❌ "puede", "tal vez" → sé definitivo.
+- ❌ "nunca", "siempre", "absolutamente" → relaja a un valor realista.
+
+**Palabras que establecen obligatoriedad**
+
+Hay palabras que indican si algo es obligatorio o solo recomendado:
+
+| Palabra | Significado | Usa cuando |
+|---|---|---|
+| **DEBE** | Es obligatorio, sin excepciones | El sistema DEBE autenticar al usuario antes de cualquier acción |
+| **DEBERÍA** | Muy recomendado, pero hay excepciones justificables | El sistema DEBERÍA enviar recordatorios antes del vencimiento |
+| **PUEDE** | Es opcional, bueno tenerlo pero no es necesario | El sistema PUEDE permitir importar datos de Excel |
+| **NO DEBE** | Absolutamente prohibido | El sistema NO DEBE permitir que dos usuarios reserven la misma sala al mismo tiempo |
+
+**¿Por qué importa?** Si escribes todo con "DEBE", el equipo no sabe qué es crítico y qué es flexible. Los desarrolladores necesitan esta claridad.
 
 **Atributos del requisito**
 
@@ -634,23 +674,24 @@ Ejemplos:
 └── Historia: Recibir notificaciones de reserva
 ```
 
-**Criterios INVEST**
+**Criterios INVEST — ¿Cómo sé que una historia de usuario es buena?**
 
-| Criterio | Descripción | Test rápido |
+INVEST es un acrónimo para recordar los 6 puntos que debe cumplir toda historia de usuario:
+
+| Criterio | ¿Qué significa? | Pregunta para verificar |
 |---|---|---|
-| **I**ndependiente | No depende de otras historias para implementarse | ¿Podría completarse en cualquier orden? |
-| **N**egociable | Los detalles son conversables, no contratos fijos | ¿El equipo puede proponer alternativas? |
-| **V**aliosa | Aporta valor al usuario o al negocio | ¿A quién le importa esta historia? |
-| **E**stimable | El equipo puede dimensionar el esfuerzo | ¿Tenemos suficiente información para estimar? |
-| **S**mall (pequeña) | Completa en un sprint | ¿Entra en 1–2 semanas de trabajo? |
-| **T**esteable | Tiene criterios de aceptación verificables | ¿Podemos escribir una prueba que la valide? |
+| **I**ndependiente | No depende de otras historias. Puedes hacerla en cualquier orden. | "¿Podría completar esta historia sin esperar que terminen otras?" |
+| **N**egociable | Los detalles pueden discutirse y cambiar. No es un "o lo haces así o nada." | "¿Podría el equipo decir 'hagámoslo de forma diferente'?" |
+| **V**aliosa | Alguien realmente la pidió y aporta valor. | "¿A quién beneficia esta historia? ¿Le importa a alguien?" |
+| **E**stimable | El equipo entiende lo suficiente para decir "esto nos toma X días." | "¿Tienen datos suficientes para estimar el trabajo?" |
+| **S**mall (Pequeña) | Se completa en 1–2 semanas de trabajo. | "¿Cabe en un sprint o es demasiado grande?" |
+| **T**esteable | Existe una forma clara de verificar que funciona. | "¿Puedo escribir una prueba que demuestre que se cumplió?" |
 
-**Antipatrones de historias de usuario**
+**Ejemplos de historias que VIOLAN INVEST:**
 
-- Historia técnica disfrazada: "Como sistema, quiero indexar la tabla de reservas para mejorar el rendimiento."
-- Historia sin valor: "Como desarrollador, quiero refactorizar el módulo de autenticación."
-- Historia demasiado grande (épica): "Como usuario, quiero gestionar todas mis actividades académicas."
-- Criterio de aceptación ausente o vago: "El sistema funciona correctamente."
+- ❌ "Como sistema, quiero indexar la tabla de usuarios..." → **Problema**: Es técnica, no aporta valor directo.
+- ❌ "Como usuario, quiero poder registrarme, logearme, recuperar contraseña, editar perfil..." → **Problema**: Demasiado grande (5 historias en 1).
+- ❌ "Como estudiante, quiero hacer todo lo que hacía en el sistema antiguo." → **Problema**: Vaga, demasiado grande, no estimable.
 
 **Criterios de aceptación (Acceptance Criteria)**  
 Condiciones concretas y verificables que determinan si la historia está completa.
@@ -696,69 +737,51 @@ Evalúen las siguientes historias e identifiquen qué criterio INVEST violan:
 
 #### Contenido teórico
 
-**¿Qué es BDD?**  
-BDD (Behavior-Driven Development) es una práctica ágil que fomenta la colaboración entre negocio, QA y desarrollo para especificar el comportamiento del sistema mediante ejemplos concretos. Extiende TDD incorporando el lenguaje del dominio.
+**Especificación mediante ejemplos en lugar de palabras vagas**
 
-**Especificación mediante ejemplos (SbE)**  
-En lugar de describir el comportamiento en abstracto, se usan ejemplos concretos con datos reales para ilustrar las reglas de negocio. Esto elimina ambigüedad y sirve como documentación viva.
+En lugar de escribir: "El sistema debe aplicar un descuento según el tipo de cliente," es mejor mostrar ejemplos concretos:
 
-*Abstracto (ambiguo):* "El sistema calcula el descuento según el tipo de cliente."  
-*Por ejemplos (preciso):*
-- Cliente estándar, compra $100 → descuento 0%
-- Cliente premium, compra $100 → descuento 10%
-- Cliente premium, compra $500 → descuento 15%
+- Si compras como cliente estándar: descuento 0%
+- Si compras como cliente premium y gastas $100: descuento 10%
+- Si compras como cliente premium y gastas $500: descuento 15%
 
-**Lenguaje Gherkin**  
-Gherkin es un lenguaje de dominio específico (DSL) legible por humanos, usado por Cucumber y otras herramientas BDD, que describe el comportamiento en términos de características y escenarios.
+Así todos entienden exactamente qué pasa. Los ejemplos hacen la especificación cristalina.
 
-**Estructura:**
+**BDD — Desarrollo orientado por comportamiento**
+
+BDD es simplemente: "Especifica el comportamiento del sistema usando ejemplos, y luego escribe pruebas automatizadas basadas en esos ejemplos." Los ejemplos sirven como especificación Y como pruebas.
+
+**Lenguaje Gherkin — Escribir especificaciones que parecen en inglés simple**
+
+Gherkin es un lenguaje simple que parece inglés normal (o español) y se usa para escribir especificaciones que también son pruebas automatizadas.
+
+**Estructura básica:**
 
 ```gherkin
-Feature: [Nombre de la funcionalidad]
-  Como [actor]
-  Quiero [capacidad]
-  Para [beneficio]
+Funcionalidad: Hacer una reserva de sala
 
-  Background:
-    Dado [contexto común a todos los escenarios]
+  Como estudiante
+  Quiero poder reservar una sala disponible
+  Para estudiar con mis compañeros
 
-  Scenario: [Nombre del escenario]
-    Dado [contexto / precondición]
-    Cuando [acción del actor]
-    Entonces [resultado observable esperado]
-    Y [condición adicional]
+  Escenario: Reservar una sala disponible
+    Dado que la sala 101 está disponible mañana de 2-4pm
+    Cuando hago una reserva para mañana 2-4pm
+    Entonces la reserva se confirma
+    Y recibo un email de confirmación
 
-  Scenario Outline: [Escenario parametrizado]
-    Dado que el cliente es de tipo <tipo>
-    Cuando compra por $<monto>
-    Entonces el descuento es <descuento>%
-
-    Examples:
-      | tipo     | monto | descuento |
-      | estándar | 100   | 0         |
-      | premium  | 100   | 10        |
-      | premium  | 500   | 15        |
+  Escenario: No puedo reservar una sala ocupada
+    Dado que la sala 101 está ocupada mañana de 2-4pm
+    Cuando intento reservar la sala 101 para mañana 2-4pm
+    Entonces me muestra un error "Sala no disponible"
 ```
 
-**Palabras clave Gherkin**
-
-| Keyword | Función |
-|---|---|
-| `Feature` | Agrupa escenarios de una funcionalidad |
-| `Scenario` | Un caso de uso / comportamiento específico |
-| `Given` (Dado) | Contexto / estado inicial del sistema |
-| `When` (Cuando) | Acción del usuario o evento externo |
-| `Then` (Entonces) | Resultado observable esperado |
-| `And` / `But` | Encadenamiento de pasos del mismo tipo |
-| `Background` | Pasos previos comunes a todos los escenarios |
-| `Scenario Outline` | Escenario parametrizado con tabla de ejemplos |
-
-**Buenas prácticas en Gherkin**
-- Un escenario = un comportamiento.
-- Usar lenguaje del dominio (no técnico): no "click en el botón", sino "el usuario confirma la reserva."
-- El `Given` no debe tener pasos de UI, solo estado del sistema.
-- Los escenarios deben ser independientes entre sí.
-- Preferir escenarios breves (3–7 pasos).
+**Palabras clave que debes conocer:**
+- **Funcionalidad**: agrupa varios escenarios de una capacidad.
+- **Escenario**: un caso específico (qué pasa si... qué pasa cuando...).
+- **Dado**: el estado inicial, lo que ya existe (precondiciones).
+- **Cuando**: la acción que hace el usuario.
+- **Entonces**: el resultado que debe ocurrir (verificable).
 
 **Herramientas BDD populares**
 
@@ -803,40 +826,48 @@ Dada la siguiente regla de negocio, identifiquen al menos 6 ejemplos que la cubr
 
 #### Contenido teórico
 
-**Backlog de producto**  
-Lista priorizada y ordenada de todo el trabajo pendiente del producto. Incluye historias de usuario, épicas, mejoras técnicas y corrección de defectos. Es la única fuente de trabajo del equipo Scrum.
+**Backlog de producto — La lista de trabajo priorizada**
 
-**Refinamiento del backlog (Backlog Grooming)**  
-Actividad continua (no un evento puntual) donde el Product Owner y el equipo de desarrollo:
-1. Descomponen épicas en historias.
-2. Estiman el esfuerzo (story points).
-3. Verifican criterios INVEST.
-4. Redactan o mejoran criterios de aceptación.
-5. Identifican dependencias técnicas.
-6. Actualizan prioridades.
+Imagina una pila de historias ordenadas por importancia. La más importante está arriba. El equipo siempre trabaja en lo que está arriba de la pila.
 
-Recomendación: dedicar ~10% de la capacidad del sprint al refinamiento.
+Incluye todo: historias de usuario, mejoras, corrección de bugs, investigaciones técnicas. Es la única "fuente de verdad" sobre qué hacer.
 
-**Definition of Ready (DoR)**  
-Acuerdo del equipo sobre las condiciones mínimas que debe cumplir una historia para poder entrar a un sprint:
+**Refinamiento — Preparar la pila antes de trabajarla**
 
-- [ ] Historia redactada en formato Connextra.
-- [ ] Criterios de aceptación escritos y acordados.
-- [ ] Estimada por el equipo (story points).
-- [ ] Sin dependencias bloqueantes no resueltas.
-- [ ] Wireframe o mockup disponible (si aplica).
-- [ ] Reglas de negocio documentadas.
+Antes de que el equipo empiece a trabajar, alguien debe:
+1. Dividir historias grandes en historias pequeñas (si es necesario).
+2. Escribir criterios de aceptación claros.
+3. Estimar cuánto trabajo es cada una.
+4. Identificar si depende de otras historias.
+5. Revisar y actualizar prioridades.
 
-**Definition of Done (DoD)**  
-Acuerdo del equipo sobre qué significa que una historia está "terminada":
+Esto debe hacerse continuamente, no es un evento único. Recomendación: 10% del tiempo del equipo debe ir a refinamiento.
 
-- [ ] Código desarrollado y en repositorio.
-- [ ] Pruebas unitarias escritas (cobertura mínima acordada).
-- [ ] Escenarios Gherkin / pruebas de aceptación automatizadas.
-- [ ] Code review aprobado.
-- [ ] Documentación actualizada.
-- [ ] Desplegado en entorno de staging.
-- [ ] Requisitos de calidad verificados.
+**Checklist: ¿Está lista una historia para que el equipo la trabaje? (Definition of Ready)**
+
+Antes de que un programador empiece a codificar una historia, debe estar clara y lista. El checklist mínimo es:
+
+- ✅ La historia está escrita clara y corta (formato "Como ... quiero ... para ...").
+- ✅ Tiene criterios de aceptación (ejemplos de qué significa "hecho").
+- ✅ El equipo estimó cuánto trabajo es (small, medium, large).
+- ✅ No depende de otras historias que aún no están terminadas.
+- ✅ Si hay mockups o diseños, están disponibles.
+- ✅ Si hay reglas de negocio, están documentadas.
+
+Si falta algo de esto, la historia no está lista y debe refinarse primero.
+
+**Checklist: ¿Está realmente terminada una historia? (Definition of Done)**
+
+Para que el Product Owner acepte que una historia está "hecha," debe cumplir:
+
+- ✅ El código está escrito y guardado en el repositorio.
+- ✅ Hay pruebas automatizadas que verifican que funciona.
+- ✅ Otro programador revisó el código (code review).
+- ✅ La documentación está actualizada.
+- ✅ Se probó en el servidor de pruebas (no solo en la máquina del programador).
+- ✅ Cumple con los requisitos de calidad (es rápido, seguro, accesible, etc.).
+
+Si falta algo, no está "Done" todavía, aunque parezca funcionar.
 
 **Uso de IA para redactar borradores de historias**  
 La IA puede acelerar la generación inicial de historias a partir de descripciones de alto nivel. El analista actúa como **revisor crítico**, no como receptor pasivo.
@@ -903,30 +934,36 @@ Se proporcionan 5 historias generadas por un LLM para el sistema de la clase. El
 
 #### Contenido teórico
 
-**Requisito funcional vs. requisito de calidad**
+**¿Requisito funcional o de calidad? — ¿Qué hace vs. cuán bien lo hace?**
 
-| Aspecto | Funcional | De calidad (no funcional) |
+| Pregunta | Tipo | Ejemplo |
 |---|---|---|
-| ¿Qué responde? | ¿Qué hace el sistema? | ¿Cómo de bien lo hace? |
-| Expresión | "El sistema deberá permitir…" | "El sistema deberá responder en menos de…" |
-| Verificación | Prueba funcional, caso de prueba | Benchmark, prueba de carga, auditoría |
-| Stakeholder principal | Usuario final | Arquitecto, equipo de operaciones, cliente |
+| ¿**QUÉ** puede hacer el usuario? | Funcional | "El estudiante puede reservar una sala para estudiar" |
+| ¿**CUÁN BIEN** o **CUÁN RÁPIDO** lo hace? | De calidad | "La reserva se confirma en menos de 2 segundos" |
+| ¿Es **VISIBLE** para el usuario final? | Funcional | Sí (ve el botón, ve la reserva) |
+| ¿Es **INVISIBLE** pero **IMPORTANTE**? | Calidad | Sí (el usuario siente que es rápido, pero no ve el código) |
 
-**ISO/IEC 25010:2023 — SQuaRE**  
-Modelo jerárquico de calidad del software organizado en 8 características de calidad en uso y 8 características del producto:
+**Ejemplos:**
+- ❌ Incorrecto: "El sistema es rápido." → No es mensurable.
+- ✅ Correcto: "Las búsquedas devuelven resultados en 2 segundos para catálogos de hasta 100,000 libros." → Mensurable.
 
-**Características del producto:**
+- ❌ Incorrecto: "El sistema es seguro." → ¿Qué significa seguro?
+- ✅ Correcto: "Las contraseñas se encriptan con AES-256 y solo administradores ven datos de usuarios." → Claro.
 
-| Característica | Subcaracterísticas clave |
-|---|---|
-| **Adecuación funcional** | Completitud, corrección, pertinencia |
-| **Eficiencia de rendimiento** | Comportamiento temporal, utilización de recursos, capacidad |
-| **Compatibilidad** | Co-existencia, interoperabilidad |
-| **Usabilidad** | Reconocibilidad, capacidad de aprendizaje, operabilidad, protección ante errores |
-| **Fiabilidad** | Madurez, disponibilidad, tolerancia a fallos, recuperabilidad |
-| **Seguridad** | Confidencialidad, integridad, no repudio, autenticidad, responsabilidad |
-| **Mantenibilidad** | Modularidad, reusabilidad, analizabilidad, modificabilidad, capacidad de prueba |
-| **Portabilidad** | Adaptabilidad, instalabilidad, reemplazabilidad |
+**ISO/IEC 25010:2023 — Un "checklist de calidad" del software**
+
+Existe un documento internacional que agrupa todas las características de calidad en 8 grupos. Es como un checklist que haces antes de lanzar:
+
+| Característica | ¿Qué significa? | Ejemplo de requisito |
+|---|---|---|
+| **¿Hace lo que promete?** (Adecuación funcional) | ¿Todas las funciones funcionan correctamente? | "Buscar libros devuelve exactamente lo que coincide con la búsqueda" |
+| **¿Es rápido?** (Eficiencia de rendimiento) | ¿Responde en tiempo razonable? | "Las búsquedas responden en menos de 2 segundos" |
+| **¿Funciona en múltiples plataformas?** (Compatibilidad) | ¿Funciona en distintos navegadores, sistemas operativos? | "El sistema funciona en Chrome, Firefox, Safari e Internet Explorer" |
+| **¿Es fácil de usar?** (Usabilidad) | ¿Entienden cómo usarlo sin ayuda? | "El 95% de nuevos usuarios pueden hacer una reserva en menos de 3 minutos" |
+| **¿Es confiable?** (Fiabilidad) | ¿Sigue funcionando o se cae? | "El sistema estará disponible 99% del tiempo (máximo 7 horas/mes de caída)" |
+| **¿Es seguro?** (Seguridad) | ¿Los datos están protegidos? | "Solo el dueño de la reserva puede verla; la contraseña se encripta" |
+| **¿Es mantenible?** (Mantenibilidad) | ¿Otro programador puede entender y modificar el código? | "Más del 80% del código tiene pruebas unitarias automatizadas" |
+| **¿Se puede cambiar a otro sistema fácilmente?** (Portabilidad) | ¿Se puede desinstalar sin dejar basura? | "Los datos se pueden exportar a CSV estándar" |
 
 **Escenario de calidad**  
 Un escenario de calidad es la forma estructurada de especificar un requisito de calidad. Componentes:
@@ -986,20 +1023,27 @@ Para el sistema de reservas de salas, redacten escenarios de calidad completos p
 
 #### Contenido teórico
 
-**Puertas de calidad (Quality Gates)**  
-Una puerta de calidad es un umbral definido previamente que el sistema debe superar en una métrica de calidad. Si no lo supera, el entregable no avanza a la siguiente fase.
+**Estándares para verificar la calidad (Quality Gates)**
 
-*Ejemplos de puertas de calidad:*
-- Cobertura de pruebas unitarias ≥ 80% antes de merge a main.
-- Tiempo de respuesta p95 ≤ 2 s bajo 200 usuarios concurrentes en staging.
-- Cero vulnerabilidades críticas (CVSS ≥ 9.0) en el reporte SAST.
-- Puntuación WAVE de accesibilidad: cero errores en páginas críticas.
+Antes de que un sistema salga a producción, debe pasar varias "pruebas de calidad." Piensa en un control de calidad en una fábrica: si un producto no cumple los estándares, no pasa. En software funciona igual:
 
-**Deuda técnica relacionada a la calidad**  
-Cuando se relajan conscientemente los umbrales de calidad por presión de tiempo, se acumula deuda técnica de calidad. Esta debe:
-1. Documentarse explícitamente (ADR o ticket de deuda).
-2. Tener un plan de pago acordado.
-3. No convertirse en el estado permanente del sistema.
+- "La aplicación debe responder en menos de 2 segundos el 95% del tiempo."
+- "El código debe tener al menos 80% de pruebas automatizadas."
+- "No puede haber vulnerabilidades de seguridad graves."
+- "Las personas con discapacidad visual deben poder navegar la aplicación."
+
+Si el sistema no cumple estos estándares, **no puede lanzarse**.
+
+**Cuando sacrificas calidad por prisa (Deuda técnica)**
+
+A veces, por presión de tiempo, el equipo dice: "Saltamos esta validación o bajamos la calidad para lanzar rápido." Es como pedir un préstamo: sacas dinero rápido, pero después tienes que pagarlo con intereses.
+
+Ejemplo: "El sistema solo responde en 5 segundos en lugar de 2, pero lo lanzamos igual. Lo arreglamos después."
+
+El problema es:
+1. Debes documentarlo explícitamente (para no olvidarlo).
+2. Debes tener un plan de "pago" (cuándo arreglarlo).
+3. No puede convertirse en la norma (el sistema lento y nadie lo arregla nunca).
 
 **Accesibilidad — WCAG 2.2**  
 Las Web Content Accessibility Guidelines definen cómo hacer el contenido web accesible para personas con discapacidades. Se organizan en 4 principios (**POUR**):
@@ -1168,48 +1212,67 @@ Para 3 historias de usuario del sistema de reservas:
 
 #### Contenido teórico
 
-**¿Qué es la trazabilidad?**  
-La trazabilidad es la capacidad de rastrear la relación entre artefactos del proceso de desarrollo: desde los objetivos de negocio hasta el código y las pruebas.
+**¿Qué es la trazabilidad? — "¿De dónde salió este código?"**
 
-**Tipos de trazabilidad**
+Imagina que tienes 100 requisitos y 50 desarrolladores. En 6 meses alguien te pregunta: "¿Por qué existe esta línea de código?"
 
-- **Hacia adelante (forward tracing)**: desde los requisitos hasta los artefactos de diseño, código y pruebas. Responde: "¿este requisito está implementado y verificado?"
-- **Hacia atrás (backward tracing)**: desde el código o las pruebas hasta los requisitos. Responde: "¿por qué existe este código? ¿qué requisito satisface?"
-- **Horizontal (bidireccional)**: ambas direcciones.
+**Sin trazabilidad:** "Ehh... no sé. Alguien la escribió hace meses."  
+**Con trazabilidad:** "Porque el requisito REQ-042 lo pedía, que fue solicitado por el coordinador académico, validado en la prueba TC-083."
 
-**Matriz de trazabilidad (RTM — Requirements Traceability Matrix)**
+La trazabilidad es un **mapa que conecta:**
+- ¿De dónde salió este requisito? (stakeholder)
+- ¿Quién lo implementó? (desarrollador, código)
+- ¿Cómo se verifica que funciona? (prueba)
+
+| Pregunta | Con trazabilidad | Sin trazabilidad |
+|---|---|---|
+| "¿Implementamos REQ-042?" | Sí, en el módulo de login, código en `AuthService.java:45`, prueba `TC-083` | ¿Cuál es REQ-042? No sé |
+| "Si cambio REQ-042, ¿qué más falla?" | Login, recuperación de contraseña, auditoría | Quién sabe, posiblemente todo |
+| "¿Tenemos pruebas de todos los requisitos?" | 48/50 (96% de cobertura) | No tenemos idea |
+
+**Matriz de trazabilidad (RTM) — La planilla que conecta todo**
+
+Una tabla simple que documenta: "Para cada requisito, ¿dónde está implementado y dónde se prueba?"
+
+| ID | ¿Qué es? | ¿Quién lo pidió? | ¿Dónde está el código? | ¿Hay prueba? | ¿Está listo? |
+|---|---|---|---|---|---|
+| REQ-001 | Reservar sala | Coordinación | `ReservaService.java:42` | Sí, TC-010 | ✅ Listo |
+| REQ-002 | Cancelar reserva | Dirección | `ReservaService.java:87` | Sí, TC-011 | ✅ Listo |
+| REQ-003 | Notificar por mail | Coordinación | `NotificadorEmail.java:15` | NO (falta) | ⚠️ Incompleto |
+| REQ-004 | Reporte mensual | Dirección | NO (falta código) | NO (falta) | ❌ No hecho |
+
+**¿Cuál es el valor?**
+- Rápidamente ves qué falta implementar o probar.
+- Cuando cambias un requisito, sabes exactamente qué código y qué pruebas afecta.
+- Auditoría: "¿Verificaste que REQ-001 funciona?" → "Sí, en TC-010."
+
+**Niveles de trazabilidad — Lo que conectas**
+
+Piensa en trazabilidad como un "hilo rojo" que va desde el objetivo de negocio hasta el código:
 
 ```
-| ID Req | Descripción        | Caso de uso | Módulo | Prueba | Estado |
-|--------|--------------------|-------------|--------|--------|--------|
-| REQ-001| Reservar sala      | UC-003      | MOD-02 | TC-012 | ✓ OK   |
-| REQ-002| Cancelar reserva   | UC-004      | MOD-02 | TC-015 | ✓ OK   |
-| REQ-003| Notificar por mail | UC-003,004  | MOD-05 | TC-018 | ⚠ Pen  |
-| REQ-004| Reporte de uso     | UC-010      | MOD-08 | —      | ✗ No   |
+"Queremos que la universidad capture más estudiantes" (¿Por qué?)
+            ↓
+"Los estudiantes quieren reservar salas online sin ir a coordin." (¿Qué necesitan?)
+            ↓
+"El sistema debe permitir inscripción por web con pago integrado" (¿Qué requisitos?)
+            ↓
+"En ReservaController.java línea 42, método crearReserva()" (¿Código dónde?)
+            ↓
+"Prueba TC-055: crear reserva de una sala, validar que se registre en BD" (¿Cómo verificas?)
 ```
 
-**Niveles de trazabilidad**
+Cada nivel es un "hilo" que puedes seguir hacia atrás o adelante:
+- **Hacia atrás:** "Código en línea 42 → ¿Por qué existe?" → "REQ-007 → ¿Por qué REQ-007?" → "Necesidad del usuario"
+- **Hacia adelante:** "Objetivo de negocio → ¿Qué requisitos?" → "¿Dónde está codificado?" → "¿Cómo se verifica?"
 
-```
-Objetivos de negocio (BRS)
-        ↕
-Necesidades de stakeholders (StRS)
-        ↕
-Requisitos del sistema (SyRS)
-        ↕
-Requisitos del software (SRS)
-        ↕
-Casos de prueba / Escenarios Gherkin
-        ↕
-Código fuente / Pull Requests
-```
+**¿Por qué importa la trazabilidad? — Tres razones críticas**
 
-**Valor de la trazabilidad**
-
-- Análisis de impacto de cambios: "si modifico REQ-003, ¿qué módulos y pruebas se ven afectados?"
-- Cobertura de pruebas: "¿tengo pruebas para todos los requisitos?"
-- Auditoría y compliance: "¿puedo demostrar que cada requisito regulatorio está implementado?"
-- Gestión de deuda: "¿qué requisitos no tienen código todavía?"
+| Problema | Sin trazabilidad | Con trazabilidad |
+|---|---|---|
+| **Cambio de requisito** | "REQ-003 cambió, cambio el código... ¿eso es todo? ¿Hay pruebas?" | "REQ-003 impacta código en 3 archivos y 7 pruebas. Todas actualizadas." |
+| **Pruebas incompletas** | "Creo que probamos todo... probablemente." | "Falta prueba para REQ-005. Cobertura: 48/50 (96%)" |
+| **Auditoría o cambios futuros** | "¿Por qué existe esta línea? Nadie lo sabe." | "Línea 42: requisito REQ-042 solicitado por Dirección, validado en TC-083." |
 
 **Herramientas para gestión de trazabilidad**
 
@@ -1265,74 +1328,101 @@ Dado el siguiente cambio en un requisito:
 
 #### Contenido teórico
 
-**Técnicas de priorización**
+**Técnicas para decidir "¿Cuál hacemos primero?"**
 
-**1. MoSCoW**
+**1. MoSCoW — Clasificación por importancia**
 
-| Categoría | Significado | Criterio |
+Divide todos los requisitos en 4 categorías:
+
+| Categoría | ¿Qué es? | Ejemplo |
 |---|---|---|
-| **M**ust have | Imprescindible para el lanzamiento | Sin esto, el producto no funciona |
-| **S**hould have | Importante, pero se puede diferir | Gran valor, pero hay workaround |
-| **C**ould have | Deseable, si hay tiempo y presupuesto | Bajo impacto si se omite |
-| **W**on't have (this time) | Fuera del alcance actual | Se puede incluir en versiones futuras |
+| 🔴 **MUST** (Imprescindible) | Sin esto, el producto no funciona. Sin negociación. | "Los estudiantes deben poder inscribirse en línea" |
+| 🟡 **SHOULD** (Importante) | Muy valioso, pero se puede diferir a la versión 2. Hay formas alternativas. | "Poder ver horarios en tiempo real" |
+| 🟢 **COULD** (Deseable) | Sería lindo tenerlo si hay tiempo. Bajo impacto si se omite. | "Notificaciones por SMS además de email" |
+| ⚪ **WON'T** (Fuera de alcance) | No en esta versión. Posible para el futuro. | "Integración con sistemas de otras universidades" |
 
-> Trampa común: el 80% de los requisitos termina en "Must have." Forzar una distribución: máximo 60% Must, mínimo 10% Won't.
+⚠️ **Trampa común**: 80% de los requisitos termina marcado como "MUST". Fuerza a tu equipo a ser más honesto: máximo 60% MUST, mínimo 10% WON'T.
 
-**2. Valor de negocio vs. Esfuerzo (Value/Effort Matrix)**
+**2. Valor vs. Esfuerzo — Matriz de priorización visual**
+
+Haz una gráfica y ubica cada requisito según:
+- Eje X: ¿Cuánto trabajo cuesta? (poco a mucho)
+- Eje Y: ¿Cuánto valor aporta? (poco a mucho)
 
 ```
         Alto valor
             |
-  Hacer     |  Quick wins
-  luego     |  (primero)
+  "Hacer    |  "Quick wins"
+   luego"   |  (HAZLO PRIMERO)
+            |
 ____________|____________→ Bajo esfuerzo
-  Descartar |  Hacer si
-            |  hay tiempo
+            |
+ "Descartar"|  "Hacer si hay
+            |   tiempo"
         Bajo valor
 ```
 
-**3. Valor vs. Riesgo**  
-Combinar valor de negocio con riesgo técnico. Los requisitos de alto valor y alto riesgo se abordan primero para reducir incertidumbre temprana.
+**3. Valor vs. Riesgo técnico**
 
-**4. Kano Model**  
-Clasifica características en:
-- **Básicas (Must-be)**: ausencia causa insatisfacción severa; presencia pasa desapercibida.
-- **Lineales (Performance)**: más es mejor; satisfacción proporcional.
-- **Delighters (Excitement)**: ausencia no genera queja; presencia sorprende positivamente.
-- **Indiferentes**: ni presencia ni ausencia importan.
+A veces, un requisito tiene poco riesgo técnico (fácil de hacer) pero es muy importante. Otros tienen alto riesgo (complejo, desconocido). Los de alto valor + alto riesgo deben abordarse primero para reducir la incertidumbre.
 
-**Línea base (Baseline)**  
-Un conjunto de requisitos aprobado formalmente en un momento específico, que sirve como referencia oficial del proyecto. Solo puede modificarse a través del proceso de control de cambios.
+**¿Cuándo congelamos los requisitos? — "A partir de ahora, nada cambia"**
 
-*Momento de establecer la baseline:*
-- En proyectos tradicionales: al finalizar la fase de análisis.
-- En proyectos ágiles: al inicio de cada sprint (sprint backlog congelado).
+En algún momento, el equipo tiene que decir: "OK, estos son los requisitos. No cambiamos más a menos que haya un motivo MUY importante."
 
-**Control de cambios**
+¿Por qué? Porque si todo cambia todo el tiempo:
+- Los desarrolladores nunca termina.
+- Las pruebas se vuelven obsoletas.
+- No sabes cuándo terminará el proyecto.
 
-Proceso formal para gestionar solicitudes de modificación a la baseline:
+Es como trabajar en un auto en movimiento: si el cliente sigue pidiendo cambios cada día, nunca lo terminas.
+
+| En proyectos tradicionales (Cascada) | En proyectos ágiles (Scrum) |
+|---|---|
+| Congelamos después de 2-3 meses de análisis | Congelamos cada 2 semanas (al inicio del sprint) |
+| Se espera que casi no haya cambios | Se espera algún cambio, pero controlado |
+| Si hay cambio, es un gran proceso | Si hay cambio, se decide en la reunión del sprint |
+
+**Línea base (Baseline):** Es la versión de requisitos "congelada" que vamos a implementar. Una vez que la apruebas, cualquier cambio pasa por un proceso formal.
+
+**¿Cómo se gestiona un cambio? — Un proceso simple para decisiones formales**
+
+Incluso después de congelar los requisitos, aparecen cambios. Pero no puedes simplemente cambiar todo de la noche a la mañana. Hay un proceso que evita caos:
 
 ```
-Solicitud de cambio (RFC)
-        ↓
-Registro y análisis de impacto
-        ↓
-Revisión por el Comité de Control de Cambios (CCB)
-        ↓
-Decisión: Aprobar / Rechazar / Diferir / Modificar
-        ↓
-Si aprobado → actualizar baseline, RTM, plan de proyecto
-        ↓
-Comunicar a todos los stakeholders
+1️⃣ Alguien solicita un cambio
+   "Necesitamos que las reservas también se hagan por WhatsApp"
+
+2️⃣ Se documenta: ¿Qué? ¿Por qué? ¿Cuánto trabajo?
+   - ¿QUÉ: Integración con WhatsApp API para hacer reservas
+   - ¿POR QUÉ: Más usuarios llegan por WhatsApp que por web
+   - ¿CUÁNTO: 3 semanas de trabajo, requiere servidor nuevo
+
+3️⃣ Un comité lo revisa (normalmente: PM + Tech Lead + Cliente)
+   - ¿Vale la pena 3 semanas?
+   - ¿Se retrasa otra cosa?
+   - ¿El cliente paga extra?
+
+4️⃣ Decisión: ✅ Aprobado / ❌ Rechazado / ⏸️ Aplazado
+   - Si es SÍ: se agrega al backlog con prioridad
+   - Si es NO: se archiva (tal vez para la v2)
+   - Si es DESPUÉS: se revisa en 3 meses
+
+5️⃣ Si se aprueba, actualizar TODO:
+   - Requisitos, código, pruebas, documentación, cronograma
+   
+6️⃣ Comunicar a todos
+   - El cliente sabe que su cambio fue procesado
+   - El equipo sabe que el cronograma cambió
 ```
 
-**Atributos de una solicitud de cambio (RFC):**
-- ID único
-- Descripción del cambio solicitado
-- Justificación (problema o oportunidad)
-- Impacto estimado en alcance, tiempo y costo
-- Prioridad del solicitante
-- Solicitante y fecha
+**Lo que documenta una solicitud de cambio (RFC — Request for Change):**
+- ¿Qué cambia exactamente?
+- ¿Por qué es necesario?
+- ¿Quién lo solicita?
+- ¿Cuán urgente es?
+- ¿Cuánto más trabajo trae?
+- ¿Afecta al cronograma o al presupuesto?
 
 #### Actividad práctica (45 min)
 
