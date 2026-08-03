@@ -178,6 +178,113 @@ Dados los siguientes pares de requisitos, determinen si son consistentes o contr
 - REQ-001: "Solo los administradores pueden eliminar usuarios."
 - REQ-047: "Cualquier usuario puede desactivar su propia cuenta, lo que elimina todos sus datos."
 
+#### Ejercicio de código — Clase 02: Validador automático de criterios SMART-V (25 minutos)
+
+**Problema:** revisar requisitos manualmente es tedioso y se presta a omisiones. Vamos a construir un script que evalúa automáticamente cuántos criterios SMART-V cumple un requisito.
+
+**Paso 1 — Crea el archivo `validar_requisito.py`:**
+
+```python
+import re
+
+# ---------------------------------------------------------------------------
+# Reglas heurísticas para detectar criterios SMART-V.
+# No son perfectas: son una primera pasada que ayuda a guiar la revisión.
+# ---------------------------------------------------------------------------
+
+PALABRAS_VAGAS = [
+    "rápido", "lento", "fácil", "difícil", "bueno", "malo",
+    "aceptable", "adecuado", "robusto", "eficiente", "seguro",
+    "amigable", "intuitivo", "flexible",
+]
+
+def es_especifico(req: str) -> bool:
+    """Específico: no contiene palabras vagas."""
+    texto = req.lower()
+    encontradas = [p for p in PALABRAS_VAGAS if p in texto]
+    if encontradas:
+        print(f"  ⚠ Palabras vagas encontradas: {encontradas}")
+    return len(encontradas) == 0
+
+def es_medible(req: str) -> bool:
+    """Medible: contiene al menos un número o porcentaje."""
+    tiene_numero = bool(re.search(r"\d+", req))
+    tiene_porcentaje = "%" in req
+    return tiene_numero or tiene_porcentaje
+
+def es_verificable(req: str) -> bool:
+    """Verificable: menciona una condición o criterio concreto."""
+    palabras_clave = ["cuando", "si ", "debe", "máximo", "mínimo",
+                      "menos de", "más de", "al menos", "exactamente"]
+    texto = req.lower()
+    return any(p in texto for p in palabras_clave)
+
+def tiene_id(req: str) -> bool:
+    """Identificable: comienza con un ID tipo REQ-001."""
+    return bool(re.match(r"^REQ-\d{3,}", req.strip()))
+
+def evaluar_requisito(req: str) -> dict:
+    resultado = {
+        "texto": req,
+        "Específico":   es_especifico(req),
+        "Medible":      es_medible(req),
+        "Verificable":  es_verificable(req),
+        "Identificable": tiene_id(req),
+    }
+    resultado["puntaje"] = sum(1 for v in resultado.values() if v is True)
+    return resultado
+
+# ---------------------------------------------------------------------------
+# Requisitos de prueba
+# ---------------------------------------------------------------------------
+requisitos = [
+    "El sistema debe ser rápido.",
+    "El login debe ser seguro y fácil.",
+    "REQ-001: El sistema debe responder en menos de 2 segundos cuando el usuario busca un libro.",
+    "El sistema no debe caerse nunca.",
+    "REQ-042: Las búsquedas devuelven resultados en máximo 2 segundos para catálogos de hasta 100,000 libros.",
+]
+
+print("=" * 60)
+for req in requisitos:
+    r = evaluar_requisito(req)
+    estado = "✅" if r["puntaje"] >= 3 else "❌"
+    print(f"\n{estado} [{r['puntaje']}/4] {r['texto'][:55]}...")
+    for criterio in ["Específico", "Medible", "Verificable", "Identificable"]:
+        marca = "✔" if r[criterio] else "✘"
+        print(f"    {marca} {criterio}")
+print("=" * 60)
+```
+
+**Paso 2 — Ejecuta el script:**
+```bash
+python validar_requisito.py
+```
+
+**Salida esperada (fragmento):**
+```
+❌ [1/4] El sistema debe ser rápido....
+    ✘ Específico
+    ✘ Medible
+    ✔ Verificable
+    ✘ Identificable
+
+✅ [4/4] REQ-042: Las búsquedas devuelven resultados en máximo 2 segundos...
+    ✔ Específico
+    ✔ Medible
+    ✔ Verificable
+    ✔ Identificable
+```
+
+**Paso 3 — Extiende el ejercicio:**
+1. Agrega la detección del criterio **Alcanzable** (puedes buscar palabras como "imposible", "infinito", "nunca" como señales de alerta).
+2. Agrega la detección de **Relevante** (pista: ¿hay alguna mención de un stakeholder o de una necesidad de negocio?).
+3. Prueba el validador con los 10 requisitos del Ejercicio 2.1 de esta clase.
+
+**Preguntas de cierre:**
+- ¿Qué criterios son más difíciles de detectar automáticamente? ¿Por qué?
+- ¿Qué pasa si el script da "verde" pero el requisito aún tiene problemas? ¿Qué significa eso sobre la confianza en herramientas automáticas?
+
 #### Recursos
 - Wiegers & Beatty — *Software Requirements*, Cap. 10–11
 - INCOSE — *Systems Engineering Handbook*, Sección 4.2
@@ -810,6 +917,137 @@ Requisitos:
 Dada la siguiente regla de negocio, identifiquen al menos 6 ejemplos que la cubran (incluyendo casos borde y negativos):
 
 *"Los usuarios premium pueden tener hasta 3 reservas activas simultáneas; los usuarios estándar, solo 1. Las reservas vencidas no cuentan como activas."*
+
+#### Ejercicio de código — Clase 09: De Gherkin a código ejecutable con pytest (30 minutos)
+
+**Problema:** escribiste escenarios Gherkin en el Ejercicio 9.1, pero ¿cómo se convierten en pruebas reales? Vamos a tomar un escenario Gherkin y ejecutarlo con Python y `pytest-bdd`.
+
+**Paso 1 — Instala la librería:**
+```bash
+pip install pytest pytest-bdd
+```
+
+**Paso 2 — Crea la estructura de archivos:**
+```
+reservas/
+  features/
+    cancelar_reserva.feature
+  tests/
+    test_cancelar_reserva.py
+  dominio.py
+```
+
+**`reservas/features/cancelar_reserva.feature`** (Gherkin — solo lectura humana + máquina):
+```gherkin
+# language: es
+Característica: Cancelar una reserva de sala
+
+  Escenario: Cancelación exitosa con anticipación suficiente
+    Dado que existe una reserva para dentro de 2 horas
+    Cuando el estudiante solicita cancelar la reserva
+    Entonces la reserva queda cancelada
+    Y la sala vuelve a estar disponible
+
+  Escenario: Cancelación tardía rechazada
+    Dado que existe una reserva que comienza en 30 minutos
+    Cuando el estudiante solicita cancelar la reserva
+    Entonces el sistema rechaza la cancelación
+    Y la reserva sigue activa
+```
+
+**`reservas/dominio.py`** (lógica de negocio pura — sin frameworks):
+```python
+from datetime import datetime, timedelta
+
+class Reserva:
+    ANTICIPACION_MINIMA = timedelta(hours=1)
+
+    def __init__(self, inicio: datetime):
+        self.inicio = inicio
+        self.activa = True
+
+    def puede_cancelarse(self, ahora: datetime = None) -> bool:
+        ahora = ahora or datetime.now()
+        return self.activa and (self.inicio - ahora) >= self.ANTICIPACION_MINIMA
+
+    def cancelar(self, ahora: datetime = None) -> bool:
+        if self.puede_cancelarse(ahora):
+            self.activa = False
+            return True
+        return False
+```
+
+**`reservas/tests/test_cancelar_reserva.py`** (pasos que conectan Gherkin con código):
+```python
+import pytest
+from datetime import datetime, timedelta
+from pytest_bdd import scenarios, given, when, then
+from reservas.dominio import Reserva
+
+scenarios("../features/cancelar_reserva.feature")
+
+AHORA = datetime(2024, 9, 1, 10, 0)  # Momento fijo para pruebas
+
+# ---------- Datos de contexto ----------
+@pytest.fixture
+def contexto():
+    return {}
+
+# ---------- Pasos Given ----------
+@given("que existe una reserva para dentro de 2 horas")
+def reserva_con_anticipacion(contexto):
+    contexto["reserva"] = Reserva(inicio=AHORA + timedelta(hours=2))
+    contexto["ahora"] = AHORA
+
+@given("que existe una reserva que comienza en 30 minutos")
+def reserva_sin_anticipacion(contexto):
+    contexto["reserva"] = Reserva(inicio=AHORA + timedelta(minutes=30))
+    contexto["ahora"] = AHORA
+
+# ---------- Paso When ----------
+@when("el estudiante solicita cancelar la reserva")
+def solicitar_cancelacion(contexto):
+    contexto["resultado"] = contexto["reserva"].cancelar(ahora=contexto["ahora"])
+
+# ---------- Pasos Then ----------
+@then("la reserva queda cancelada")
+def reserva_cancelada(contexto):
+    assert contexto["resultado"] is True
+    assert contexto["reserva"].activa is False
+
+@then("la sala vuelve a estar disponible")
+def sala_disponible(contexto):
+    # En un sistema real verificarías en el repositorio de salas
+    assert contexto["reserva"].activa is False
+
+@then("el sistema rechaza la cancelación")
+def cancelacion_rechazada(contexto):
+    assert contexto["resultado"] is False
+
+@then("la reserva sigue activa")
+def reserva_sigue_activa(contexto):
+    assert contexto["reserva"].activa is True
+```
+
+**Paso 3 — Ejecuta las pruebas:**
+```bash
+cd reservas
+pytest tests/ -v
+```
+
+**Salida esperada:**
+```
+PASSED  test_cancelar_reserva.py::test_cancelación_exitosa_con_anticipación_suficiente
+PASSED  test_cancelar_reserva.py::test_cancelación_tardía_rechazada
+```
+
+**Paso 4 — Agrega un tercer escenario tú mismo:**  
+Escribe en el `.feature` el escenario "Reserva inexistente" (una reserva que ya fue cancelada no puede cancelarse de nuevo). Agrega los pasos en el archivo de prueba.
+
+**Preguntas de cierre:**
+- ¿En qué punto del proceso colocas al stakeholder para validar que el escenario Gherkin refleja lo que él necesita?
+- ¿Qué ventaja tiene escribir el `.feature` primero y el código después? ¿Y qué desventaja?
+- La clase `Reserva` no importa ningún framework. ¿Por qué eso es una ventaja para las pruebas?
 
 #### Recursos
 - North, D. — *Introducing BDD* (artículo fundacional, dannorth.net)
@@ -1444,6 +1682,108 @@ Se recibe la siguiente RFC:
 2. Realicen el análisis de impacto (usando la RTM del ejercicio anterior).
 3. Emitan una recomendación fundamentada para el CCB: aprobar, rechazar o diferir.
 4. Definan los artefactos que deberían actualizarse si se aprueba.
+
+#### Ejercicio de código — Clase 15: Calculadora de priorización MoSCoW con Value/Effort (25 minutos)
+
+**Problema:** en el Ejercicio 15.1 priorizaste historias de usuario manualmente. Vamos a automatizar el cálculo con Python para poder iterar rápido y comparar distintos escenarios.
+
+**Paso 1 — Crea el archivo `priorizacion.py`:**
+
+```python
+from dataclasses import dataclass, field
+from enum import Enum
+
+class MoSCoW(Enum):
+    MUST   = "Must Have"
+    SHOULD = "Should Have"
+    COULD  = "Could Have"
+    WONT   = "Won't Have"
+
+@dataclass
+class Historia:
+    id: str
+    nombre: str
+    valor: int      # Impacto para el negocio: 1 (bajo) a 5 (muy alto)
+    esfuerzo: int   # Costo de implementación: 1 (bajo) a 5 (muy alto)
+    dependencias: list[str] = field(default_factory=list)
+
+    @property
+    def prioridad(self) -> float:
+        """Relación valor/esfuerzo: más alto = mejor candidato para MVP."""
+        return round(self.valor / self.esfuerzo, 2)
+
+    def moscow(self) -> MoSCoW:
+        p = self.prioridad
+        if p >= 2.0:   return MoSCoW.MUST
+        if p >= 1.0:   return MoSCoW.SHOULD
+        if p >= 0.6:   return MoSCoW.COULD
+        return MoSCoW.WONT
+
+# ---------------------------------------------------------------------------
+# Backlog de historias del sistema de reservas de salas
+# ---------------------------------------------------------------------------
+backlog: list[Historia] = [
+    Historia("US-01", "Reservar sala desde la app",              valor=5, esfuerzo=2),
+    Historia("US-02", "Cancelar reserva con anticipación",       valor=4, esfuerzo=1),
+    Historia("US-03", "Ver historial de reservas",               valor=3, esfuerzo=2),
+    Historia("US-04", "Notificación de recordatorio por email",  valor=4, esfuerzo=3),
+    Historia("US-05", "Reservar sala por WhatsApp",              valor=3, esfuerzo=5),
+    Historia("US-06", "Panel de administración de salas",        valor=5, esfuerzo=4),
+    Historia("US-07", "Integración con calendario de Google",    valor=2, esfuerzo=5),
+    Historia("US-08", "Login con cuenta institucional",          valor=5, esfuerzo=2),
+]
+
+# ---------------------------------------------------------------------------
+# Reporte de priorización
+# ---------------------------------------------------------------------------
+def imprimir_reporte(historias: list[Historia]):
+    ordenadas = sorted(historias, key=lambda h: h.prioridad, reverse=True)
+    print(f"\n{'ID':<8} {'Historia':<44} {'V':>3} {'E':>3} {'V/E':>5}  {'MoSCoW'}")
+    print("-" * 78)
+    for h in ordenadas:
+        print(f"{h.id:<8} {h.nombre:<44} {h.valor:>3} {h.esfuerzo:>3} {h.prioridad:>5}  {h.moscow().value}")
+
+def mvp(historias: list[Historia]) -> list[Historia]:
+    """Historias Must Have — candidatos al alcance v1.0."""
+    return [h for h in historias if h.moscow() == MoSCoW.MUST]
+
+imprimir_reporte(backlog)
+print(f"\n=== MVP v1.0 ({len(mvp(backlog))} historias) ===")
+for h in mvp(backlog):
+    print(f"  ✅ {h.id} — {h.nombre}")
+```
+
+**Paso 2 — Ejecuta el script:**
+```bash
+python priorizacion.py
+```
+
+**Salida esperada:**
+```
+ID       Historia                                     V   E   V/E  MoSCoW
+------------------------------------------------------------------------------
+US-02    Cancelar reserva con anticipación            4   1  4.00  Must Have
+US-01    Reservar sala desde la app                   5   2  2.50  Must Have
+US-08    Login con cuenta institucional               5   2  2.50  Must Have
+US-03    Ver historial de reservas                    3   2  1.50  Should Have
+US-04    Notificación de recordatorio por email       4   3  1.33  Should Have
+...
+
+=== MVP v1.0 (3 historias) ===
+  ✅ US-02 — Cancelar reserva con anticipación
+  ✅ US-01 — Reservar sala desde la app
+  ✅ US-08 — Login con cuenta institucional
+```
+
+**Paso 3 — Experimenta:**
+1. Cambia el umbral de `MUST` (actualmente ≥ 2.0) a 1.5 y observa cómo cambia el MVP.
+2. Agrega 3 historias más del backlog de tu propio proyecto.
+3. Implementa la verificación de dependencias: si US-02 depende de US-08, US-08 también debe entrar en el MVP aunque su V/E sea bajo.
+
+**Preguntas de cierre:**
+- ¿La relación V/E captura todo lo que importa al priorizar? ¿Qué queda fuera del cálculo?
+- Un stakeholder insiste en que US-07 (integración con Google Calendar) es crítica para él. ¿Cómo reconcilias el número con la política?
+- ¿Qué pasaría si el equipo tiene restricción de capacidad (solo puede entrar 10 puntos de esfuerzo al MVP)? ¿Cómo ajustarías el script?
 
 #### Recursos
 - Leffingwell, D. — *Scaled Agile Framework (SAFe)*, Feature Prioritization

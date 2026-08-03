@@ -1213,6 +1213,147 @@ Implementar en Java (o el lenguaje del curso) la clase `NumeroDeLegajo`:
 - El constructor debe lanzar excepción con mensaje claro si el formato es inválido.
 - Escribir 3 pruebas unitarias básicas (sin framework aún, solo afirmaciones manuales).
 
+#### Ejercicio de código — Clase 04: Implementar un Value Object completo en Java (25 minutos)
+
+**Problema:** las clases del Ejercicio 2 pedían implementar `NumeroDeLegajo`. Aquí lo construimos desde cero con todas las propiedades que debe tener un Value Object real.
+
+**Paso 1 — Crea el archivo `NumeroDeLegajo.java`:**
+
+```java
+import java.util.Objects;
+import java.util.regex.Pattern;
+
+/**
+ * Value Object: NumeroDeLegajo
+ * Reglas:
+ *   - Formato: 2 letras mayúsculas + 3–6 dígitos. Ej: "LI12345", "CS001".
+ *   - Inmutable (final + sin setters).
+ *   - Igualdad por valor, no por referencia.
+ */
+public final class NumeroDeLegajo {
+
+    // Patrón de formato válido
+    private static final Pattern FORMATO = Pattern.compile("^[A-Z]{2}\\d{3,6}$");
+
+    private final String valor;
+
+    // Constructor: única entrada al objeto — valida aquí o falla aquí.
+    public NumeroDeLegajo(String valor) {
+        if (valor == null || valor.isBlank()) {
+            throw new IllegalArgumentException("El número de legajo no puede estar vacío.");
+        }
+        String normalizado = valor.trim().toUpperCase();
+        if (!FORMATO.matcher(normalizado).matches()) {
+            throw new IllegalArgumentException(
+                "Formato inválido: '" + valor + "'. Se esperaba 2 letras + 3-6 dígitos (ej: LI12345)."
+            );
+        }
+        this.valor = normalizado;
+    }
+
+    // ---- Acceso al valor ----
+    public String getValor() {
+        return valor;
+    }
+
+    // ---- Igualdad por valor (NO por referencia) ----
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NumeroDeLegajo)) return false;
+        NumeroDeLegajo otro = (NumeroDeLegajo) o;
+        return this.valor.equals(otro.valor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(valor);
+    }
+
+    @Override
+    public String toString() {
+        return valor;
+    }
+}
+```
+
+**Paso 2 — Crea el archivo de pruebas `TestNumeroDeLegajo.java`:**
+
+```java
+public class TestNumeroDeLegajo {
+
+    // Utilidad mínima para afirmar sin framework
+    static void assertTrue(boolean condicion, String mensaje) {
+        if (!condicion) throw new AssertionError("FALLO: " + mensaje);
+        System.out.println("  PASA: " + mensaje);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== Tests NumeroDeLegajo ===\n");
+
+        // --- Pruebas de formato válido ---
+        NumeroDeLegajo n1 = new NumeroDeLegajo("LI12345");
+        assertTrue("LI12345".equals(n1.getValor()), "Acepta formato válido en mayúsculas");
+
+        NumeroDeLegajo n2 = new NumeroDeLegajo("li12345"); // minúsculas → normaliza
+        assertTrue("LI12345".equals(n2.getValor()), "Normaliza a mayúsculas");
+
+        // --- Igualdad por valor ---
+        assertTrue(n1.equals(n2), "Dos objetos con mismo valor son iguales");
+        assertTrue(n1.hashCode() == n2.hashCode(), "Igual valor → igual hashCode");
+        assertTrue(n1 != n2, "Son objetos distintos en memoria (no misma referencia)");
+
+        // --- toString ---
+        assertTrue("LI12345".equals(n1.toString()), "toString devuelve el valor normalizado");
+
+        // --- Formatos inválidos ---
+        String[] invalidos = { "", " ", "12345", "LI", "L12345", "LI1234567", null };
+        for (String inv : invalidos) {
+            try {
+                new NumeroDeLegajo(inv);
+                throw new AssertionError("FALLO: debió rechazar '" + inv + "'");
+            } catch (IllegalArgumentException e) {
+                System.out.println("  PASA: rechaza inválido '" + inv + "' — " + e.getMessage());
+            }
+        }
+
+        System.out.println("\n✅ Todas las pruebas pasaron.");
+    }
+}
+```
+
+**Paso 3 — Compila y ejecuta:**
+```bash
+javac NumeroDeLegajo.java TestNumeroDeLegajo.java
+java TestNumeroDeLegajo
+```
+
+**Salida esperada:**
+```
+=== Tests NumeroDeLegajo ===
+
+  PASA: Acepta formato válido en mayúsculas
+  PASA: Normaliza a mayúsculas
+  PASA: Dos objetos con mismo valor son iguales
+  PASA: Igual valor → igual hashCode
+  PASA: Son objetos distintos en memoria (no misma referencia)
+  PASA: toString devuelve el valor normalizado
+  PASA: rechaza inválido '' — El número de legajo no puede estar vacío.
+  ...
+
+✅ Todas las pruebas pasaron.
+```
+
+**Paso 4 — Extiende el ejercicio:**
+1. Crea el Value Object `ISBN` para libros (formato ISBN-13: 13 dígitos, o formato `978-X-XXXX-XXXX-X`).
+2. Agrégalo a la clase `Libro` de tu modelo del dominio.
+3. Reflexiona: ¿por qué `Libro` sería una entidad e `ISBN` un Value Object?
+
+**Preguntas de cierre:**
+- ¿Qué hubiera pasado si usaras un `String` en lugar de `NumeroDeLegajo` como tipo del legajo?
+- ¿Dónde debe lanzarse la excepción de formato inválido: en el constructor, en un factory method, o en el servicio que crea el objeto?
+- Nombra 3 casos en tu dominio de biblioteca donde usarías un Value Object en lugar de una entidad.
+
 ---
 
 ### Tarea para la próxima clase
@@ -1367,6 +1508,149 @@ Para cada responsabilidad, documentar:
 
 #### Debate de alternativas con IA (10 min)
 El docente hace una demostración en vivo: pedirle a GitHub Copilot/ChatGPT que compare dos alternativas de diseño para una de las responsabilidades anteriores. Analizar la respuesta críticamente.
+
+#### Ejercicio de código — Clase 05: Detectar y corregir violaciones de GRASP en Java (25 minutos)
+
+**Problema:** el siguiente código funciona, pero tiene responsabilidades mal asignadas. Tu tarea es identificar qué patrón GRASP se viola en cada caso y luego corregirlo.
+
+**Paso 1 — Lee el código con problemas y anota qué falta:**
+
+```java
+// ❌ Código con violaciones — ¿puedes identificarlas?
+
+public class GestorPrestamos {
+
+    // Problema A: ¿quién debería calcular si el préstamo está vencido?
+    public boolean estaVencido(String fechaVencimientoStr, String fechaActualStr) {
+        // parse de fechas incrustado aquí...
+        java.time.LocalDate venc = java.time.LocalDate.parse(fechaVencimientoStr);
+        java.time.LocalDate hoy  = java.time.LocalDate.parse(fechaActualStr);
+        return hoy.isAfter(venc);
+    }
+
+    // Problema B: ¿quién debería crear un nuevo Prestamo?
+    public Prestamo registrarPrestamo(String estudianteId, String libroId, int diasPlazo) {
+        Prestamo p = new Prestamo();   // GestorPrestamos crea el objeto
+        p.setEstudianteId(estudianteId);
+        p.setLibroId(libroId);
+        p.setFechaInicio(java.time.LocalDate.now().toString());
+        p.setFechaVencimiento(java.time.LocalDate.now().plusDays(diasPlazo).toString());
+        return p;
+    }
+
+    // Problema C: ¿esta clase debería también enviar el email?
+    public void enviarRecordatorio(Prestamo prestamo) {
+        System.out.println("Enviando email a: " + prestamo.getEstudianteId());
+        // lógica de envío de email...
+    }
+}
+```
+
+**Paso 2 — Refactoriza el código corrigiendo cada violación:**
+
+```java
+import java.time.LocalDate;
+import java.util.Objects;
+
+// ✅ Entidad Prestamo con sus propias responsabilidades (Experto en Información)
+public final class Prestamo {
+
+    private final String estudianteId;
+    private final String libroId;
+    private final LocalDate fechaInicio;
+    private final LocalDate fechaVencimiento;
+
+    // Creador: el mismo Prestamo sabe inicializarse (o un factory)
+    public Prestamo(String estudianteId, String libroId, int diasPlazo) {
+        Objects.requireNonNull(estudianteId, "estudianteId requerido");
+        Objects.requireNonNull(libroId, "libroId requerido");
+        if (diasPlazo <= 0) throw new IllegalArgumentException("diasPlazo debe ser > 0");
+        this.estudianteId     = estudianteId;
+        this.libroId          = libroId;
+        this.fechaInicio      = LocalDate.now();
+        this.fechaVencimiento = LocalDate.now().plusDays(diasPlazo);
+    }
+
+    // Experto en Información: Prestamo tiene los datos → calcula si está vencido
+    public boolean estaVencido() {
+        return LocalDate.now().isAfter(fechaVencimiento);
+    }
+
+    // Experto en Información: calcula la multa con la tarifa dada
+    public double calcularMulta(double tarifaPorDia) {
+        if (!estaVencido()) return 0;
+        long diasAtraso = java.time.temporal.ChronoUnit.DAYS.between(fechaVencimiento, LocalDate.now());
+        return diasAtraso * tarifaPorDia;
+    }
+
+    public String getEstudianteId() { return estudianteId; }
+    public String getLibroId()      { return libroId; }
+
+    @Override
+    public String toString() {
+        return String.format("Prestamo{estudiante=%s, libro=%s, vence=%s, vencido=%s}",
+            estudianteId, libroId, fechaVencimiento, estaVencido());
+    }
+}
+
+// ✅ Clase separada para notificaciones (Indirección / bajo acoplamiento)
+class ServicioEmail {
+    public void enviarRecordatorio(Prestamo prestamo) {
+        System.out.println("📧 Recordatorio enviado a: " + prestamo.getEstudianteId());
+    }
+}
+
+// ✅ GestorPrestamos solo coordina (Controlador)
+class GestorPrestamos {
+    private final ServicioEmail email;
+
+    public GestorPrestamos(ServicioEmail email) {
+        this.email = email;
+    }
+
+    public Prestamo registrarPrestamo(String estudianteId, String libroId, int diasPlazo) {
+        return new Prestamo(estudianteId, libroId, diasPlazo);
+    }
+
+    public void verificarYNotificar(Prestamo prestamo) {
+        if (prestamo.estaVencido()) {
+            email.enviarRecordatorio(prestamo);
+        }
+    }
+}
+
+// ✅ Demo
+class Main {
+    public static void main(String[] args) {
+        ServicioEmail email = new ServicioEmail();
+        GestorPrestamos gestor = new GestorPrestamos(email);
+
+        // Simular préstamo vencido (usando fecha en el pasado no es posible con el constructor actual)
+        // Paso de extensión: modifica el constructor para aceptar una fecha de inicio personalizada.
+        Prestamo p = gestor.registrarPrestamo("LI12345", "ISBN-978", 14);
+        System.out.println(p);
+        System.out.println("¿Vencido? " + p.estaVencido());
+        System.out.println("Multa ($500/día): $" + p.calcularMulta(500));
+    }
+}
+```
+
+**Paso 3 — Ejecuta y verifica:**
+```bash
+javac Prestamo.java
+java Main
+```
+
+**Paso 4 — Asigna el patrón a cada corrección:**
+Para cada cambio que hiciste, responde:
+1. Clase `estaVencido` movida a `Prestamo` → ¿qué patrón GRASP justifica esto?
+2. Constructor de `Prestamo` crea sus propios datos → ¿qué patrón GRASP?
+3. `ServicioEmail` separado de `GestorPrestamos` → ¿qué principio GRASP aplica?
+
+**Preguntas de cierre:**
+- ¿Cuántas responsabilidades tenía `GestorPrestamos` antes? ¿Cuántas tiene ahora?
+- Si mañana cambia la lógica de multas (tarifa progresiva según días), ¿qué clase modificas? ¿Cuántas clases tocas?
+- ¿Qué relación ves entre el patrón Experto en Información de GRASP y el principio S de SOLID?
 
 ---
 
@@ -1671,6 +1955,188 @@ Dibujar a mano el diagrama de secuencia para el flujo "reserva exitosa" del caso
 
 #### Revisión y conclusiones (10 min)
 El docente muestra la solución y señala dónde cada principio SOLID y patrón GRASP se aplicó.
+
+#### Ejercicio de código — Clase 06: Implementar ReservarLibroUseCase con inyección de dependencias (30 minutos)
+
+**Problema:** el ejercicio de clase pedía implementar el esqueleto. Aquí lo construyes completo y añades una prueba que funciona sin base de datos real.
+
+**Paso 1 — Crea los archivos (un archivo por clase o todo en `Biblioteca.java`):**
+
+```java
+import java.util.*;
+
+// ============================================================
+// DOMINIO (no depende de nada externo)
+// ============================================================
+
+class Libro {
+    public final String id;
+    public final String titulo;
+    public Libro(String id, String titulo) { this.id = id; this.titulo = titulo; }
+}
+
+class Prestamo {
+    public final String estudianteId;
+    public final String libroId;
+    public Prestamo(String estudianteId, String libroId) {
+        this.estudianteId = estudianteId;
+        this.libroId      = libroId;
+    }
+}
+
+// ============================================================
+// INTERFACES DE REPOSITORIO (en el dominio, sin importar BD)
+// ============================================================
+
+interface PrestamoRepository {
+    int  countActivosByEstudiante(String estudianteId);
+    void save(Prestamo prestamo);
+}
+
+interface LibroRepository {
+    Optional<Libro> findById(String libroId);
+}
+
+// ============================================================
+// CASO DE USO (depende solo de las interfaces, no de detalles)
+// ============================================================
+
+class ReservarLibroUseCase {
+
+    private static final int MAXIMO_PRESTAMOS = 3;   // RN-01
+
+    private final PrestamoRepository prestamos;
+    private final LibroRepository    libros;
+
+    // Inyección por constructor: las dependencias vienen de afuera
+    public ReservarLibroUseCase(PrestamoRepository prestamos, LibroRepository libros) {
+        this.prestamos = prestamos;
+        this.libros    = libros;
+    }
+
+    public Prestamo ejecutar(String estudianteId, String libroId) {
+        // 1. Verificar que el libro existe
+        Libro libro = libros.findById(libroId)
+            .orElseThrow(() -> new IllegalArgumentException("Libro no encontrado: " + libroId));
+
+        // 2. Verificar límite de préstamos (RN-01)
+        int activos = prestamos.countActivosByEstudiante(estudianteId);
+        if (activos >= MAXIMO_PRESTAMOS) {
+            throw new IllegalStateException(
+                "El estudiante ya tiene " + activos + " préstamos activos (máximo " + MAXIMO_PRESTAMOS + ")."
+            );
+        }
+
+        // 3. Registrar el préstamo
+        Prestamo nuevo = new Prestamo(estudianteId, libro.id);
+        prestamos.save(nuevo);
+        return nuevo;
+    }
+}
+
+// ============================================================
+// IMPLEMENTACIONES FALSAS (solo para pruebas — en memoria)
+// ============================================================
+
+class FakePrestamoRepository implements PrestamoRepository {
+    private final List<Prestamo> almacen = new ArrayList<>();
+    private final int activosIniciales;
+
+    FakePrestamoRepository(int activosIniciales) { this.activosIniciales = activosIniciales; }
+
+    @Override public int countActivosByEstudiante(String id) { return activosIniciales; }
+    @Override public void save(Prestamo p)                   { almacen.add(p); }
+    public List<Prestamo> getTodos()                          { return Collections.unmodifiableList(almacen); }
+}
+
+class FakeLibroRepository implements LibroRepository {
+    private final Map<String, Libro> catalogo = new HashMap<>();
+
+    public void agregar(Libro libro) { catalogo.put(libro.id, libro); }
+
+    @Override public Optional<Libro> findById(String id) {
+        return Optional.ofNullable(catalogo.get(id));
+    }
+}
+
+// ============================================================
+// PRUEBAS (sin JUnit — afirmaciones manuales)
+// ============================================================
+
+class PruebasReservarLibro {
+
+    static void assertEquals(Object esperado, Object real, String mensaje) {
+        if (!Objects.equals(esperado, real))
+            throw new AssertionError("FALLO [" + mensaje + "]: esperado=" + esperado + " real=" + real);
+        System.out.println("  PASA: " + mensaje);
+    }
+
+    static void assertThrows(Class<? extends Exception> tipo, Runnable accion, String mensaje) {
+        try {
+            accion.run();
+            throw new AssertionError("FALLO [" + mensaje + "]: no se lanzó la excepción esperada");
+        } catch (Exception e) {
+            if (!tipo.isInstance(e))
+                throw new AssertionError("FALLO [" + mensaje + "]: se esperaba " + tipo.getSimpleName() + " pero se obtuvo " + e.getClass().getSimpleName());
+            System.out.println("  PASA: " + mensaje + " (" + e.getMessage() + ")");
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== Pruebas ReservarLibroUseCase ===\n");
+
+        // --- Caso 1: reserva exitosa ---
+        FakePrestamoRepository prestamos1 = new FakePrestamoRepository(1); // 1 activo
+        FakeLibroRepository    libros1    = new FakeLibroRepository();
+        libros1.agregar(new Libro("L001", "Clean Code"));
+
+        ReservarLibroUseCase uc1 = new ReservarLibroUseCase(prestamos1, libros1);
+        Prestamo resultado = uc1.ejecutar("LI12345", "L001");
+
+        assertEquals("LI12345", resultado.estudianteId, "Prestamo registra estudianteId correcto");
+        assertEquals("L001",    resultado.libroId,      "Prestamo registra libroId correcto");
+        assertEquals(1,         prestamos1.getTodos().size(), "Se guardó exactamente 1 préstamo");
+
+        // --- Caso 2: límite de préstamos (RN-01) ---
+        FakePrestamoRepository prestamos2 = new FakePrestamoRepository(3); // ya tiene 3
+        ReservarLibroUseCase   uc2        = new ReservarLibroUseCase(prestamos2, libros1);
+        assertThrows(IllegalStateException.class,
+            () -> uc2.ejecutar("LI12345", "L001"),
+            "Rechaza cuando el estudiante ya tiene 3 préstamos activos");
+
+        // --- Caso 3: libro inexistente ---
+        FakePrestamoRepository prestamos3 = new FakePrestamoRepository(0);
+        ReservarLibroUseCase   uc3        = new ReservarLibroUseCase(prestamos3, libros1);
+        assertThrows(IllegalArgumentException.class,
+            () -> uc3.ejecutar("LI12345", "LIBRO_INEXISTENTE"),
+            "Rechaza cuando el libro no existe en el catálogo");
+
+        System.out.println("\n✅ Todas las pruebas pasaron.");
+    }
+}
+```
+
+**Paso 2 — Compila y ejecuta:**
+```bash
+javac Biblioteca.java
+java PruebasReservarLibro
+```
+
+**Paso 3 — Identifica cada principio SOLID en el código:**
+Completa esta tabla localizando en el código dónde se aplica cada principio:
+
+| Principio | ¿Dónde lo ves en el código? |
+|---|---|
+| S — Single Responsibility | |
+| O — Open/Closed | |
+| L — Liskov Substitution | |
+| I — Interface Segregation | |
+| D — Dependency Inversion | |
+
+**Preguntas de cierre:**
+- ¿Por qué `ReservarLibroUseCase` no importa ninguna clase de base de datos?
+- Si cambias de PostgreSQL a MongoDB, ¿qué clase modifica? ¿Qué clase NO modifica?
+- ¿Qué relación tiene `FakePrestamoRepository` con el principio de Liskov?
 
 ---
 

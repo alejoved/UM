@@ -882,6 +882,168 @@ Decisión: Elegir entre MongoDB y PostgreSQL para catálogo de productos con atr
 
 Texto arquitectónico con 4-5 ambigüedades intencionales. Identificarlas. Luego: ¿Qué validación humana es necesaria que IA no puede hacer?
 
+#### Ejercicio de código — Clase 06: Validador de ADR en formato MADR (25 minutos)
+
+**Problema:** tu equipo decide usar ADRs para documentar decisiones arquitectónicas, pero nadie verifica que estén bien escritas. Vamos a construir un script que valida si un ADR en Markdown tiene todas las secciones requeridas del formato MADR.
+
+**Paso 1 — Crea el archivo `validar_adr.py`:**
+
+```python
+import re
+import sys
+from pathlib import Path
+
+# Secciones obligatorias del formato MADR (Markdown Architecture Decision Records)
+SECCIONES_OBLIGATORIAS = [
+    "# ADR-",               # Título con número
+    "## Estado",            # Estado: propuesto | aceptado | obsoleto | reemplazado
+    "## Contexto",          # Descripción del problema y por qué se necesita una decisión
+    "## Opciones consideradas",  # Lista de alternativas
+    "## Decisión",          # La opción elegida y por qué
+    "## Consecuencias",     # Efectos positivos y negativos de la decisión
+]
+
+ESTADOS_VALIDOS = {"propuesto", "aceptado", "obsoleto", "reemplazado", "deprecated"}
+
+
+def validar_adr(contenido: str, nombre_archivo: str) -> list[str]:
+    """Retorna lista de problemas encontrados. Lista vacía = ADR válido."""
+    problemas = []
+
+    for seccion in SECCIONES_OBLIGATORIAS:
+        if seccion.lower() not in contenido.lower():
+            problemas.append(f"  ✘ Falta la sección: '{seccion}'")
+
+    # Verificar que el estado sea uno de los valores esperados
+    match = re.search(r"##\s*Estado\s*\n+(.+)", contenido, re.IGNORECASE)
+    if match:
+        estado = match.group(1).strip().lower()
+        if not any(v in estado for v in ESTADOS_VALIDOS):
+            problemas.append(f"  ⚠ Estado inválido: '{estado}'. Valores válidos: {ESTADOS_VALIDOS}")
+
+    # Verificar que tenga al menos 2 opciones consideradas
+    opciones = re.findall(r"^[-*] .+", contenido, re.MULTILINE)
+    if len(opciones) < 2:
+        problemas.append("  ⚠ Se recomienda al menos 2 opciones consideradas (solo se encontró 1 o ninguna).")
+
+    return problemas
+
+
+def validar_archivo(ruta: str):
+    path = Path(ruta)
+    if not path.exists():
+        print(f"❌ Archivo no encontrado: {ruta}")
+        return
+
+    contenido = path.read_text(encoding="utf-8")
+    problemas = validar_adr(contenido, path.name)
+
+    if not problemas:
+        print(f"✅ {path.name} — ADR válido")
+    else:
+        print(f"❌ {path.name} — {len(problemas)} problema(s):")
+        for p in problemas:
+            print(p)
+
+
+# ---------------------------------------------------------------------------
+# Prueba con contenido en memoria (sin archivos reales)
+# ---------------------------------------------------------------------------
+ADR_COMPLETO = """
+# ADR-001: Usar PostgreSQL como base de datos principal
+
+## Estado
+Aceptado
+
+## Contexto
+Necesitamos una base de datos relacional para el catálogo de libros y préstamos.
+Los datos tienen estructura fija y relaciones claras entre entidades.
+
+## Opciones consideradas
+- PostgreSQL: ACID compliant, código abierto, extensible
+- MongoDB: flexible para esquemas variables, pero nuestros datos son relacionales
+- MySQL: similar a PostgreSQL pero con menos características avanzadas
+
+## Decisión
+Elegimos PostgreSQL porque nuestros datos son relacionales (préstamos, estudiantes, libros)
+y necesitamos transacciones ACID para garantizar consistencia.
+
+## Consecuencias
+- Positivo: transacciones confiables, joins eficientes, amplia documentación
+- Negativo: más complejo de escalar horizontalmente que MongoDB
+- Neutral: el equipo ya conoce SQL, curva de aprendizaje mínima
+"""
+
+ADR_INCOMPLETO = """
+# ADR-002: Elegir framework frontend
+
+## Contexto
+Necesitamos un framework para la interfaz de usuario.
+
+## Decisión
+Usaremos React.
+"""
+
+print("=" * 55)
+print("Validando ADRs de ejemplo\n")
+
+for nombre, contenido in [("adr-001-completo.md", ADR_COMPLETO),
+                           ("adr-002-incompleto.md", ADR_INCOMPLETO)]:
+    problemas = validar_adr(contenido, nombre)
+    if not problemas:
+        print(f"✅ {nombre} — ADR válido")
+    else:
+        print(f"❌ {nombre} — {len(problemas)} problema(s):")
+        for p in problemas:
+            print(p)
+    print()
+
+print("=" * 55)
+print("Uso con archivo real: python validar_adr.py mi-adr.md")
+```
+
+**Paso 2 — Ejecuta el script:**
+```bash
+python validar_adr.py
+```
+
+**Salida esperada:**
+```
+=======================================================
+Validando ADRs de ejemplo
+
+✅ adr-001-completo.md — ADR válido
+
+❌ adr-002-incompleto.md — 3 problema(s):
+  ✘ Falta la sección: '## Estado'
+  ✘ Falta la sección: '## Opciones consideradas'
+  ✘ Falta la sección: '## Consecuencias'
+  ⚠ Se recomienda al menos 2 opciones consideradas
+```
+
+**Paso 3 — Escribe tu propio ADR y valídalo:**
+1. Crea un archivo `adr-003-mi-decision.md` con el ADR del Ejercicio de esta clase (MongoDB vs. PostgreSQL).
+2. Ejecuta: `python validar_adr.py adr-003-mi-decision.md`
+3. Corrige cualquier problema que detecte el script.
+
+**Paso 4 — Integración en CI (opcional avanzado):**
+```yaml
+# .github/workflows/validar-adrs.yml
+name: Validar ADRs
+on: [push]
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python scripts/validar_adr.py docs/adr/*.md
+```
+
+**Preguntas de cierre:**
+- ¿Qué problemas que NO puede detectar el script (validación de contenido vs. validación de estructura)?
+- ¿Cuándo es mejor un ADR largo y detallado vs. uno corto y directo?
+- ¿Qué sección del ADR es la más difícil de escribir bien? ¿Por qué?
+
 ---
 
 # UNIDAD 2. Diseño orientado por atributos y arquitecturas cloud-native
@@ -1211,6 +1373,138 @@ Código legacy dado. Identificar violaciones. Priorizar por severidad.
 **Actividad 2: Refactorizar (13 min)**
 
 Tomar la violación más grave. Reescribir el fragmento para cumplir el factor correspondiente.
+
+#### Ejercicio de código — Clase 09: Aplicación con los 12 factores en Python (30 minutos)
+
+**Problema:** el código legacy siguiente viola varios factores de la Twelve-Factor App. Tu tarea es identificar los problemas y corregirlos.
+
+**Paso 1 — Instala las dependencias:**
+```bash
+pip install python-dotenv
+```
+
+**Paso 2 — Código con violaciones (`app_legacy.py`):**
+
+```python
+# ❌ CÓDIGO CON VIOLACIONES — identifica cuáles son antes de continuar
+
+import psycopg2
+import logging
+
+# Factor III violado: credenciales en el código
+DB_HOST     = "prod-db.empresa.com"
+DB_USER     = "admin"
+DB_PASSWORD = "SuperS3creta!"
+DB_NAME     = "biblioteca_prod"
+
+# Factor XI violado: logs a archivo local en vez de stdout
+logging.basicConfig(filename="/var/log/app.log", level=logging.INFO)
+
+def buscar_libros(titulo: str):
+    # Factor IV violado: conexión nueva en cada llamada (sin pool, sin backing service configurable)
+    conn = psycopg2.connect(
+        host=DB_HOST, user=DB_USER, password=DB_PASSWORD, dbname=DB_NAME
+    )
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT * FROM libros WHERE titulo LIKE '%{titulo}%'")  # ⚠ SQL injection
+    resultados = cursor.fetchall()
+    conn.close()  # no hay manejo de errores ni context manager
+    return resultados
+
+# Factor XV violado (no es un factor oficial, pero es práctica incorrecta):
+# El puerto está hardcodeado
+if __name__ == "__main__":
+    import flask
+    app = flask.Flask(__name__)
+    app.run(host="0.0.0.0", port=5000)  # Puerto hardcodeado
+```
+
+**Paso 3 — Versión corregida (`app_12factor.py`):**
+
+```python
+# ✅ CÓDIGO CORREGIDO aplicando Twelve-Factor App
+
+import os
+import logging
+from dotenv import load_dotenv
+
+# Factor III: Cargar configuración desde variables de entorno
+load_dotenv()   # Lee .env en desarrollo; en producción las variables ya están definidas
+
+DB_HOST     = os.environ["DB_HOST"]      # Falla explícitamente si no está configurado
+DB_USER     = os.environ["DB_USER"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
+DB_NAME     = os.environ["DB_NAME"]
+PORT        = int(os.environ.get("PORT", "8080"))
+
+# Factor XI: Logs a stdout (sin archivos, sin rutas hardcodeadas)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    handlers=[logging.StreamHandler()]   # stdout
+)
+logger = logging.getLogger(__name__)
+
+def get_connection():
+    """Factor IV: la conexión es un backing service intercambiable."""
+    import psycopg2
+    return psycopg2.connect(
+        host=DB_HOST, user=DB_USER, password=DB_PASSWORD, dbname=DB_NAME
+    )
+
+def buscar_libros(titulo: str) -> list:
+    """Consulta parametrizada: evita SQL injection."""
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT id, titulo, autor FROM libros WHERE titulo ILIKE %s",
+                (f"%{titulo}%",)   # Parámetro separado del SQL
+            )
+            resultados = cursor.fetchall()
+    logger.info("Búsqueda completada: '%s' — %d resultados", titulo, len(resultados))
+    return resultados
+
+if __name__ == "__main__":
+    from flask import Flask, jsonify, request
+    app = Flask(__name__)
+
+    @app.route("/libros")
+    def libros():
+        titulo = request.args.get("titulo", "")
+        return jsonify(buscar_libros(titulo))
+
+    # Factor VII: puerto desde variable de entorno
+    app.run(host="0.0.0.0", port=PORT)
+```
+
+**Paso 4 — Crea el archivo `.env` (solo para desarrollo local):**
+```bash
+# .env  — NO subir a git (agregar al .gitignore)
+DB_HOST=localhost
+DB_USER=dev_user
+DB_PASSWORD=dev_password
+DB_NAME=biblioteca_dev
+PORT=8080
+```
+
+**Paso 5 — Agrega `.env` al `.gitignore`:**
+```bash
+echo ".env" >> .gitignore
+```
+
+**Paso 6 — Identifica los factores en cada corrección:**
+
+| Violación en el legacy | Factor violado | Corrección aplicada |
+|---|---|---|
+| Credenciales en el código | Factor III (Config) | `os.environ["DB_HOST"]` con `.env` |
+| Log a archivo local | Factor XI (Logs) | `StreamHandler()` → stdout |
+| Puerto hardcodeado | Factor VII (Port binding) | `os.environ.get("PORT", "8080")` |
+| SQL con f-string | No es un factor, pero es OWASP A03 | Parámetros `%s` separados |
+
+**Preguntas de cierre:**
+- ¿Qué pasa si alguien sube el archivo `.env` al repositorio por error? ¿Cómo lo previenes automáticamente?
+- ¿Por qué los logs deben ir a stdout y no a un archivo? ¿Quién recoge esos logs en producción?
+- Nombra 3 backing services típicos de una app y cómo se configurarían con variables de entorno.
 
 ---
 
@@ -1958,6 +2252,157 @@ Sistema de pagos que llama Stripe y Paypal. Circuit breaker simple: estados, tra
 **Actividad 2: Estrategia de resiliencia por dependencia (13 min)**
 
 Microservicio que depende de 4 servicios externos. Para cada uno: Timeout (cuánto?), Retry (cuántos? delay?), Circuit Breaker (threshold?), Fallback (qué devolver?).
+
+#### Ejercicio de código — Clase 14: Implementar un Circuit Breaker desde cero en Python (35 minutos)
+
+**Problema:** tienes un microservicio de pagos que llama a una API externa (Stripe). Si Stripe está caído, tu servicio no debe seguir intentando llamadas que van a fallar — eso desperdicia recursos y empeora el tiempo de respuesta. El **Circuit Breaker** resuelve esto.
+
+**Los tres estados del circuito:**
+```
+CLOSED ──(umbral de errores superado)──► OPEN
+OPEN   ──(timeout de espera expirado)──► HALF-OPEN
+HALF-OPEN ──(llamada exitosa)──► CLOSED
+HALF-OPEN ──(llamada falla)──► OPEN
+```
+
+**Paso 1 — Crea el archivo `circuit_breaker.py`:**
+
+```python
+import time
+import random
+from enum import Enum, auto
+from dataclasses import dataclass, field
+
+class Estado(Enum):
+    CLOSED    = auto()   # Funcionando normalmente
+    OPEN      = auto()   # Cortado: rechaza llamadas sin intentar
+    HALF_OPEN = auto()   # Prueba: deja pasar una llamada para ver si el servicio se recuperó
+
+@dataclass
+class CircuitBreaker:
+    nombre: str
+    umbral_errores: int = 3        # Cuántos errores seguidos abren el circuito
+    timeout_open: float = 10.0     # Segundos en OPEN antes de pasar a HALF-OPEN
+
+    _estado: Estado = field(default=Estado.CLOSED, init=False, repr=False)
+    _errores_consecutivos: int = field(default=0, init=False, repr=False)
+    _tiempo_apertura: float = field(default=0.0, init=False, repr=False)
+
+    @property
+    def estado(self) -> Estado:
+        # Verificar si el timeout OPEN ya venció → pasar a HALF-OPEN
+        if self._estado == Estado.OPEN:
+            if time.monotonic() - self._tiempo_apertura >= self.timeout_open:
+                print(f"  [{self.nombre}] Timeout expirado → HALF-OPEN (probando recuperación)")
+                self._estado = Estado.HALF_OPEN
+        return self._estado
+
+    def llamar(self, funcion, *args, **kwargs):
+        """Intenta ejecutar 'funcion'. Administra el estado del circuito."""
+        estado_actual = self.estado  # Puede actualizar a HALF-OPEN si el timeout venció
+
+        if estado_actual == Estado.OPEN:
+            raise RuntimeError(f"[{self.nombre}] Circuito ABIERTO — llamada rechazada sin intentar")
+
+        try:
+            resultado = funcion(*args, **kwargs)
+            self._en_exito()
+            return resultado
+        except Exception as e:
+            self._en_fallo()
+            raise
+
+    def _en_exito(self):
+        if self._estado == Estado.HALF_OPEN:
+            print(f"  [{self.nombre}] Llamada exitosa en HALF-OPEN → volviendo a CLOSED")
+        self._estado = Estado.CLOSED
+        self._errores_consecutivos = 0
+
+    def _en_fallo(self):
+        self._errores_consecutivos += 1
+        print(f"  [{self.nombre}] Fallo #{self._errores_consecutivos}/{self.umbral_errores}")
+        if self._errores_consecutivos >= self.umbral_errores:
+            self._estado = Estado.OPEN
+            self._tiempo_apertura = time.monotonic()
+            print(f"  [{self.nombre}] ⚡ Circuito ABIERTO — demasiados errores")
+
+    def __str__(self):
+        return f"CircuitBreaker({self.nombre}, estado={self.estado.name}, errores={self._errores_consecutivos})"
+
+
+# ---------------------------------------------------------------------------
+# Simulación de llamadas a un servicio externo (Stripe)
+# ---------------------------------------------------------------------------
+
+def llamar_stripe(probabilidad_fallo: float = 0.0) -> dict:
+    """Simula la API de Stripe. Falla con la probabilidad dada."""
+    if random.random() < probabilidad_fallo:
+        raise ConnectionError("Stripe no disponible (timeout)")
+    return {"status": "ok", "charge_id": f"ch_{random.randint(10000, 99999)}"}
+
+
+def procesar_pago(cb: CircuitBreaker, monto: float, prob_fallo: float) -> str:
+    try:
+        resultado = cb.llamar(llamar_stripe, probabilidad_fallo=prob_fallo)
+        return f"✅ Pago de ${monto} aprobado — {resultado['charge_id']}"
+    except RuntimeError as e:
+        return f"🚫 {e} — devolviendo fallback: 'intente más tarde'"
+    except ConnectionError as e:
+        return f"❌ Error de red: {e}"
+
+
+# ---------------------------------------------------------------------------
+# Escenario de prueba
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    random.seed(42)
+    cb = CircuitBreaker(nombre="stripe", umbral_errores=3, timeout_open=5.0)
+
+    print("=== Fase 1: servicio degradado (70% de fallos) ===")
+    for i in range(6):
+        msg = procesar_pago(cb, monto=100 * (i + 1), prob_fallo=0.7)
+        print(f"  Intento {i+1}: {msg}")
+        print(f"  Estado: {cb}")
+
+    print("\n=== Fase 2: esperando recuperación (5 segundos) ===")
+    time.sleep(5.1)   # Esperar que el timeout OPEN expire
+
+    print("\n=== Fase 3: servicio recuperado (0% de fallos) ===")
+    for i in range(3):
+        msg = procesar_pago(cb, monto=500, prob_fallo=0.0)
+        print(f"  Intento {i+1}: {msg}")
+        print(f"  Estado: {cb}")
+```
+
+**Paso 2 — Ejecuta el script:**
+```bash
+python circuit_breaker.py
+```
+
+**Salida esperada:**
+```
+=== Fase 1: servicio degradado (70% de fallos) ===
+  Intento 1: ❌ Error de red: Stripe no disponible (timeout)
+  [stripe] Fallo #1/3
+  ...
+  [stripe] ⚡ Circuito ABIERTO — demasiados errores
+  Intento 4: 🚫 [stripe] Circuito ABIERTO — llamada rechazada sin intentar
+
+=== Fase 3: servicio recuperado (0% de fallos) ===
+  [stripe] Timeout expirado → HALF-OPEN (probando recuperación)
+  [stripe] Llamada exitosa en HALF-OPEN → volviendo a CLOSED
+  Intento 1: ✅ Pago de $500 aprobado — ch_XXXXX
+```
+
+**Paso 3 — Extiende el ejercicio:**
+1. Agrega un contador de llamadas rechazadas en estado OPEN (métrica para monitoreo).
+2. Implementa el patrón **Retry con backoff exponencial**: 1s, 2s, 4s entre reintentos antes de abrir el circuito.
+3. Modifica el código para tener **dos circuit breakers independientes**: uno para Stripe y otro para PayPal. Prueba que el fallo de uno no afecta al otro.
+
+**Preguntas de cierre:**
+- ¿Qué diferencia hay entre un Circuit Breaker y simplemente poner un `try/except`?
+- ¿Por qué el estado HALF-OPEN es necesario? ¿Qué pasaría sin él?
+- En un sistema de microservicios real, ¿dónde viviría el Circuit Breaker: en el cliente, en el servidor, o en el API Gateway?
 
 ---
 

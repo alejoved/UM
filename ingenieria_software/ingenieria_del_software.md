@@ -1193,6 +1193,141 @@ GitHub Actions workflow para proyecto anterior. Archivo `.github/workflows/ci.ym
 
 ---
 
+#### Ejercicio de código — Clase 07: Construir un pipeline CI real (25 minutos)
+
+**Objetivo:** Escribir desde cero un pipeline de CI funcional y el código que lo acompaña.
+
+**Contexto:** Tienes una API REST en Python (Flask) con un endpoint de suma. Tu tarea es escribir:
+1. La función con su prueba unitaria.
+2. El pipeline GitHub Actions que la verifica automáticamente en cada commit.
+
+---
+
+**Paso 1 — Escribe la función y su prueba (10 min)**
+
+Crea el archivo `app.py`:
+
+```python
+# app.py
+def sumar(a: float, b: float) -> float:
+    """Suma dos números. Lanza ValueError si alguno no es numérico."""
+    if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+        raise ValueError("Solo se aceptan números")
+    return a + b
+```
+
+Crea el archivo `test_app.py`:
+
+```python
+# test_app.py
+import pytest
+from app import sumar
+
+# ✅ Caso normal
+def test_sumar_enteros():
+    assert sumar(3, 4) == 7
+
+# ✅ Números negativos
+def test_sumar_negativos():
+    assert sumar(-5, 3) == -2
+
+# ✅ Decimales
+def test_sumar_decimales():
+    assert sumar(1.5, 2.5) == 4.0
+
+# ✅ Suma con cero
+def test_sumar_cero():
+    assert sumar(0, 100) == 100
+
+# ❌ Texto → debe lanzar error
+def test_sumar_texto_lanza_error():
+    with pytest.raises(ValueError):
+        sumar("hola", 5)
+```
+
+**Ejecuta localmente para verificar:**
+```bash
+pip install pytest
+pytest test_app.py -v
+```
+
+Salida esperada:
+```
+test_app.py::test_sumar_enteros      PASSED
+test_app.py::test_sumar_negativos    PASSED
+test_app.py::test_sumar_decimales    PASSED
+test_app.py::test_sumar_cero         PASSED
+test_app.py::test_sumar_texto_lanza_error PASSED
+
+5 passed in 0.12s
+```
+
+---
+
+**Paso 2 — Escribe el pipeline CI (15 min)**
+
+Crea el archivo `.github/workflows/ci.yml`:
+
+```yaml
+# .github/workflows/ci.yml
+
+name: Pipeline CI — Verificación automática
+
+# ¿Cuándo se ejecuta?
+on:
+  push:
+    branches: [main, develop]   # Al subir cambios a estas ramas
+  pull_request:
+    branches: [main]            # Al abrir un Pull Request hacia main
+
+jobs:
+  verificar:
+    name: Verificar código
+    runs-on: ubuntu-latest       # Servidor limpio con Ubuntu
+
+    steps:
+      # 1. Descargar el código del repositorio
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      # 2. Instalar Python
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3. Instalar dependencias del proyecto
+      - name: Instalar dependencias
+        run: pip install pytest pytest-cov
+
+      # 4. Ejecutar pruebas y medir cobertura
+      - name: Ejecutar pruebas
+        run: pytest test_app.py -v --cov=app --cov-report=term-missing
+
+      # 5. Verificar que cobertura >= 80%
+      - name: Verificar cobertura mínima
+        run: pytest test_app.py --cov=app --cov-fail-under=80
+```
+
+---
+
+**Paso 3 — Simula un fallo (reflexión, 5 min)**
+
+Modifica `sumar` para que falle:
+```python
+def sumar(a, b):
+    return a - b   # ← error intencional
+```
+
+Sube el cambio. ¿Qué muestra el pipeline? ¿Qué prueba falla primero?
+
+**Preguntas de cierre:**
+- ¿Qué pasaría si eliminamos el paso "Verificar cobertura mínima"?
+- ¿Por qué el pipeline usa `ubuntu-latest` y no tu computador directamente?
+- ¿Cómo agregarías un paso de lint con `flake8` o `pylint`?
+
+---
+
 ## Clase 08: Despliegue continuo y estrategias para lanzar sin apagar el sistema
 
 **Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
@@ -1338,6 +1473,119 @@ Post-deploy a producción:
 **Actividad 2: Escribir rollback plan (13 min)**
 
 Proyecto elegido. Detalla: detección (¿cómo sabemos que falló?), decisión (¿quién decide?), ejecución (¿cómo rollback?), validación (¿cómo sabemos que OK?).
+
+---
+
+#### Ejercicio de código — Clase 08: Simula un despliegue Canary con feature flags (25 minutos)
+
+**Objetivo:** Implementar en Python la lógica de un despliegue canary usando feature flags, para entender cómo un sistema envía solo el X% del tráfico a la nueva versión.
+
+**Contexto:** Tu equipo lanzó una nueva versión del algoritmo de recomendaciones. No quieres arriesgar a todos los usuarios, así que solo lo activas para el 20% del tráfico.
+
+---
+
+**Paso 1 — Escribe la lógica del feature flag (10 min):**
+
+```python
+# feature_flag.py
+
+import hashlib
+
+class FeatureFlag:
+    """
+    Decide si un usuario recibe la nueva versión o la vieja,
+    basándose en un porcentaje de activación.
+    """
+
+    def __init__(self, nombre: str, porcentaje_activado: float):
+        """
+        nombre:              nombre del flag (ej: "nuevo_algoritmo_recomendaciones")
+        porcentaje_activado: de 0.0 a 100.0 (ej: 20.0 = 20% de usuarios)
+        """
+        if not 0.0 <= porcentaje_activado <= 100.0:
+            raise ValueError("El porcentaje debe estar entre 0 y 100")
+        self.nombre              = nombre
+        self.porcentaje_activado = porcentaje_activado
+
+    def esta_activo_para(self, usuario_id: int) -> bool:
+        """
+        Determina si el flag está activo para un usuario específico.
+        Usa un hash del ID para que la asignación sea consistente:
+        el mismo usuario siempre recibe la misma versión.
+        """
+        # Convertir el ID a un número entre 0 y 99 (distribución uniforme)
+        clave   = f"{self.nombre}:{usuario_id}"
+        hash_bytes = hashlib.md5(clave.encode()).digest()
+        bucket  = hash_bytes[0] % 100            # valor entre 0 y 99
+
+        return bucket < self.porcentaje_activado  # si está en el porcentaje activado → True
+```
+
+---
+
+**Paso 2 — Usa el feature flag en el servicio (5 min):**
+
+```python
+# recomendaciones.py
+
+from feature_flag import FeatureFlag
+
+flag_nuevo_algoritmo = FeatureFlag("nuevo_algoritmo", porcentaje_activado=20.0)
+
+def obtener_recomendaciones(usuario_id: int) -> list:
+    if flag_nuevo_algoritmo.esta_activo_para(usuario_id):
+        # Nueva versión — solo para el 20% de usuarios
+        return _recomendaciones_v2(usuario_id)
+    else:
+        # Versión estable — para el 80% restante
+        return _recomendaciones_v1(usuario_id)
+
+def _recomendaciones_v1(usuario_id: int) -> list:
+    return [f"Producto clásico para usuario {usuario_id}"]
+
+def _recomendaciones_v2(usuario_id: int) -> list:
+    return [f"Producto ML para usuario {usuario_id}"]
+```
+
+---
+
+**Paso 3 — Prueba la distribución (10 min):**
+
+```python
+# test_feature_flag.py
+
+from feature_flag import FeatureFlag
+from recomendaciones import obtener_recomendaciones
+
+def test_distribucion_aproximada():
+    """El 20% de los primeros 1000 usuarios debe recibir v2."""
+    flag = FeatureFlag("nuevo_algoritmo", porcentaje_activado=20.0)
+    activos = sum(1 for uid in range(1000) if flag.esta_activo_para(uid))
+
+    # Esperamos aproximadamente 200 (±50 por variación estadística)
+    assert 150 <= activos <= 250, f"Distribución inesperada: {activos}/1000"
+
+def test_mismo_usuario_siempre_recibe_misma_version():
+    """Consistencia: el usuario 42 siempre debe recibir lo mismo."""
+    flag = FeatureFlag("nuevo_algoritmo", porcentaje_activado=20.0)
+    resultados = [flag.esta_activo_para(42) for _ in range(10)]
+    assert len(set(resultados)) == 1, "El mismo usuario recibió versiones distintas"
+
+def test_0_porciento_nunca_activo():
+    flag = FeatureFlag("apagado", porcentaje_activado=0.0)
+    assert all(not flag.esta_activo_para(uid) for uid in range(100))
+
+def test_100_porciento_siempre_activo():
+    flag = FeatureFlag("todos", porcentaje_activado=100.0)
+    assert all(flag.esta_activo_para(uid) for uid in range(100))
+```
+
+**Ejecuta:** `pytest test_feature_flag.py -v`
+
+**Preguntas de cierre:**
+- ¿Qué ventaja tiene usar el hash del ID en lugar de `random()`?
+- ¿Cómo ampliarías el porcentaje de 20% a 50% si todo funciona bien?
+- ¿Cómo modificarías el código para activar el flag solo para usuarios de un país específico?
 
 ---
 
@@ -1506,6 +1754,130 @@ Diseña quality gates de seguridad para pipeline CI:
 - SAST (SonarQube, qué bloquea?).
 - SCA (Snyk, umbral de severidad?).
 - Tests de seguridad (qué casos?).
+
+---
+
+#### Ejercicio de código — Clase 09: Encuentra y corrige las vulnerabilidades (25 minutos)
+
+**Objetivo:** Identificar vulnerabilidades reales del OWASP Top 10 en código Python y corregirlas.
+
+El siguiente código es una API de inicio de sesión con **5 vulnerabilidades intencionales**. Tu tarea es encontrarlas todas y escribir la versión corregida.
+
+---
+
+**Código vulnerable (SOLO para análisis — NO usar en producción):**
+
+```python
+# login_vulnerable.py  — CÓDIGO CON ERRORES INTENCIONALES PARA PRÁCTICA
+
+import sqlite3
+import hashlib
+import os
+
+# ❌ VULNERABILIDAD 1: Credenciales hardcodeadas en el código
+DB_PASSWORD = "admin123"
+SECRET_KEY  = "mi_clave_secreta_12345"
+
+def login(username: str, password: str):
+    # ❌ VULNERABILIDAD 2: SQL Injection — el usuario puede escribir SQL en su nombre
+    conn = sqlite3.connect("usuarios.db")
+    query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
+    resultado = conn.execute(query).fetchone()
+    conn.close()
+    return resultado
+
+def guardar_password(password: str) -> str:
+    # ❌ VULNERABILIDAD 3: Hash inseguro — MD5 está roto desde 2004
+    return hashlib.md5(password.encode()).hexdigest()
+
+def reset_password(user_id: str):
+    # ❌ VULNERABILIDAD 4: Sin autorización — cualquiera puede resetear la contraseña de cualquier usuario
+    nueva_pass = "temp_password"
+    conn = sqlite3.connect("usuarios.db")
+    conn.execute(f"UPDATE users SET password = '{nueva_pass}' WHERE id = {user_id}")
+    conn.commit()
+    conn.close()
+    print(f"Password reseteada para usuario {user_id}")
+
+def log_evento(evento: str):
+    # ❌ VULNERABILIDAD 5: Log injection — el atacante puede escribir logs falsos
+    with open("logs.txt", "a") as f:
+        f.write(f"EVENTO: {evento}\n")
+```
+
+---
+
+**Tu tarea (trabaja en parejas):**
+
+**Paso 1 — Identificar (10 min):**
+
+Para cada una de las 5 vulnerabilidades marcadas con `❌`, completa esta tabla:
+
+| # | Línea(s) de código | Vulnerabilidad OWASP | ¿Qué puede hacer el atacante? |
+|---|---|---|---|
+| 1 | `DB_PASSWORD = ...` | | |
+| 2 | `query = f"SELECT..."` | | |
+| 3 | `hashlib.md5(...)` | | |
+| 4 | `UPDATE users SET...` | | |
+| 5 | `f.write(f"EVENTO: {evento}")` | | |
+
+**Paso 2 — Corregir (15 min):**
+
+Reescribe el código sin las vulnerabilidades. Guía:
+
+```python
+# login_seguro.py — TU VERSIÓN CORREGIDA
+
+import sqlite3
+import bcrypt          # pip install bcrypt
+import os
+import re
+
+# ✅ CORRECCIÓN 1: Las credenciales vienen de variables de entorno, no del código
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+SECRET_KEY  = os.environ.get("SECRET_KEY")
+
+# Verifica que estén configuradas
+if not DB_PASSWORD or not SECRET_KEY:
+    raise EnvironmentError("Faltan variables de entorno DB_PASSWORD y SECRET_KEY")
+
+def login(username: str, password: str):
+    # ✅ CORRECCIÓN 2: Parametrized query — el input del usuario NO entra directo al SQL
+    conn = sqlite3.connect("usuarios.db")
+    query = "SELECT id, password_hash FROM users WHERE username = ?"  # ← el ? es el placeholder
+    resultado = conn.execute(query, (username,)).fetchone()            # ← el valor va separado
+    conn.close()
+
+    if resultado is None:
+        return None  # Usuario no existe
+
+    user_id, password_hash = resultado
+    # ✅ CORRECCIÓN 3: Verificar con bcrypt (incluye salt automático)
+    if bcrypt.checkpw(password.encode(), password_hash):
+        return user_id
+    return None
+
+def guardar_password(password: str) -> bytes:
+    # ✅ CORRECCIÓN 3: bcrypt con salt — si dos usuarios tienen la misma contraseña, el hash es diferente
+    salt = bcrypt.gensalt(rounds=12)    # rounds=12 hace el hash más lento (más seguro)
+    return bcrypt.hashpw(password.encode(), salt)
+
+def reset_password(user_id: str, usuario_autenticado_id: str, es_admin: bool):
+    # ✅ CORRECCIÓN 4: Solo admin o el propio usuario pueden resetear
+    if not es_admin and user_id != usuario_autenticado_id:
+        raise PermissionError("No tienes permiso para resetear esta contraseña")
+    # ... resto del reset seguro
+
+def log_evento(evento: str):
+    # ✅ CORRECCIÓN 5: Sanitizar el evento para evitar log injection
+    evento_limpio = evento.replace("\n", " ").replace("\r", " ")
+    with open("logs.txt", "a") as f:
+        f.write(f"EVENTO: {evento_limpio}\n")
+```
+
+**Pregunta de reflexión:**
+- ¿Por qué `bcrypt` es mejor que `md5` o `sha256` para contraseñas?
+- ¿Qué pasaría si un atacante escribe `'; DROP TABLE users; --` como nombre de usuario en el código vulnerable?
 
 ---
 
@@ -1730,6 +2102,121 @@ Proyecto con 10 secretos (DB password, API keys, etc.). Diseña:
 
 ---
 
+#### Ejercicio de código — Clase 10: De credenciales en el código a variables de entorno (20 minutos)
+
+**Objetivo:** Migrar un script con credenciales hardcodeadas a una versión segura que las lee desde variables de entorno, y verificar que gitleaks detecta el problema original.
+
+---
+
+**Código inseguro (punto de partida):**
+
+```python
+# conexion_bd_insegura.py  — ❌ NUNCA hacer esto en producción
+
+import psycopg2   # pip install psycopg2-binary
+
+def conectar():
+    return psycopg2.connect(
+        host     = "db.empresa.com",
+        database = "produccion",
+        user     = "admin",
+        password = "P@ssw0rd2026!"    # ← credencial expuesta en el código
+    )
+
+STRIPE_API_KEY = "sk_live_4eC39HqLyjWDarjtT1zdp7dc"  # ← clave real de Stripe en el repo
+```
+
+Si este archivo llega a GitHub (aunque sea en un commit borrado después), las credenciales quedan en el historial para siempre.
+
+---
+
+**Paso 1 — Crear el archivo `.env` (fuera del repositorio):**
+
+```bash
+# Crea el archivo .env en la raíz del proyecto (NO lo hagas commit)
+cat > .env << 'EOF'
+DB_HOST=db.empresa.com
+DB_NAME=produccion
+DB_USER=admin
+DB_PASSWORD=P@ssw0rd2026!
+STRIPE_API_KEY=sk_live_4eC39HqLyjWDarjtT1zdp7dc
+EOF
+
+# Agrega .env al .gitignore para que NUNCA entre al repositorio
+echo ".env" >> .gitignore
+```
+
+---
+
+**Paso 2 — Reescribe el código para leer desde el entorno:**
+
+```python
+# conexion_bd_segura.py  — ✅ Versión correcta
+
+import os
+import psycopg2
+from dotenv import load_dotenv   # pip install python-dotenv
+
+# Carga las variables del archivo .env (en desarrollo)
+# En producción, las variables se inyectan directamente por el sistema (CI/CD, Kubernetes secrets)
+load_dotenv()
+
+def conectar():
+    host     = os.environ.get("DB_HOST")
+    database = os.environ.get("DB_NAME")
+    user     = os.environ.get("DB_USER")
+    password = os.environ.get("DB_PASSWORD")
+
+    # Verificar que todas las variables necesarias están presentes
+    if not all([host, database, user, password]):
+        raise EnvironmentError(
+            "Faltan variables de entorno: DB_HOST, DB_NAME, DB_USER, DB_PASSWORD"
+        )
+
+    return psycopg2.connect(
+        host=host, database=database, user=user, password=password
+    )
+
+STRIPE_API_KEY = os.environ.get("STRIPE_API_KEY")
+if not STRIPE_API_KEY:
+    raise EnvironmentError("Falta variable de entorno: STRIPE_API_KEY")
+```
+
+---
+
+**Paso 3 — Agregar detección automática de secretos al pipeline CI:**
+
+```yaml
+# .github/workflows/security.yml  — Fragmento a agregar al pipeline existente
+
+  detectar-secretos:
+    name: Detectar credenciales en el código
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0            # Necesario para analizar todo el historial
+
+      - name: Instalar gitleaks
+        run: |
+          wget -q https://github.com/gitleaks/gitleaks/releases/download/v8.18.0/gitleaks_8.18.0_linux_x64.tar.gz
+          tar -xzf gitleaks_8.18.0_linux_x64.tar.gz
+          chmod +x gitleaks
+
+      - name: Escanear repositorio
+        run: ./gitleaks detect --source . --exit-code 1
+        # exit-code 1 → el pipeline FALLA si encuentra credenciales
+```
+
+**Prueba: si agregas `password = "secreto123"` en cualquier archivo y haces commit, este paso fallará y el merge quedará bloqueado.**
+
+**Preguntas de cierre:**
+- ¿Por qué agregar `.env` al `.gitignore` no es suficiente si ya lo subiste una vez?
+- ¿Cómo se inyectan las variables de entorno en producción sin usar un archivo `.env`?
+- ¿Qué diferencia hay entre `os.environ.get("KEY")` y `os.environ["KEY"]`?
+
+---
+
 # UNIDAD 3. Operación, observabilidad e incidentes
 
 ---
@@ -1884,6 +2371,119 @@ Request de login. Qué información loguear? Campos.
 **Actividad 2: Alertas críticas (13 min)**
 
 App de comercio. 10 alertas críticas (error rate, latencia, etc.). Define threshold, escalation path.
+
+---
+
+#### Ejercicio de código — Clase 11: Mejorar logs de texto plano a logs estructurados (25 minutos)
+
+**Objetivo:** Transformar logs de texto plano (difíciles de buscar) a logs estructurados en JSON que un sistema de monitoreo pueda analizar automáticamente.
+
+---
+
+**Código inicial — logs en texto plano (difícil de analizar):**
+
+```python
+# servicio_pagos_malo.py
+
+def procesar_pago(usuario_id: int, monto: float, metodo: str):
+    print(f"Procesando pago de {usuario_id}")          # ← ¿Qué nivel? ¿Qué contexto?
+    
+    if monto <= 0:
+        print(f"Error: monto inválido {monto}")        # ← No hay severidad, no hay ID de request
+        return False
+    
+    # Simular llamada a procesador de pagos
+    print(f"Pago {monto} procesado por {metodo}")      # ← No hay timestamp, sin trace_id
+    return True
+
+# Logs que genera:
+# Procesando pago de 456
+# Pago 99.99 procesado por tarjeta
+```
+
+**Problema:** Si hay 10,000 pagos por hora, no puedes buscar fácilmente todos los pagos fallidos de un usuario específico, ni cuánto tarda cada paso.
+
+---
+
+**Tu tarea: Reescribir con logs estructurados (15 min)**
+
+Completa el siguiente código reemplazando los `# TU CÓDIGO AQUÍ`:
+
+```python
+# servicio_pagos_mejorado.py
+
+import logging
+import json
+import uuid
+from datetime import datetime, timezone
+
+# Configurar el logger para emitir JSON
+class FormateadorJSON(logging.Formatter):
+    def format(self, record):
+        entrada = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "nivel":     record.levelname,        # INFO, WARNING, ERROR
+            "servicio":  "servicio-pagos",
+            "mensaje":   record.getMessage(),
+            # Incluir campos extra si existen
+            **getattr(record, "extra", {})
+        }
+        return json.dumps(entrada, ensure_ascii=False)
+
+# Crear logger
+logger = logging.getLogger("pagos")
+handler = logging.StreamHandler()
+handler.setFormatter(FormateadorJSON())
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+
+
+def procesar_pago(usuario_id: int, monto: float, metodo: str) -> bool:
+    # Generar un ID único por request para poder rastrear toda la operación
+    request_id = str(uuid.uuid4())[:8]
+
+    # ✅ Log de inicio — nivel INFO con contexto completo
+    logger.info(
+        "Iniciando procesamiento de pago",
+        extra={
+            "extra": {
+                "request_id":  request_id,
+                "usuario_id":  usuario_id,
+                "monto":       monto,
+                "metodo":      metodo
+            }
+        }
+    )
+
+    # ✅ Validación con log de WARNING si el monto es inválido
+    if monto <= 0:
+        # TU CÓDIGO AQUÍ: emitir un log de nivel WARNING con request_id, usuario_id y monto
+        pass
+
+    # ✅ Simulación de procesamiento exitoso
+    # TU CÓDIGO AQUÍ: emitir un log INFO de "Pago procesado exitosamente"
+    # incluye: request_id, usuario_id, monto, metodo, duracion_ms (usa un valor fijo de 143)
+
+    return True
+```
+
+**Salida esperada cuando se llama `procesar_pago(456, 99.99, "tarjeta")`:**
+
+```json
+{"timestamp": "2026-08-15T10:30:44Z", "nivel": "INFO", "servicio": "servicio-pagos", "mensaje": "Iniciando procesamiento de pago", "request_id": "a3b9c1d2", "usuario_id": 456, "monto": 99.99, "metodo": "tarjeta"}
+{"timestamp": "2026-08-15T10:30:44Z", "nivel": "INFO", "servicio": "servicio-pagos", "mensaje": "Pago procesado exitosamente", "request_id": "a3b9c1d2", "usuario_id": 456, "monto": 99.99, "metodo": "tarjeta", "duracion_ms": 143}
+```
+
+**Salida esperada cuando se llama `procesar_pago(456, -50, "tarjeta")`:**
+
+```json
+{"timestamp": "2026-08-15T10:30:45Z", "nivel": "WARNING", "servicio": "servicio-pagos", "mensaje": "Monto inválido rechazado", "request_id": "f7e2a4b1", "usuario_id": 456, "monto": -50}
+```
+
+**Preguntas de cierre:**
+- ¿Por qué el `request_id` es útil cuando hay muchos usuarios haciendo pagos al mismo tiempo?
+- ¿Qué diferencia hay entre `logger.info()`, `logger.warning()` y `logger.error()`?
+- Con logs en JSON, ¿cómo buscarías en Elasticsearch todos los pagos fallidos de `usuario_id = 456`?
 
 ---
 
@@ -2469,6 +3069,142 @@ Mismo incident. Escribe postmortem blameless con: timeline, root causes, contrib
 
 ---
 
+#### Ejercicio de código — Clase 15: Traza el bug y aplica los 5 Por qués (25 minutos)
+
+**Objetivo:** Practicar análisis de causa raíz leyendo código real, no solo describiendo el problema en abstracto.
+
+**Escenario:** Tu sistema de carrito de compras tiene este bug reportado en producción:
+
+> *"El total del carrito a veces muestra $0.00 aunque hay productos. Ocurre cuando el usuario agrega ítems, cierra sesión y vuelve a entrar."*
+
+---
+
+**Código con el bug (léelo completo antes de responder):**
+
+```python
+# carrito.py
+
+class Carrito:
+    def __init__(self):
+        self.items = []         # lista de dicts: {nombre, precio, cantidad}
+        self.descuento = 0.0    # porcentaje de descuento (0.0 a 1.0)
+
+    def agregar_item(self, nombre: str, precio: float, cantidad: int):
+        self.items.append({"nombre": nombre, "precio": precio, "cantidad": cantidad})
+
+    def calcular_total(self) -> float:
+        subtotal = 0
+        for item in self.items:
+            subtotal += item["precio"] * item["cantidad"]
+        return subtotal * (1 - self.descuento)
+
+    def limpiar(self):
+        self.items = []
+        self.descuento = 0.0
+
+
+# sesion.py
+
+class Sesion:
+    _carrito_activo = None    # ← variable de clase (compartida entre TODAS las instancias)
+
+    def iniciar(self, usuario_id: int):
+        self.usuario_id = usuario_id
+        if Sesion._carrito_activo is None:
+            Sesion._carrito_activo = Carrito()   # ← solo crea uno nuevo si no existe
+
+    def obtener_carrito(self) -> Carrito:
+        return Sesion._carrito_activo
+
+    def cerrar(self):
+        Sesion._carrito_activo.limpiar()          # ← limpia el carrito al cerrar sesión
+        # ¿Pero lo destruye? ¿O solo lo vacía?
+```
+
+**Flujo que produce el bug:**
+
+```python
+# Usuario A agrega productos
+sesion_a = Sesion()
+sesion_a.iniciar(usuario_id=1)
+sesion_a.obtener_carrito().agregar_item("Libro", 25.0, 2)
+print(sesion_a.obtener_carrito().calcular_total())  # → 50.0 ✅
+
+# Usuario A cierra sesión
+sesion_a.cerrar()
+
+# Usuario B inicia sesión y agrega producto
+sesion_b = Sesion()
+sesion_b.iniciar(usuario_id=2)
+sesion_b.obtener_carrito().agregar_item("Mochila", 80.0, 1)
+print(sesion_b.obtener_carrito().calcular_total())  # → ¿Cuánto da? 🤔
+```
+
+---
+
+**Paso 1 — Analiza el comportamiento (5 min):**
+
+Sin ejecutar el código, responde:
+1. `_carrito_activo` es una variable de instancia o de clase?
+2. Cuando `sesion_b` llama `iniciar(usuario_id=2)`, ¿se crea un carrito nuevo o se reutiliza el de `sesion_a`?
+3. ¿Qué retorna `sesion_b.obtener_carrito().calcular_total()`? ¿`80.0` o `0.0`?
+
+**Paso 2 — Aplica los 5 Por qués (10 min):**
+
+| # | Pregunta | Tu respuesta |
+|---|---|---|
+| 1 | ¿Por qué el total es $0.00? | |
+| 2 | ¿Por qué el carrito está vacío al iniciar sesión? | |
+| 3 | ¿Por qué `limpiar()` deja el carrito vacío para el siguiente usuario? | |
+| 4 | ¿Por qué `_carrito_activo` es compartido entre sesiones? | |
+| 5 | ¿Por qué el código fue escrito así sin detectarse el error? | |
+
+**Paso 3 — Escribe la corrección (10 min):**
+
+```python
+# sesion_corregida.py — TU VERSIÓN
+
+class Sesion:
+    def iniciar(self, usuario_id: int):
+        self.usuario_id = usuario_id
+        # TU CÓDIGO AQUÍ:
+        # La variable del carrito debe ser de INSTANCIA, no de clase.
+        # Siempre crear un carrito NUEVO al iniciar sesión.
+        pass
+
+    def obtener_carrito(self) -> Carrito:
+        # TU CÓDIGO AQUÍ
+        pass
+
+    def cerrar(self):
+        # TU CÓDIGO AQUÍ:
+        # Al cerrar sesión, ¿qué debe pasar con el carrito?
+        pass
+```
+
+**Respuesta esperada (no mires hasta haber intentado):**
+
+```python
+class Sesion:
+    def iniciar(self, usuario_id: int):
+        self.usuario_id = usuario_id
+        self._carrito = Carrito()   # ← variable de INSTANCIA, nuevo carrito por sesión
+
+    def obtener_carrito(self) -> Carrito:
+        return self._carrito
+
+    def cerrar(self):
+        self._carrito = None        # ← liberar referencia (el GC la limpiará)
+        self.usuario_id = None
+```
+
+**Preguntas de postmortem:**
+- ¿Qué prueba unitaria habría detectado este bug antes de llegar a producción?
+- ¿Qué "condición del sistema" permitió que el bug llegara a producción?
+- Si tuvieras que escribir el accionable de postmortem, ¿cuál sería?
+
+---
+
 # UNIDAD 4. Mantenimiento, evolución, ética y liberación
 
 ---
@@ -2632,6 +3368,167 @@ assert(calculateTotal(
 **Actividad 2: Refactorizar función (13 min)**
 
 Código complejo dado. Refactoriza: extrae funciones, mejora tests, reduce coupling.
+
+---
+
+#### Ejercicio de código — Clase 16: Refactorización paso a paso (25 minutos)
+
+**Objetivo:** Aplicar 3 técnicas de refactorización concretas sobre un fragmento de código real, verificando en cada paso que el comportamiento no cambió.
+
+**Código original (funciona, pero es difícil de mantener):**
+
+```python
+# factura.py  — VERSIÓN SIN REFACTORIZAR
+
+def procesar_factura(cliente_id, items, descuento_cliente):
+    # Calcular subtotal
+    subtotal = 0
+    for i in items:
+        if i["tipo"] == "producto":
+            subtotal += i["precio"] * i["cantidad"]
+        elif i["tipo"] == "servicio":
+            subtotal += i["precio"]
+
+    # Calcular impuesto
+    if subtotal < 100:
+        impuesto = subtotal * 0.08
+    elif subtotal < 1000:
+        impuesto = subtotal * 0.12
+    else:
+        impuesto = subtotal * 0.16
+
+    # Calcular descuento
+    if descuento_cliente == "VIP":
+        descuento = subtotal * 0.10
+    elif descuento_cliente == "FIDELIDAD":
+        descuento = subtotal * 0.05
+    else:
+        descuento = 0
+
+    total = subtotal + impuesto - descuento
+
+    # Construir resultado
+    resultado = {
+        "cliente":   cliente_id,
+        "subtotal":  subtotal,
+        "impuesto":  impuesto,
+        "descuento": descuento,
+        "total":     total
+    }
+    print(f"Factura para cliente {cliente_id}: ${total:.2f}")
+    return resultado
+```
+
+**Problemas que tiene este código:**
+- Una función hace 4 cosas distintas (viola el Principio de Responsabilidad Única).
+- Los números mágicos (`0.08`, `0.12`, `0.16`, `0.10`, `0.05`) no tienen nombre.
+- El `print` dentro de la función de negocio mezcla lógica con presentación.
+- Muy difícil de probar en partes.
+
+---
+
+**Paso 1 — Extraer constantes con nombre (5 min)**
+
+Mueve los números mágicos a constantes en la parte superior del archivo:
+
+```python
+# factura_v1.py — después del Paso 1
+
+# TU CÓDIGO AQUÍ: define las constantes con nombres descriptivos
+# Ejemplos de nombres: TASA_IVA_BASICA, TASA_IVA_MEDIA, TASA_IVA_ALTA
+#                      DESCUENTO_VIP, DESCUENTO_FIDELIDAD
+#                      UMBRAL_SUBTOTAL_BAJO, UMBRAL_SUBTOTAL_MEDIO
+```
+
+---
+
+**Paso 2 — Extraer funciones puras (10 min)**
+
+Divide la función grande en 3 funciones pequeñas, cada una con una sola responsabilidad:
+
+```python
+# factura_v2.py — después del Paso 2
+
+def calcular_subtotal(items: list) -> float:
+    """Suma el costo de todos los ítems según su tipo."""
+    # TU CÓDIGO AQUÍ
+
+def calcular_impuesto(subtotal: float) -> float:
+    """Retorna el impuesto según el tramo del subtotal."""
+    # TU CÓDIGO AQUÍ
+
+def calcular_descuento(subtotal: float, tipo_cliente: str) -> float:
+    """Retorna el descuento según el tipo de cliente."""
+    # TU CÓDIGO AQUÍ
+
+def procesar_factura(cliente_id: int, items: list, tipo_cliente: str) -> dict:
+    """Ensambla la factura usando las funciones anteriores."""
+    subtotal  = calcular_subtotal(items)
+    impuesto  = calcular_impuesto(subtotal)
+    descuento = calcular_descuento(subtotal, tipo_cliente)
+    total     = subtotal + impuesto - descuento
+
+    return {
+        "cliente":   cliente_id,
+        "subtotal":  round(subtotal,  2),
+        "impuesto":  round(impuesto,  2),
+        "descuento": round(descuento, 2),
+        "total":     round(total,     2)
+    }
+    # Nota: ya no hay print() aquí — el llamador decide cómo mostrar el resultado
+```
+
+---
+
+**Paso 3 — Escribir pruebas para verificar que no cambiaste el comportamiento (10 min)**
+
+```python
+# test_factura.py
+
+from factura_v2 import calcular_subtotal, calcular_impuesto, calcular_descuento, procesar_factura
+
+ITEMS_EJEMPLO = [
+    {"tipo": "producto", "precio": 50.0,  "cantidad": 2},   # 100.00
+    {"tipo": "servicio", "precio": 30.0,  "cantidad": 1},   # 30.00
+]
+# subtotal esperado: 130.00
+
+def test_subtotal_mezcla_producto_y_servicio():
+    assert calcular_subtotal(ITEMS_EJEMPLO) == 130.0
+
+def test_impuesto_tramo_medio():
+    # subtotal 130 → tramo medio (100-1000) → 12%
+    assert calcular_impuesto(130.0) == 130.0 * 0.12
+
+def test_descuento_vip():
+    assert calcular_descuento(130.0, "VIP") == 130.0 * 0.10
+
+def test_descuento_sin_categoria():
+    assert calcular_descuento(130.0, "NORMAL") == 0.0
+
+def test_factura_completa_cliente_vip():
+    resultado = procesar_factura(
+        cliente_id=42,
+        items=ITEMS_EJEMPLO,
+        tipo_cliente="VIP"
+    )
+    assert resultado["subtotal"]  == 130.0
+    assert resultado["impuesto"]  == round(130.0 * 0.12, 2)
+    assert resultado["descuento"] == round(130.0 * 0.10, 2)
+    assert resultado["total"]     == round(130.0 + 130.0 * 0.12 - 130.0 * 0.10, 2)
+```
+
+**Ejecuta las pruebas:**
+```bash
+pytest test_factura.py -v
+```
+
+**Todas deben pasar en verde. Si alguna falla, tu refactorización cambió el comportamiento.**
+
+**Preguntas de cierre:**
+- ¿Cuántas pruebas tenía el código original? ¿Cuántas tiene ahora?
+- Si el negocio cambia la tasa de impuesto alta a 18%, ¿en cuántos lugares del código nuevo debes cambiar? ¿Y en el original?
+- ¿Qué técnicas de refactorización aplicaste en cada paso? (Extract Constant, Extract Function, Separate Concerns)
 
 ---
 
