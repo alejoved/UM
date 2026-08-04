@@ -1,9 +1,36 @@
 # Ingeniería del Software — Curso Completo (2 horas × 20 clases)
 
 > Material de referencia — Universidad de Manizales  
-> Última actualización: agosto 2026 | Versión: 3.0 (Completo)  
-> **Duración total: 40 horas** | Dirigido a: Estudiantes de 4° semestre de Ingeniería de Sistemas
+> Última actualización: agosto 2026 | Versión: 3.0 (Completo)
 
+---
+
+## Docente Jorge Alejandro Aguirre Gutierrez
+
+**Ingeniero de Software | SRE | AWS Certified ×4**
+
+Profesional con experiencia en diseño, desarrollo y operación de sistemas de software a escala, especializado en arquitecturas cloud, prácticas DevOps e IA.
+
+**Certificaciones y especialidades técnicas:**
+
+- ☁️ **AWS Certified** × 4: Solutions Architect, Developer, AI Practitioner y DevOps Engineer
+- 🖥️ **Desarrollo frontend:** Angular, React
+- ⚙️ **Desarrollo backend:** Spring (Java), NestJS (Node.js)
+- 🗄️ **Administración de bases de datos:** Relacionales y NoSQL
+- 🏗️ **Infraestructura como código (IaC):** Terraform, CloudFormation
+- 🚀 **AWS DevOps:** CI/CD, automatización de infraestructura, observabilidad en nube
+
+**Experiencia docente:**
+
+| Institución | Programa | Nivel |
+|---|---|---|
+| Universidad de Caldas | Ingeniería de Sistemas | Pregrado |
+| Universidad Autónoma de Manizales | Ingeniería de Sistemas | Pregrado |
+| Universidad Autónoma de Manizales | Especialización en Ingeniería del Software con Énfasis en Pruebas | Posgrado |
+| Universidad Autónoma de Manizales | Maestría en Ingeniería de Sistemas | Posgrado |
+
+![alt text](image.png)
+![alt text](image-1.png)
 ---
 
 ## Índice de contenidos
@@ -35,6 +62,22 @@
 - Clase 18: Deuda técnica y ciclo de vida de componentes con IA
 - Clase 19: Ética profesional, licencias y accesibilidad
 - Clase 20: Sostenibilidad, decisión go/no-go y sustentación final
+
+---
+
+## Evaluación del curso
+
+| Componente | Porcentaje | Descripción |
+|---|---|---|
+| **Primer parcial** | 20 % | Evaluación escrita — Unidad 1: Ciclo de vida, gestión y calidad |
+| **Segundo parcial** | 20 % | Evaluación escrita — Unidad 2: Configuración, CI/CD y DevSecOps |
+| **Tercer parcial** | 20 % | Evaluación escrita — Unidades 3 y 4: Operación, mantenimiento y ética |
+| **Proyecto** | 20 % | Desarrollo incremental del proyecto de grupo (NotasYa / FacturaYa / VehiculosYa / DoctorYa / ViajaYa) con entregables por unidad |
+| **Talleres** | 20 % | Actividades prácticas realizadas en clase (Jira, Jenkins, pipelines, postmortems, etc.) |
+| **Total** | **100 %** | |
+
+> **Nota mínima aprobatoria:** 3.0 / 5.0 en cada componente.  
+> Los talleres se evalúan con entrega en clase; no tienen recuperación fuera de la sesión correspondiente.
 
 ---
 
@@ -164,6 +207,126 @@ Principios clave:
 
 ---
 
+#### 4. ¿Qué se construye en cada fase? — Artefactos por etapa
+
+Independientemente del modelo (cascada, ágil, DevOps), un proyecto de software atraviesa fases conceptuales. Cada fase produce **artefactos concretos y verificables**.
+
+---
+
+**Fase 1 — Requisitos**
+
+> Objetivo: Entender qué debe hacer el sistema y para quién.
+
+| Artefacto | Descripción |
+|---|---|
+| **Documento de visión** | Problema que resuelve, usuarios objetivo, alcance inicial |
+| **Historias de usuario** | "Como *[rol]*, quiero *[acción]* para *[beneficio]*" |
+| **Casos de uso** | Flujos de interacción usuario ↔ sistema |
+| **Backlog priorizado** | Lista ordenada de funcionalidades por valor de negocio |
+| **Criterios de aceptación** | Condiciones que determinan que una historia está "done" |
+| **Prototipos / wireframes** | Bocetos de interfaz para validar con el cliente antes de codificar |
+| **Glosario del dominio** | Diccionario de términos del negocio (lenguaje ubiquo) |
+
+---
+
+**Fase 2 — Diseño**
+
+> Objetivo: Decidir cómo se va a construir el sistema técnicamente.
+
+*Diseño arquitectónico (alto nivel):*
+
+| Artefacto | Descripción |
+|---|---|
+| **Diagrama de arquitectura** | Estilo elegido: monolítico, microservicios, capas, hexagonal |
+| **Diagrama de contexto (C4 L1)** | El sistema y sus actores/sistemas externos |
+| **Diagrama de contenedores (C4 L2)** | Apps, APIs, bases de datos y cómo se comunican |
+| **ADR (Architecture Decision Records)** | Por qué se eligió cada tecnología o patrón |
+
+*Diseño detallado (bajo nivel):*
+
+| Artefacto | Descripción |
+|---|---|
+| **Diagrama de clases** | Entidades, atributos, relaciones, herencia |
+| **Diagrama Entidad-Relación (ER)** | Modelo de base de datos relacional |
+| **Diagrama de secuencia** | Cómo interactúan los objetos en el tiempo para un caso de uso |
+| **Diagrama de estados** | Ciclo de vida de una entidad (ej: `pedido: creado → pagado → enviado → entregado`) |
+| **Contrato de API (OpenAPI/Swagger)** | Endpoints, request/response, códigos de error |
+
+---
+
+**Fase 3 — Implementación**
+
+> Objetivo: Construir el software de forma ordenada, revisable y desplegable.
+
+| Artefacto | Descripción |
+|---|---|
+| **Código fuente versionado** | Git con commits atómicos y mensajes convencionales |
+| **Pull Requests con code review** | Al menos un revisor antes de mergear a main |
+| **Migraciones de base de datos** | Scripts versionados (`V1__create_users.sql`) — nunca SQL manual |
+| **Dockerfile / IaC** | Infraestructura como código (Terraform, Helm, Docker Compose) |
+| **Configuración externalizada** | Variables de entorno separadas del código (12-Factor App) |
+| **Pipeline CI configurado** | Que valide (lint + tests) cada commit automáticamente |
+| **README del módulo** | Cómo levantar, configurar y contribuir al componente |
+
+---
+
+**Fase 4 — Pruebas**
+
+> Objetivo: Verificar que el software funciona correcta, segura y eficientemente.
+
+La **pirámide de pruebas** establece la proporción: muchas unitarias (baratas, rápidas) → menos de integración → pocas E2E (caras, lentas).
+
+```
+          /‾‾‾‾‾‾‾‾‾‾‾‾\
+         /    E2E (UI)   \        ← Pocos, lentos, frágiles
+        /‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\
+       /    Integración    \      ← Moderados
+      /‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\
+     /      Unitarias        \    ← Muchos, rápidos, estables
+    /‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\
+```
+
+| Tipo | Qué verifica | Herramientas ejemplo |
+|---|---|---|
+| **Unitarias** | Una función/clase aislada, sin dependencias externas | JUnit, Jest, pytest |
+| **Integración** | Módulos conectados entre sí (BD, servicios, APIs) | Testcontainers, Supertest |
+| **Contrato** | Que la API cumple el contrato acordado con el consumidor | Pact |
+| **End-to-End (E2E)** | Flujo completo de usuario desde la interfaz | Playwright, Cypress, Selenium |
+| **Rendimiento** | Latencia y comportamiento bajo carga o estrés | k6, Locust, JMeter |
+| **Seguridad (SAST/DAST)** | Vulnerabilidades en código fuente y en ejecución | SonarQube, OWASP ZAP |
+| **Regresión** | Que funcionalidades anteriores no se rompieron | Suite completa automatizada en CI |
+| **Aceptación (UAT)** | El cliente valida que el sistema cumple los criterios de negocio | Gherkin / Cucumber |
+
+---
+
+**Fase 5 — Despliegue / Entrega**
+
+> Objetivo: Llevar el software a producción de forma controlada y reversible.
+
+| Artefacto | Descripción |
+|---|---|
+| **Pipeline CD** | Automatiza despliegue a staging y producción |
+| **Release notes / Changelog** | Qué cambió en cada versión (siguiendo SemVer) |
+| **Plan de rollback** | Cómo revertir si la nueva versión falla |
+| **Feature flags** | Activar funcionalidades sin redeploy (LaunchDarkly, Unleash) |
+| **Estrategia de despliegue** | Blue/Green, Canary, Rolling update — según el riesgo |
+
+---
+
+**Fase 6 — Mantenimiento y Operación**
+
+> Objetivo: Operar el sistema en producción y mejorarlo de forma continua.
+
+| Artefacto | Descripción |
+|---|---|
+| **Runbooks** | Guías paso a paso para operar o recuperar el sistema |
+| **Dashboards de observabilidad** | Logs, métricas, trazas (Grafana, Datadog, Prometheus) |
+| **Alertas** | Notificaciones automáticas ante degradación de SLOs |
+| **Postmortems** | Análisis de incidentes: qué pasó, causa raíz, acciones correctivas |
+| **Registro de deuda técnica** | Lo que se debe refactorizar con su impacto estimado |
+
+---
+
 ### Ejemplos prácticos (40 minutos)
 
 **Ejemplo 1: Kodak — Cascada fallida**
@@ -186,20 +349,6 @@ Empresa tradicional (500 personas, software médico). Ciclo regulatorio 6 meses.
 
 ---
 
-### Actividades prácticas (30 minutos)
-
-**Actividad 1: Matriz de decisión (15 min)**
-
-5 proyectos: (1) Nómina, (2) Red social, (3) Control misiles, (4) SaaS CRM, (5) Auto eléctrico.
-
-Elige modelo + 3 criterios + justificación.
-
-**Actividad 2: Flujo de proyecto (15 min)**
-
-Dibuja flujo completo (requisito → mantenimiento) para modelo elegido. Identifica roles, documentos, puntos de riesgo.
-
----
-
 ### Preguntas de reflexión
 
 1. ¿Cascada es obsoleto o todavía tiene sentido en algún proyecto?
@@ -208,18 +357,9 @@ Dibuja flujo completo (requisito → mantenimiento) para modelo elegido. Identif
 
 ---
 
-### Recursos
-
-- ISO/IEC/IEEE 12207:2017
-- "The Phoenix Project" — Kim et al.
-- "Accelerate" — Forsgren et al.
-- Agile Manifesto: agilemanifesto.org
-
----
-
 ## Clase 02: DevOps — Más allá de herramientas (dimensión humana)
 
-**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 1
+**Duración:** 2 horas | **Unidad:** 1
 
 ### Objetivos de aprendizaje
 
@@ -230,7 +370,7 @@ Dibuja flujo completo (requisito → mantenimiento) para modelo elegido. Identif
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. DevOps más allá de herramientas
 
@@ -311,49 +451,271 @@ Resultado: Las personas reportan errores temprano porque no temen castigo.
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Actividad práctica: Registro y configuración de Jira
 
-**Google (Bottom-Up):**
-- Startup: Ingenieros construyen todo.
-- Escala: SRE role (50% ops, 50% ingeniería).
-- Error Budget: SLO 99.9% → presupuesto 0.1% downtime.
-- Resultado: 2M cambios/día.
-
-**IBM (Top-Down):**
-- 2015: Transformación decidida desde C-level.
-- Herramientas, capacitación, innovation centers.
-- Resultado: Lead time 6 meses → 2 semanas. CFR < 5%.
-
-**Empresa energética (Hybrid):**
-- 2015: Lab innovación (8 personas). +$2M/año.
-- 2017: 3 equipos. Herramientas.
-- 2019: 20 equipos. Deployment 1/año → 5/semana. MTTR 4h → 15min.
+> **Objetivo:** Crear la cuenta de Jira, configurar el proyecto Scrum del grupo y dejar el entorno listo para registrar historias de usuario en la Clase 03.
 
 ---
 
-### Actividades prácticas (25 minutos)
+#### Paso 1 — Crear cuenta gratuita en Jira
 
-**Actividad 1: Diagnóstico cultural (10 min)**
+1. Ve a `https://www.atlassian.com/software/jira/free` → clic en **Get it free**.
+2. Ingresa tu correo institucional y crea una contraseña segura.
+3. Selecciona el producto **Jira Software** → **Get it free**.
+4. En *"What is your team's name?"* escribe el nombre de tu grupo (ej: `Grupo-A`).
+5. Avanza con **Next** hasta llegar al dashboard inicial de Jira.
 
-Checklist 8 preguntas. Scoring: 7-8 = DevOps. 4-6 = Transición. 0-3 = Tradicional.
+---
 
-Preguntas:
-1. ¿Deplegan más de 1 vez/semana?
-2. ¿Postmortems sin culpa?
-3. ¿Menos de 1 hora de lead time?
-4. ¿Menos de 15% cambios fallan?
-5. ¿Equipos multidisciplinarios?
-6. ¿CI/CD automático?
-7. ¿Monitoreo en tiempo real?
-8. ¿Autonomía de equipos?
+#### Paso 2 — Crear un proyecto Scrum por grupo
 
-**Actividad 2: Plan de transformación (15 min)**
+Cada grupo crea **su propio proyecto** en Jira.
 
-Empresa Financiera: 200 personas, ciclo 6 meses. Competidor fintech 10x rápido.
+1. En el menú lateral haz clic en **Projects** → **Create project**.
+2. Selecciona la plantilla **Scrum** → **Select**.
+3. Completa los campos:
+   - **Name:** Nombre del proyecto (ej: `NotasYa`, `FacturaYa`, `VehiculosYa`, `DoctorYa`, `ViajaYa`)
+   - **Key:** Clave corta de 3 letras (ej: `NYA`, `FYA`, `VYA`, `DYA`, `VJA`)
+   - **Access:** Private
+4. Clic en **Create project**.
 
-Plan 24 meses: Awareness (3m) → Pilots (6m) → Scale (15m).
+> **Claves recomendadas:**
+>
+> | Proyecto | Clave Jira |
+> |---|---|
+> | NotasYa | `NYA` |
+> | FacturaYa | `FYA` |
+> | VehiculosYa | `VYA` |
+> | DoctorYa | `DYA` |
+> | ViajaYa | `VJA` |
 
-Presupuesto $2M. Presenta: ¿Por qué este plan?
+---
+
+#### Paso 3 — Explorar el tablero Scrum
+
+1. En el menú lateral haz clic en **Board**.
+2. Observa las tres columnas por defecto: **To Do**, **In Progress**, **Done**.
+3. Haz clic en **Backlog** y nota la diferencia: el Backlog acumula todas las historias; el Board muestra solo las del sprint activo.
+
+---
+
+#### Paso 4 — Habilitar el campo Story Points
+
+1. Ve a **Project Settings** → **Features**.
+2. Activa la opción **Estimation** (habilita el campo Story Points en los issues).
+3. Ve a **Project Settings** → **Issue types** → **Story** y confirma que el campo **Story Points** aparece en el formulario del issue.
+
+> Los Story Points se asignarán en la **Clase 04** mediante Planning Poker.
+
+---
+
+#### Paso 5 — Crear una Épica de prueba
+
+1. Haz clic en **Create** (botón azul superior).
+2. En **Issue type** selecciona **Epic**.
+3. **Summary:** `Módulo de prueba` (o el módulo principal de tu proyecto).
+4. **Epic Name:** el mismo valor.
+5. Clic en **Create**.
+6. Verifica que la épica aparece en el Backlog con un color asignado automáticamente.
+
+#### Paso 6 — Crear una Historia de Usuario de prueba
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿En qué se parece el Backlog de Jira a la "lista de TODO" de la que habla el estándar ISO/IEC/IEEE 12207?
+2. ¿Qué diferencia hay entre un **Epic** y una **Story** en Jira?
+3. ¿Por qué el campo Story Points está desactivado por defecto y hay que habilitarlo?
+
+---
+
+### Actividad práctica: Instalación y configuración de Jenkins (40 minutos)
+
+> **Objetivo:** Instalar Jenkins directamente en el sistema operativo, crear el primer pipeline CI y entender cómo encaja en el flujo DevOps.
+
+**Prerrequisitos:** JDK 17 o superior instalado. Verificar con `java -version` en la terminal.
+
+---
+
+#### Paso 1 — Instalar Java (si no está instalado) (3 min)
+
+Jenkins requiere Java 17 como mínimo. Según tu sistema operativo:
+
+**Windows:**
+1. Descarga el instalador JDK 17 desde [adoptium.net](https://adoptium.net).
+2. Ejecuta el `.msi` y sigue el asistente (siguiente → siguiente → finalizar).
+3. Verifica en PowerShell: `java -version`
+
+**macOS:**
+```bash
+brew install openjdk@17
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt update
+sudo apt install -y openjdk-17-jdk
+java -version
+```
+
+---
+
+#### Paso 2 — Descargar e instalar Jenkins (5 min)
+
+**Windows:**
+1. Ve a [jenkins.io/download](https://www.jenkins.io/download/) → sección **LTS** → descarga el instalador `.msi`.
+2. Ejecuta el instalador:
+   - Elige la carpeta de instalación (por defecto `C:\Program Files\Jenkins`).
+   - En **"Run service as LocalSystem"** deja la opción marcada.
+   - Puerto: deja `8080`.
+   - Selecciona el JDK instalado en el paso anterior.
+3. Haz clic en **Install** y luego **Finish**. Jenkins queda instalado como servicio de Windows y arranca automáticamente.
+
+**macOS:**
+```bash
+brew install jenkins-lts
+brew services start jenkins-lts
+```
+
+**Ubuntu / Debian:**
+```bash
+# Agregar repositorio oficial de Jenkins
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key \
+  | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/" \
+  | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+sudo apt install -y jenkins
+
+# Iniciar el servicio
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins   # debe mostrar "active (running)"
+```
+
+---
+
+#### Paso 3 — Obtener la contraseña inicial (2 min)
+
+Jenkins genera una contraseña de administrador al primer arranque. Recupérala según tu SO:
+
+**Windows** (PowerShell como administrador):
+```powershell
+Get-Content "C:\ProgramData\Jenkins\.jenkins\secrets\initialAdminPassword"
+```
+
+**macOS:**
+```bash
+cat ~/.jenkins/secrets/initialAdminPassword
+```
+
+**Linux:**
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+Copia el valor que aparece (cadena de 32 caracteres hexadecimales).
+
+---
+
+#### Paso 4 — Configuración inicial en el navegador (8 min)
+
+1. Abre `http://localhost:8080` en tu navegador.
+2. Pega la contraseña copiada → **Continue**.
+3. Selecciona **"Install suggested plugins"** y espera a que termine (≈ 2-3 min).
+4. Crea el usuario administrador:
+   - Username: `admin`
+   - Password: elige una segura
+   - Full name y email: los tuyos
+5. En **"Instance Configuration"** deja la URL `http://localhost:8080/` → **Save and Finish**.
+6. Haz clic en **"Start using Jenkins"**.
+
+---
+
+#### Paso 5 — Crear el primer Pipeline (10 min)
+
+1. En el dashboard, haz clic en **"New Item"**.
+2. Nombre: `mi-primer-pipeline` | Tipo: **Pipeline** → **OK**.
+3. Baja hasta la sección **"Pipeline"** → en **Definition** selecciona `Pipeline script`.
+4. Pega el siguiente `Jenkinsfile` de ejemplo:
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Clonando repositorio...'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Compilando el proyecto...'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Ejecutando pruebas unitarias...'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Desplegando a staging...'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline ejecutado correctamente.'
+        }
+        failure {
+            echo 'El pipeline falló. Revisar logs.'
+        }
+    }
+}
+```
+
+5. Haz clic en **Save**.
+
+---
+
+#### Paso 6 — Ejecutar y analizar el pipeline (5 min)
+
+1. En la página del job, haz clic en **"Build Now"** (panel izquierdo).
+2. Observa el **Stage View**: cada etapa aparece como una columna con su tiempo de ejecución y estado (verde = ok, rojo = fallo).
+3. Haz clic en el número de build `#1` → **Console Output** para ver el log completo.
+4. Identifica en el log cada mensaje `echo` de las cuatro etapas.
+
+---
+
+#### Paso 7 — Conectar el Pipeline a un repositorio Git (7 min)
+
+Conectar Jenkins a un repo real es el caso de uso habitual en equipos:
+
+1. Ve al job → **Configure**.
+2. En **Pipeline → Definition**, cambia a `Pipeline script from SCM`.
+3. En **SCM** selecciona `Git`.
+4. En **Repository URL** ingresa la URL HTTPS de un repositorio tuyo en GitHub (puede ser público).
+5. En **Branch Specifier** escribe `*/main`.
+6. En **Script Path** deja `Jenkinsfile`.
+7. Haz clic en **Save** → **Build Now**.
+
+> Jenkins clonará el repositorio, leerá el `Jenkinsfile` de la raíz y ejecutará el pipeline. Así el pipeline **viaja con el código** y no vive solo dentro de Jenkins.
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿Qué ocurre si el stage `Test` falla? ¿Se ejecuta `Deploy`?
+2. ¿En qué se diferencia tener el `Jenkinsfile` en el repositorio vs. definirlo dentro de Jenkins?
+3. ¿Cómo detener Jenkins si necesitas reiniciar el servicio? (`sudo systemctl stop jenkins` en Linux, `brew services stop jenkins-lts` en macOS)
+4. ¿Cómo extenderías este pipeline para que ejecute pruebas reales con Maven (`mvn test`) o npm (`npm test`)?
 
 ---
 
@@ -367,7 +729,7 @@ Presupuesto $2M. Presenta: ¿Por qué este plan?
 
 ## Clase 03: Planificación orientada a valor
 
-**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 2
+**Duración:** 2 horas | **Unidad:** 1
 
 ### Objetivos de aprendizaje
 
@@ -508,22 +870,617 @@ Story: "Como usuario, quiero pagar con tarjeta de crédito"
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividad práctica: Jira + Jenkins — 9 historias de usuario y sus pipelines CI
 
-**Actividad 1: Construir roadmap (12 min)**
+> **Objetivo:** Registrar y configurar Jira como herramienta de gestión ágil, crear las 9 historias de usuario del grupo en Jira y luego construir en Jenkins un pipeline CI asociado a cada Issue Key.
 
-Empresa SaaS CRM. Usuario solicita 5 features. Timeframe 6 meses. Presupuesto: 4 sprints/mes.
+**Herramientas:** Jira Software (plan gratuito) + Jenkins (instalado en Clase 02)
 
-Tareas:
-1. Estimar effort de cada feature.
-2. Crear roadmap (Q1 H1, Q2 H1, Q2 H2).
-3. Justificar orden.
+---
 
-**Actividad 2: Escribir DoR/DoD (13 min)**
+#### 6. — Registro y configuración de Jira
 
-Story elegida por grupo. Escribir:
-- 5 criterios DoR específicos.
-- 5 criterios DoD específicos.
+##### Paso Crear cuenta gratuita en Jira
+
+1. Ve a `https://www.atlassian.com/software/jira/free` → clic en **Get it free**.
+2. Ingresa tu correo institucional y crea una contraseña.
+3. Selecciona el producto **Jira Software** → **Get it free**.
+4. En *"What is your team's name?"* escribe el nombre de tu grupo (ej: `Grupo-A`).
+5. Selecciona **Next** hasta llegar al dashboard inicial de Jira.
+
+##### Paso Crear un proyecto Scrum por estudiante (5 min)
+
+Cada integrante crea **su propio proyecto** en Jira (uno por proyecto asignado):
+
+1. En el menú lateral haz clic en **Projects** → **Create project**.
+2. Selecciona la plantilla **Scrum** → **Select**.
+3. Completa los campos:
+   - **Name:** Nombre del proyecto asignado (ej: `NotasYa`)
+   - **Key:** Clave corta de 3 letras (ver tabla abajo)
+   - **Access:** Private
+4. Clic en **Create project**.
+
+> **Claves recomendadas por proyecto:**
+>
+> | Proyecto | Clave Jira |
+> |---|---|
+> | NotasYa | `NYA` |
+> | FacturaYa | `FYA` |
+> | VehiculosYa | `VYA` |
+> | DoctorYa | `DYA` |
+> | ViajaYa | `VJA` |
+
+##### Paso Crear una Épica que agrupe las historias (3 min)
+
+1. Dentro de tu proyecto, haz clic en **Create** (botón azul).
+2. En **Issue type** selecciona **Epic**.
+3. En **Summary** escribe el módulo principal (ej: `Gestión de Notas`).
+4. En **Epic Name** escribe el mismo valor.
+5. Clic en **Create**.
+
+##### Paso Habilitar el campo Story Points (2 min)
+
+1. Ve a **Project Settings** → **Features**.
+2. Activa la opción **Estimation** (activa el campo Story Points en las historias).
+3. Ve a **Project Settings** → **Issue types** → **Story** y confirma que el campo **Story Points** aparece en el formulario.
+
+> Los Story Points se asignarán en la **Clase 04** mediante Planning Poker.
+
+---
+
+#### Parte Formación de grupos y asignación de proyectos
+
+Forma grupos de **3 estudiantes**. Cada integrante elige un proyecto **diferente** (no se repite dentro del mismo grupo):
+
+| Proyecto | Clave Jira | Módulos principales |
+|---|---|---|
+| **NotasYa** | `NYA` | Notas, Cursos, Estudiantes, Profesores |
+| **FacturaYa** | `FYA` | Facturas, Productos, Clientes, Pagos |
+| **VehiculosYa** | `VYA` | Vehículos, Seguros, Multas, Mantenimientos |
+| **DoctorYa** | `DYA` | Citas, Doctores, Pacientes, Historia Clínica |
+| **ViajaYa** | `VJA` | Vuelos, Hoteles, Reservas, Pasajeros |
+
+Cada integrante crea **3 historias** en Jira → el grupo produce **9 historias en total**.
+
+---
+
+#### 7. Crear las 9 historias de usuario en Jira (20 min)
+
+##### Paso Estructura de una historia bien formada
+
+Cada historia se registra en Jira con los siguientes campos:
+
+| Campo Jira | Valor a completar |
+|---|---|
+| **Issue type** | Story |
+| **Summary** | Título corto de la historia (ej: `Registrar nota de estudiante`) |
+| **Description** | Historia completa en Como/Quiero/Para + criterios Given/When/Then |
+| **Epic Link** | La épica creada en el Paso A3 |
+| **Labels** | Módulo al que pertenece (ej: `notas`, `facturas`, `citas`) |
+| **Story Points** | Vacío por ahora — se completa en Clase 04 |
+
+##### Paso a paso: crear una historia en Jira
+
+1. En tu proyecto, haz clic en **Create**.
+2. **Issue type:** `Story`.
+3. **Summary:** Título corto de la historia.
+4. **Description:** Usa esta plantilla:
+
+```
+Como   [rol del usuario]
+Quiero [acción concreta que realiza]
+Para   [valor o beneficio que obtiene]
+
+--- Criterios de aceptación ---
+
+Scenario 1: [nombre del escenario exitoso]
+  Given [condición inicial del sistema o usuario]
+  When  [acción que realiza el usuario]
+  Then  [resultado esperado visible o verificable]
+
+Scenario 2: [nombre del escenario de error o borde]
+  Given [condición inicial]
+  When  [acción inválida o límite]
+  Then  [mensaje de error o comportamiento esperado]
+```
+
+5. **Epic Link:** selecciona la épica creada.
+6. **Labels:** escribe el módulo.
+7. **Story Points:** dejar vacío.
+8. Clic en **Create**. Jira generará automáticamente la Issue Key (ej: `NYA-1`).
+
+##### Paso Ejemplos de historias por proyecto
+
+**NotasYa — Clave `NYA`**
+
+| Issue Key | Summary | Como / Quiero / Para |
+|---|---|---|
+| `NYA-1` | Registrar nota de estudiante | Profesor / registrar la nota de un estudiante en un curso / que quede en el historial académico |
+| `NYA-2` | Consultar notas por materia | Estudiante / ver mis notas por materia / saber mi promedio y cuánto necesito para aprobar |
+| `NYA-3` | Generar reporte de notas del curso | Coordinador / generar el reporte de notas de un curso / enviarlo a padres al cierre del período |
+
+**FacturaYa — Clave `FYA`**
+
+| Issue Key | Summary | Como / Quiero / Para |
+|---|---|---|
+| `FYA-1` | Crear factura de venta | Cajero / crear una factura seleccionando productos del catálogo / registrar la transacción y entregar el comprobante |
+| `FYA-2` | Anular factura emitida | Administrador / anular una factura emitida / corregir errores de cobro sin eliminar el registro |
+| `FYA-3` | Exportar reporte de ventas en PDF | Contador / exportar el reporte de ventas del mes / presentarlo en el cierre contable mensual |
+
+**VehiculosYa — Clave `VYA`**
+
+| Issue Key | Summary | Como / Quiero / Para |
+|---|---|---|
+| `VYA-1` | Registrar mantenimiento de vehículo | Propietario / registrar un mantenimiento realizado / llevar el historial de servicio actualizado |
+| `VYA-2` | Registrar multa a vehículo | Agente de tránsito / registrar una multa / notificar al propietario para que pague en línea |
+| `VYA-3` | Consultar vencimiento de seguro | Propietario / ver la fecha de vencimiento de mi seguro / renovarlo antes de que expire |
+
+**DoctorYa — Clave `DYA`**
+
+| Issue Key | Summary | Como / Quiero / Para |
+|---|---|---|
+| `DYA-1` | Agendar cita médica | Paciente / agendar cita con médico disponible / ser atendido en la fecha y hora que me convenga |
+| `DYA-2` | Registrar diagnóstico de consulta | Médico / registrar el diagnóstico y tratamiento / actualizar la historia clínica del paciente |
+| `DYA-3` | Cancelar cita con aviso de 24h | Administrador / cancelar una cita con aviso previo / liberar el espacio y notificar al paciente |
+
+**ViajaYa — Clave `VJA`**
+
+| Issue Key | Summary | Como / Quiero / Para |
+|---|---|---|
+| `VJA-1` | Buscar vuelos por fecha y destino | Viajero / buscar vuelos disponibles / comparar opciones y elegir el mejor itinerario |
+| `VJA-2` | Reservar hotel junto con el vuelo | Viajero / reservar habitación de hotel con mi vuelo / tener alojamiento garantizado al comprar el tiquete |
+| `VJA-3` | Cancelar una reserva activa | Agente de viajes / cancelar una reserva / procesar el reembolso según la política vigente |
+
+---
+
+#### 8. Crear los Pipelines en Jenkins para cada historia (20 min)
+
+Cada historia creada en Jira tendrá un **Pipeline CI en Jenkins** nombrado con la **Issue Key de Jira**. Esto simula la convención real de los equipos: el código de la rama, el pipeline y el ticket de Jira usan la misma clave.
+
+```
+Jira: Story NYA-1  →  Git branch: feature/NYA-1  →  Jenkins Pipeline: NYA-1
+```
+
+##### Paso Crear el Pipeline en Jenkins
+
+1. Abre Jenkins en `http://localhost:8080`.
+2. Haz clic en **New Item**.
+3. **Name:** usa exactamente la Issue Key de Jira (ej: `NYA-1`, `FYA-2`, `DYA-3`).
+4. Tipo: **Pipeline** → **OK**.
+5. En **Pipeline → Definition** selecciona `Pipeline script`.
+6. Pega la plantilla del Paso D2 adaptada a tu historia.
+7. Clic en **Save** → **Build Now**.
+8. Repite para las 3 historias de tu proyecto (9 pipelines totales en el grupo).
+
+##### Paso Plantilla de Jenkinsfile
+
+Adapta los valores de `JIRA_KEY`, `PROYECTO`, `HISTORIA_TITULO` y los textos del escenario por cada historia:
+
+```groovy
+pipeline {
+    agent any
+
+    environment {
+        JIRA_KEY        = 'NYA-1'               // Issue Key de Jira — CAMBIAR
+        PROYECTO        = 'NotasYa'             // Nombre del proyecto — CAMBIAR
+        FEATURE_BRANCH  = "feature/${env.JIRA_KEY}"
+        HISTORIA_TITULO = 'Registrar nota de estudiante' // Título de la historia — CAMBIAR
+    }
+
+    stages {
+
+        stage('Historia de Usuario') {
+            steps {
+                echo "=== ${env.JIRA_KEY} | ${env.PROYECTO} ==="
+                echo "Historia : ${env.HISTORIA_TITULO}"
+                echo 'Como   profesor'
+                echo 'Quiero registrar la nota de un estudiante en un curso'
+                echo 'Para   que quede guardada y sea visible en el historial académico'
+            }
+        }
+
+        stage('Criterios de Aceptación') {
+            steps {
+                echo '--- Scenario 1: Nota registrada exitosamente ---'
+                echo '  Given: el profesor tiene sesión iniciada y el curso existe'
+                echo '  When:  ingresa la nota (0.0 a 5.0) y hace clic en Guardar'
+                echo '  Then:  el sistema almacena la nota y muestra confirmación'
+                echo '--- Scenario 2: Nota fuera del rango ---'
+                echo '  Given: el profesor intenta ingresar nota = 6.0'
+                echo '  When:  hace clic en Guardar'
+                echo '  Then:  el sistema muestra error: "La nota debe estar entre 0.0 y 5.0"'
+            }
+        }
+
+        stage('DoR Check') {
+            steps {
+                echo '=== Definition of Ready ==='
+                echo '[x] Historia registrada en Jira con formato Como/Quiero/Para'
+                echo '[x] Criterios de aceptación en Given/When/Then'
+                echo '[ ] Story Points: pendiente — se asigna en Clase 04 con Planning Poker'
+                echo '[x] Sin bloqueadores conocidos'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Compilando rama: ${env.FEATURE_BRANCH}"
+                // mvn clean compile    ← Java / Maven
+                // npm install          ← Node.js
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                echo "Ejecutando pruebas unitarias para ${env.JIRA_KEY}..."
+                // mvn test
+                // npm test
+            }
+        }
+
+        stage('DoD Check') {
+            steps {
+                echo '=== Definition of Done ==='
+                echo '[ ] Código en PR aprobado por 2 revisores'
+                echo '[ ] Tests unitarios >= 80% cobertura'
+                echo '[ ] Pipeline CI en verde'
+                echo '[ ] PO aceptó en staging'
+                echo "[ ] Ticket ${env.JIRA_KEY} en Jira marcado como Done"
+            }
+        }
+    }
+
+    post {
+        success { echo "${env.JIRA_KEY} — Pipeline verde. Listo para revisión del PO." }
+        failure { echo "${env.JIRA_KEY} — Pipeline rojo. Revisar Console Output." }
+    }
+}
+```
+
+---
+
+#### Verificación grupal final
+
+| # | Issue Key (Jira) | Proyecto | Historia creada en Jira | Pipeline en Jenkins | Build verde |
+|---|---|---|---|---|---|
+| 1 | | | ☐ | ☐ | ☐ |
+| 2 | | | ☐ | ☐ | ☐ |
+| 3 | | | ☐ | ☐ | ☐ |
+| 4 | | | ☐ | ☐ | ☐ |
+| 5 | | | ☐ | ☐ | ☐ |
+| 6 | | | ☐ | ☐ | ☐ |
+| 7 | | | ☐ | ☐ | ☐ |
+| 8 | | | ☐ | ☐ | ☐ |
+| 9 | | | ☐ | ☐ | ☐ |
+
+---
+
+#### Relación Jira ↔ Jenkins
+
+```
+Jira Software                        Jenkins
+─────────────────────────────────────────────────────────────
+Story NYA-1 (backlog)           →    Pipeline "NYA-1" creado
+  ↓ desarrollador empieza            ↓ push a feature/NYA-1
+Story NYA-1 (in progress)       →    Build ejecutado automáticamente
+  ↓ criterios de aceptación          ↓ Unit Tests validan esos criterios
+Story NYA-1 (done)              ←    Stage View verde + PR aprobado
+```
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿Por qué la Issue Key de Jira es el nombre del Pipeline en Jenkins? ¿Qué ventaja tiene esa convención?
+2. ¿En qué se diferencia gestionar una historia en Jira vs. escribirla en un documento de Word o en el mismo Jenkins?
+3. El stage `DoR Check` dice *"Story Points: pendiente"*. ¿Qué riesgo hay si el equipo empieza a desarrollar sin haber estimado?
+   → Se asignará en la **Clase 04** con Planning Poker.
+
+---
+
+#### 9. Registrar cada historia como Pipeline en Jenkins
+
+En Jenkins (`http://localhost:8080`) crea **un Pipeline por historia** (9 en total por grupo). Para cada uno:
+
+1. Haz clic en **New Item**.
+2. Nombre del item: usa el código de historia (`HUS-01`, `HUF-02`, etc.) seguido del nombre corto.
+   - Ejemplo: `HUS-01-registrar-nota`
+3. Tipo: **Pipeline** → **OK**.
+4. En la sección **Pipeline → Definition** selecciona `Pipeline script`.
+5. Pega la siguiente plantilla adaptándola a cada historia:
+
+```groovy
+pipeline {
+    agent any
+
+    environment {
+        HISTORIA_ID    = 'HUS-01'          // Cambia por el código de tu historia
+        PROYECTO       = 'NotasYa'          // Cambia por tu proyecto
+        FEATURE_BRANCH = 'feature/HUS-01'   // Cambia por el código de tu historia
+    }
+
+    stages {
+
+        stage('Historia de Usuario') {
+            steps {
+                echo """Proyecto  : ${env.PROYECTO}"""
+                echo """Historia  : ${env.HISTORIA_ID}"""
+                echo 'Como   profesor'
+                echo 'Quiero registrar la nota de un estudiante en un curso'
+                echo 'Para   que quede guardada y sea visible en el historial académico'
+            }
+        }
+
+        stage('Criterios de Aceptación') {
+            steps {
+                echo 'Scenario 1: Nota registrada exitosamente'
+                echo '  Given: el profesor tiene sesión iniciada y el curso existe'
+                echo '  When:  ingresa la nota (0-5) y hace clic en Guardar'
+                echo '  Then:  el sistema almacena la nota y muestra confirmación'
+                echo '---'
+                echo 'Scenario 2: Nota fuera del rango permitido'
+                echo '  Given: el profesor intenta ingresar nota = 6'
+                echo '  When:  hace clic en Guardar'
+                echo '  Then:  el sistema muestra error: Nota debe estar entre 0 y 5'
+            }
+        }
+
+        stage('DoR Check') {
+            steps {
+                echo '=== Definition of Ready ==='
+                echo '[ ] Historia redactada en formato Como/Quiero/Para'
+                echo '[ ] Criterios de aceptación en Given/When/Then'
+                echo '[ ] Estimación pendiente (se asignará en Clase 04)'
+                echo '[ ] Sin bloqueadores conocidos'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Compilando rama: ${env.FEATURE_BRANCH}"
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                echo "Ejecutando pruebas unitarias para ${env.HISTORIA_ID}..."
+            }
+        }
+
+        stage('DoD Check') {
+            steps {
+                echo '=== Definition of Done ==='
+                echo '[ ] Código en PR aprobado por 2 revisores'
+                echo '[ ] Tests unitarios >= 80% cobertura'
+                echo '[ ] Pipeline CI en verde'
+                echo '[ ] PO aceptó en staging'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Historia ${env.HISTORIA_ID} — pipeline verde."
+        }
+        failure {
+            echo "Historia ${env.HISTORIA_ID} — pipeline rojo. Revisar logs."
+        }
+    }
+}
+```
+
+6. Haz clic en **Save** → **Build Now**.
+7. Verifica el Stage View: deben aparecer 6 stages en verde.
+8. Repite para las otras 2 historias del proyecto.
+
+---
+
+#### Verificación grupal (8 min)
+
+Una vez que los 3 integrantes hayan creado sus 9 pipelines:
+
+1. En el **Dashboard de Jenkins**, deberían verse los 9 jobs del grupo.
+2. Revisa que todos muestren el ícono ✅ (último build exitoso).
+3. Abre el **Console Output** de uno de los pipelines y comparte con el grupo el texto de los criterios de aceptación que imprimió.
+
+**Lista de verificación grupal:**
+
+| # | Historia (ID) | Proyecto | Pipeline creado | Build verde |
+|---|---|---|---|---|
+| 1 | | | ☐ | ☐ |
+| 2 | | | ☐ | ☐ |
+| 3 | | | ☐ | ☐ |
+| 4 | | | ☐ | ☐ |
+| 5 | | | ☐ | ☐ |
+| 6 | | | ☐ | ☐ |
+| 7 | | | ☐ | ☐ |
+| 8 | | | ☐ | ☐ |
+| 9 | | | ☐ | ☐ |
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿Alguna historia no cumplió INVEST? ¿Cuál criterio falló y cómo la reescribirías?
+2. ¿Qué diferencia hay entre un criterio de aceptación y una prueba unitaria?
+3. ¿Por qué en el `DoR Check` del pipeline la estimación aparece como pendiente?
+   → Se asignará en la **Clase 04**.
+
+---
+
+#### 10. Escribir los criterios de aceptación (5 min)
+
+Los criterios de aceptación definen exactamente cuándo la historia está **hecha**. Se escriben en formato **Given / When / Then** (Gherkin):
+
+```gherkin
+Feature: Consulta de estado de pedido
+
+  Scenario: Cliente consulta un pedido existente
+    Given que el cliente tiene sesión iniciada
+    And  tiene al menos un pedido registrado
+    When accede a "Mis pedidos" y selecciona un pedido
+    Then ve el estado actual: "Procesando", "Enviado" o "Entregado"
+    And si el estado es "Enviado", ve la fecha estimada de llegada
+
+  Scenario: Cliente consulta un pedido inexistente
+    Given que el cliente tiene sesión iniciada
+    When intenta acceder a un ID de pedido que no le pertenece
+    Then recibe un mensaje de error: "Pedido no encontrado"
+    And el sistema registra el intento en los logs de auditoría
+
+  Scenario: Servicio de pedidos no disponible
+    Given que el servicio de pedidos está caído
+    When el cliente consulta el estado
+    Then ve el mensaje: "Información temporalmente no disponible"
+    And el error queda registrado en el sistema de observabilidad
+```
+
+---
+
+#### Paso Definir el DoR y DoD de la historia (3 min)
+
+Antes de llevarla al sprint, el equipo verifica:
+
+**Definition of Ready (la historia puede entrar al sprint):**
+- [x] Historia redactada con formato Como / Quiero / Para
+- [x] Criterios de aceptación escritos en Given/When/Then
+- [x] Estimación consensuada: **5 Story Points**
+- [x] Endpoint del backend definido: `GET /api/orders/{id}/status`
+- [x] Mockup de la pantalla aprobado por el PO
+- [x] Sin bloqueadores ni dependencias sin resolver
+
+**Definition of Done (la historia puede marcarse como terminada):**
+- [x] Código en rama `feature/order-status` con PR aprobado por 2 revisores
+- [x] Tests unitarios con cobertura ≥ 80 %
+- [x] Tests de integración del endpoint `GET /api/orders/{id}/status`
+- [x] Pipeline CI en verde (build + test + análisis de calidad)
+- [x] PO probó en staging y aceptó
+- [x] Documentación del endpoint actualizada en Swagger
+
+---
+
+#### Paso Crear el pipeline en Jenkins (15 min)
+
+Abre Jenkins (`http://localhost:8080`), crea un nuevo item tipo **Pipeline** con el nombre `order-status-story` y pega el siguiente `Jenkinsfile`:
+
+```groovy
+pipeline {
+    agent any
+
+    environment {
+        // Nombre de la rama asociada a la historia
+        FEATURE_BRANCH = 'feature/order-status'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo "Clonando rama: ${env.FEATURE_BRANCH}"
+                // En un proyecto real:
+                // git branch: "${env.FEATURE_BRANCH}", url: 'https://github.com/tu-org/tu-repo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Compilando el proyecto...'
+                // mvn clean compile   ← Java/Maven
+                // npm install         ← Node.js
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                echo 'Ejecutando pruebas unitarias del servicio de pedidos...'
+                // mvn test -Dtest=OrderStatusServiceTest
+                // npm test -- --testPathPattern=orderStatus
+            }
+            post {
+                always {
+                    echo 'Publicando reporte de tests...'
+                    // junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                echo 'Verificando endpoint GET /api/orders/{id}/status...'
+                // mvn verify -Pintegration-tests
+            }
+        }
+
+        stage('Code Quality') {
+            steps {
+                echo 'Analizando cobertura y calidad de código...'
+                // Requiere plugin SonarQube en Jenkins:
+                // withSonarQubeEnv('SonarQube') { sh 'mvn sonar:sonar' }
+            }
+        }
+
+        stage('DoD Check') {
+            steps {
+                echo '=== Verificando Definition of Done ==='
+                echo '✔ Tests unitarios ejecutados'
+                echo '✔ Tests de integración ejecutados'
+                echo '✔ Análisis de calidad ejecutado'
+                echo '⏳ Pendiente: aprobación del PO en staging'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline verde — Historia lista para revisión del PO en staging.'
+        }
+        failure {
+            echo 'Pipeline rojo — Revisar logs. La historia NO cumple el DoD todavía.'
+        }
+    }
+}
+```
+
+Haz clic en **Save** → **Build Now** y observa el Stage View.
+
+---
+
+#### Paso Leer e interpretar el resultado (5 min)
+
+| Color del stage | Significado | Acción |
+|---|---|---|
+| 🟢 Verde | Stage pasó correctamente | Continuar |
+| 🔴 Rojo | Stage falló | Revisar Console Output, corregir código y volver a ejecutar |
+| 🔵 Azul (en curso) | Stage ejecutándose | Esperar |
+
+En **Console Output** (`Build #1 → Console Output`) podrás leer línea a línea qué ejecutó Jenkins y en qué punto falló si hubo algún error.
+
+**Relación historia ↔ pipeline:**
+
+```
+Historia de usuario
+        │
+        ▼
+Criterios de aceptación (Given/When/Then)
+        │
+        ▼
+Tests automatizados que validan esos criterios
+        │
+        ▼
+Pipeline Jenkins que ejecuta esos tests en cada commit
+        │
+        ▼
+Stage View en verde = DoD técnico cumplido
+```
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿Qué stage del pipeline corresponde directamente a cada criterio de aceptación?
+2. ¿Por qué el `DoD Check` del pipeline no reemplaza la aprobación del PO en staging?
+3. Si el stage `Unit Tests` pasa pero `Integration Tests` falla, ¿qué significa para la historia?
+4. ¿Cómo modificarías el pipeline para que se ejecute automáticamente cada vez que alguien hace push a la rama `feature/order-status`?
 
 ---
 
@@ -692,17 +1649,158 @@ Timeline:
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividad práctica: Planning Poker en Jira + Actualización de Pipelines en Jenkins
 
-**Actividad 1: Planning Poker simulado (12 min)**
-
-3 stories. Equipo estima, debate, consensus.
-
-**Actividad 2: Calcular velocidad (13 min)**
-
-Datos históricos de 8 sprints. Calcular velocidad, proyectar timeline para roadmap dado.
+> **Objetivo:** Asignar Story Points a las 9 historias creadas en Jira durante la Clase 03 mediante Planning Poker, registrar los resultados directamente en Jira, actualizar los pipelines de Jenkins con el SP acordado, y calcular cuántos sprints necesita el grupo para completar las historias.
 
 ---
+
+#### Paso 1 — Preparar el tablero de estimación
+
+Cada integrante del grupo necesita las **cartas de Planning Poker** con la escala de Fibonacci:
+
+```
+  1   2   3   5   8   13   21   ?   ☕
+```
+
+- `?` = No entiendo la historia, necesito más información
+- `☕` = Necesito un descanso
+
+Si no tienen cartas físicas, usen post-its o la app [planningpokeronline.com](https://planningpokeronline.com).
+
+---
+
+#### Paso 2 — Sesión de Planning Poker: estimar las 9 historias
+
+Sigan este proceso para **cada una de las 9 historias** creadas en Jira durante la Clase 03:
+
+1. El dueño de la historia (quien la creó) la lee en voz alta: *Como / Quiero / Para*.
+2. El grupo hace preguntas de clarificación (máx. 1 min).
+3. Cada integrante elige su carta **en privado** sin mostrarla.
+4. A la cuenta de 3: todos muestran su carta al mismo tiempo.
+5. Si hay consenso (diferencia ≤ 1 nivel Fibonacci): se registra ese valor.
+6. Si hay divergencia: el mayor y el menor explican su razonamiento. Se vuelve a estimar.
+
+**Registra los resultados en la siguiente tabla:**
+
+| # | Código historia | Proyecto | Dev 1 | Dev 2 | Dev 3 | SP Final | Razón del consenso |
+|---|---|---|---|---|---|---|---|
+| 1 | | | | | | | |
+| 2 | | | | | | | |
+| 3 | | | | | | | |
+| 4 | | | | | | | |
+| 5 | | | | | | | |
+| 6 | | | | | | | |
+| 7 | | | | | | | |
+| 8 | | | | | | | |
+| 9 | | | | | | | |
+| | | **Total SP** | | | | | |
+
+**Guía de referencia para calibrar:**
+
+| SP | Complejidad | Ejemplo orientativo |
+|---|---|---|
+| **1** | Trivial | Cambiar el texto de un label en pantalla |
+| **2** | Simple | Agregar un campo de búsqueda que filtra una lista |
+| **3** | Moderada | CRUD básico de una entidad (sin validaciones complejas) |
+| **5** | Media | CRUD con validaciones, lógica de negocio y pruebas |
+| **8** | Alta | Integración con servicio externo (pagos, email, API terceros) |
+| **13** | Muy alta | Flujo complejo con múltiples entidades y estados |
+| **21** | Épica — dividir | Demasiado grande para un sprint; debe partirse |
+
+---
+
+#### Paso 3 — Registrar los Story Points en Jira (5 min)
+
+Con el SP acordado para cada historia, actualiza el campo en Jira:
+
+1. Abre el ticket en Jira (ej: `NYA-1`).
+2. En el panel lateral derecho busca el campo **Story Points** (o **Estimate**).
+3. Haz clic en el campo y escribe el valor acordado (ej: `5`).
+4. Presiona **Enter** para guardar.
+5. Repite para las 9 historias del grupo.
+
+#### Paso 4 — Crear el Sprint en Jira y agregar las historias (5 min)
+
+1. En tu proyecto, ve a **Backlog**.
+2. Haz clic en **Create Sprint** (aparece sobre el backlog).
+3. Clic derecho sobre cada historia → **Move to Sprint** para agregar las 3 historias de tu proyecto al sprint.
+4. Haz clic en **Start Sprint** y define:
+   - **Sprint name:** `Sprint 1`
+   - **Duration:** 2 semanas
+   - **Start / End date:** fechas reales de la clase
+5. Confirma con **Start**.
+
+#### Paso 5 — Actualizar el DoR en Jenkins con el Story Point acordado
+
+Vuelve a cada pipeline en Jenkins y actualiza el stage `DoR Check` con el SP acordado en Jira:
+
+1. Ve al job en Jenkins → **Configure**.
+2. Localiza en el Jenkinsfile la línea:
+   ```groovy
+   echo '[ ] Story Points: pendiente — se asigna en Clase 04 con Planning Poker'
+   ```
+3. Reemplázala con el valor acordado en Jira:
+   ```groovy
+   echo '[x] Story Points: 5 SP (consenso Planning Poker — registrado en Jira)'
+   ```
+   *(Cambia el número por el SP real de esa historia)*
+4. Haz clic en **Save** → **Build Now** y verifica en el Console Output que el stage `DoR Check` muestra el SP correcto.
+
+---
+
+#### Paso 6 — Calcular la velocidad del grupo y proyectar el sprint (5 min)
+
+Usando los SP totales de las 9 historias, calcula cuántos sprints necesitaría el grupo para completarlas.
+
+**Dato de referencia:** Un equipo de 3 personas en un sprint de 2 semanas suele completar entre **15 y 25 SP** (velocidad estimada inicial: **18 SP/sprint**).
+
+**Fórmula:**
+
+$$
+\text{Sprints necesarios} = \frac{\text{Total SP}}{\text{Velocidad del equipo (SP/sprint)}}
+$$
+
+**Ejemplo:**
+
+| Historia | SP |
+|---|---|
+| HUS-01 | 3 |
+| HUS-02 | 2 |
+| HUS-03 | 5 |
+| HUF-01 | 5 |
+| HUF-02 | 3 |
+| HUF-03 | 8 |
+| HUV-01 | 3 |
+| HUV-02 | 5 |
+| HUV-03 | 2 |
+| **Total** | **36 SP** |
+
+$$
+\frac{36 \text{ SP}}{18 \text{ SP/sprint}} = 2 \text{ sprints} \approx 4 \text{ semanas}
+$$
+
+Calcula el total de tu grupo y completa:
+
+| Concepto | Valor del grupo |
+|---|---|
+| Total SP de las 9 historias | |
+| Velocidad estimada (SP/sprint) | 18 |
+| Sprints necesarios | |
+| Semanas calendario | |
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿Hubo alguna historia donde los tres integrantes estimaron muy diferente? ¿Qué causó esa divergencia?
+2. ¿Alguna historia resultó ser mayor a 13 SP? Si es así, ¿cómo la dividirías en dos historias más pequeñas?
+3. ¿Por qué es importante registrar el SP en Jira y no solo hablarlo en la reunión?
+4. ¿Qué ventaja tiene ver los SP de todas las historias del Sprint en el Board de Jira antes de empezar a desarrollar?
+5. Si la velocidad real del equipo fuera 12 SP/sprint en lugar de 18, ¿cómo cambiaría el timeline? ¿Qué historias priorizarías para el Sprint 1?
+
+---
+🔴 VOY ACA
 
 ## Clase 05: Gestión de riesgos y calidad (ISO/IEC 25010)
 
