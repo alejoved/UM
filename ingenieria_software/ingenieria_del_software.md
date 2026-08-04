@@ -1,7 +1,7 @@
 # Ingeniería del Software — Curso Completo (2 horas × 20 clases)
 
 > Material de referencia — Universidad de Manizales  
-> Última actualización: agosto 2026 | Versión: 3.0 (Completo)
+> Última actualización: Agosto 2026 | Versión: 3.0 (Completo)
 
 ---
 
