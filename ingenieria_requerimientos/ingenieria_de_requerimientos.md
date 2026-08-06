@@ -2,8 +2,36 @@
 
 > **Materia:** Ingeniería de Requerimientos  
 > **Duración por clase:** 2 horas (120 minutos)  
-> **Total de clases:** 20  
-> **Estructura de cada clase:** Teoría (60–70 min) · Práctica (40–50 min) · Cierre (10 min)
+> **Total de clases:** 20
+
+---
+
+## Docente Jorge Alejandro Aguirre Gutierrez
+
+**Ingeniero de Software | SRE | AWS Certified ×4**
+
+Profesional con experiencia en diseño, desarrollo y operación de sistemas de software a escala, especializado en arquitecturas cloud, prácticas DevOps e IA.
+
+**Certificaciones y especialidades técnicas:**
+
+- ☁️ **AWS Certified** × 4: Solutions Architect, Developer, AI Practitioner y DevOps Engineer
+- 🖥️ **Desarrollo frontend:** Angular, React
+- ⚙️ **Desarrollo backend:** Spring (Java), NestJS (Node.js)
+- 🗄️ **Administración de bases de datos:** Relacionales y NoSQL
+- 🏗️ **Infraestructura como código (IaC):** Terraform, CloudFormation
+- 🚀 **AWS DevOps:** CI/CD, automatización de infraestructura, observabilidad en nube
+
+**Experiencia docente:**
+
+| Institución | Programa | Nivel |
+|---|---|---|
+| Universidad de Caldas | Ingeniería de Sistemas | Pregrado |
+| Universidad Autónoma de Manizales | Ingeniería de Sistemas | Pregrado |
+| Universidad Autónoma de Manizales | Especialización en Ingeniería del Software con Énfasis en Pruebas | Posgrado |
+| Universidad Autónoma de Manizales | Maestría en Ingeniería de Sistemas | Posgrado |
+
+![alt text](../image.png)
+![alt text](../image-1.png)
 
 ---
 
@@ -69,22 +97,267 @@ Ejemplo: "Sistema de inscripción en línea"
 - ❌ FUERA: crear nuevos programas académicos (eso lo hace coordinación)
 - ❌ FUERA: auditoría de fraude (lo hace otro sistema)
 
+**¿Cómo crear un diagrama de contexto paso a paso?**
+
+Un diagrama de contexto dibuja tu sistema como una sola caja en el centro, y muestra todo lo que interactúa con él desde afuera. No muestra lo que hay dentro del sistema; solo sus fronteras y conexiones.
+
+**Los 3 elementos que contiene:**
+
+| Elemento | Representación | Descripción |
+|---|---|---|
+| **El sistema** | Caja central con el nombre | El software que vas a construir |
+| **Actores externos** | Elipses o rectángulos alrededor | Personas, sistemas u organizaciones que interactúan con él |
+| **Flujos de datos** | Flechas con etiqueta | Información que entra o sale del sistema |
+
+---
+
+**Paso a paso para construirlo:**
+
+**Paso 1 — Nombra tu sistema en el centro**
+
+Pon el nombre de lo que vas a construir en una caja central. Ejemplo: `Sistema de Inscripción en Línea`.
+
+**Paso 2 — Identifica a todos los actores externos**
+
+Hazte estas preguntas:
+- ¿Quién usa el sistema directamente? → usuarios humanos
+- ¿Qué otros sistemas necesita consultar o notificar? → sistemas externos
+- ¿Quién recibe reportes o resultados? → actores receptores
+- ¿Quién alimenta datos al sistema? → actores fuente
+
+**Paso 3 — Dibuja los flujos de información**
+
+Para cada actor, pregúntate:
+- ¿Qué datos **le manda** al sistema? → flecha entrante (→)
+- ¿Qué datos **recibe** del sistema? → flecha saliente (←)
+- Las flechas siempre llevan una etiqueta que describe qué dato fluye
+
+**Paso 4 — Verifica los límites**
+
+Todo lo que está dentro de la caja central lo vas a construir tú. Todo lo que está afuera ya existe o es responsabilidad de otro.
+
+---
+
+**Ejemplo completo — Sistema de Inscripción Universitaria en Línea:**
+
+```
+                    ┌─────────────────────────────────────┐
+  Estudiante ───────▶                                     ◀─── Coordinación Académica
+  (solicitud de     │   SISTEMA DE INSCRIPCIÓN EN LÍNEA   │    (catálogo de materias)
+   inscripción)     │                                     │
+  Estudiante ◀──────│                                     ├───▶ Coordinación Académica
+  (confirmación,    │                                     │    (lista de inscriptos)
+   horario)         │                                     │
+                    │                                     ├───▶ Sistema Bancario
+  Docente ─────────▶│                                     │    (solicitud de cobro)
+  (disponibilidad   │                                     │
+   de horarios)     │                                     ◀─── Sistema Bancario
+                    │                                     │    (confirmación de pago)
+  Admin ────────────▶                                     │
+  (apertura de      │                                     ├───▶ Sistema de Email
+   período)         │                                     │    (correos de confirmación)
+                    └─────────────────────────────────────┘
+```
+
+**Lo que muestra este diagrama:**
+
+| Actor externo | Datos que envía al sistema | Datos que recibe del sistema |
+|---|---|---|
+| **Estudiante** | Solicitud de inscripción | Confirmación, horario asignado |
+| **Docente** | Disponibilidad de horarios | — |
+| **Admin** | Apertura y cierre de período | — |
+| **Coordinación Académica** | Catálogo de materias | Lista de inscriptos |
+| **Sistema Bancario** | Confirmación de pago | Solicitud de cobro |
+| **Sistema de Email** | — | Correos de confirmación |
+
+**Lo que NO está en el diagrama (y por qué importa):**
+- ❌ No aparece la base de datos → es interna, no es un actor externo
+- ❌ No aparece el servidor → es infraestructura, no un actor de negocio
+- ❌ No aparece el código → el diagrama es conceptual, no técnico
+
+---
+
+**Errores comunes al hacer el diagrama:**
+
+| Error | Ejemplo | Corrección |
+|---|---|---|
+| Poner componentes internos como actores | "Base de datos" como elipse externa | La base de datos va dentro del sistema |
+| Flechas sin etiqueta | Una flecha vacía entre Estudiante y el sistema | Etiquetar: "solicitud de inscripción" |
+| Olvidar actores no humanos | No incluir el sistema de pagos | Incluir todos los sistemas externos que interactúan |
+| Demasiado detalle | Mostrar pantallas o pasos internos | Solo fronteras y flujos de datos, nada interno |
+
+---
+
+**Herramientas para dibujarlo:**
+- **draw.io** (gratuito, online): app.diagrams.net
+- **Lucidchart**: lucidchart.com (plan gratuito limitado)
+- **Figma**: figma.com (también sirve para wireframes)
+- **A mano**: papel + lápiz es suficiente para borradores iniciales
+
 Herramienta: **diagrama de contexto** (dibuja el sistema como una caja, y sus conexiones con el mundo exterior).
 
-#### Actividad práctica (45 min)
+#### Actividades prácticas
 
-**Ejercicio 1.1 — Diagrama de contexto (grupos de 3)**
+Cada grupo elige **uno** de los siguientes escenarios. Todos realizan los mismos pasos sobre dominios distintos.
 
-*Escenario:* Una biblioteca universitaria quiere digitalizar el proceso de préstamo de libros.
+---
 
-1. Identifiquen al menos 5 actores externos al sistema (personas, sistemas, organizaciones).
-2. Para cada actor, listen las entradas y salidas de información hacia/desde el sistema.
-3. Dibujen el diagrama de contexto en papel o en draw.io.
-4. Definan 3 elementos que quedan **fuera** del alcance (justifiquen).
+**Ejercicio A — Sistema de Gestión de Citas Médicas**
 
-**Preguntas de reflexión para el cierre:**
-- ¿Hay actores que no son humanos? ¿Cómo los tratamos?
-- ¿Qué pasa si no definimos los límites desde el inicio?
+*Escenario:* Una clínica privada quiere digitalizar la gestión de turnos médicos. Los pacientes deben poder sacar, cancelar y reprogramar citas. Los médicos deben poder ver su agenda diaria. La clínica emite recordatorios automáticos y cobra una seña al reservar.
+
+1. Identifiquen al menos 6 actores externos al sistema (ej: paciente, médico, obra social, sistema de pagos, sistema de email/SMS, laboratorio).
+2. Para cada actor, listen qué información **envía** al sistema y qué información **recibe**.
+3. Dibujen el diagrama de contexto en draw.io o en papel.
+4. Definan al menos 3 elementos que quedan **fuera del alcance** y justifiquen (ej: gestión de historias clínicas, facturación a obras sociales, asignación de quirófanos).
+5. Redacten el alcance en una oración: "El sistema gestiona X, pero no gestiona Y."
+
+**Preguntas de reflexión:**
+- ¿El laboratorio es un actor externo o parte del sistema? ¿De qué depende la respuesta?
+- ¿Qué pasa si el médico y la clínica tienen expectativas distintas sobre quién puede cancelar una cita?
+
+---
+
+**Ejercicio B — Sistema de Gestión de Reservas de Vuelos y Hoteles**
+
+*Escenario:* Una agencia de viajes online permite reservar vuelos y hoteles en una sola plataforma. El sistema debe consultar disponibilidad en tiempo real a aerolíneas y hoteles externos, procesar pagos con tarjeta y enviar itinerarios al viajero por email.
+
+1. Identifiquen al menos 7 actores externos (ej: viajero, aerolínea, hotel, pasarela de pago, sistema de email, agencia reguladora de aviación, proveedor de mapas).
+2. Para cada actor, describan los flujos de datos de entrada y salida con etiquetas concretas (ej: "consulta de disponibilidad", "confirmación de reserva", "notificación de cancelación").
+3. Dibujen el diagrama de contexto.
+4. Identifiquen 3 límites del sistema: qué gestiona la plataforma y qué gestionan los actores externos.
+5. Señalen qué flujos son **sincrónicos** (el sistema espera respuesta) y cuáles son **asincrónicos** (el sistema no espera).
+
+**Preguntas de reflexión:**
+- ¿Cuántos sistemas externos tiene este dominio comparado con el Ejercicio A? ¿Qué implica eso en términos de riesgo e integración?
+- ¿Cambiaría el diagrama si la aerolínea también fuera cliente de la plataforma?
+
+---
+
+**Ejercicio C — Sistema de Gestión de Facturación de una Tienda de Productos**
+
+*Escenario:* Una tienda de electrónica quiere digitalizar su proceso de ventas y facturación. Los vendedores registran ventas, el sistema genera facturas electrónicas, descuenta stock automáticamente y reporta al sistema contable. Los clientes pueden solicitar comprobantes por email.
+
+1. Identifiquen al menos 6 actores externos (ej: cliente, vendedor, sistema contable, AFIP/SAT u organismo fiscal, proveedor de stock, sistema de email).
+2. Para cada actor, identifiquen los datos que intercambian con el sistema (ej: "datos de la venta", "factura electrónica", "CAE/folio fiscal", "reporte de ventas mensual").
+3. Dibujen el diagrama de contexto.
+4. Definan 3 elementos fuera del alcance (ej: gestión de proveedores, recursos humanos, logística de envíos).
+5. Identifiquen cuál actor tiene el flujo de datos más crítico para el negocio y justifiquen.
+
+**Preguntas de reflexión:**
+- ¿El organismo fiscal (AFIP/SAT) es un actor activo o pasivo? ¿Envía datos o solo los recibe?
+- ¿Qué sucede si el sistema contable cambia? ¿Cómo afecta al diagrama de contexto?
+
+---
+
+**Ejercicio D — Sistema de Gestión de Notas, Estudiantes, Profesores y Cursos**
+
+*Escenario:* Una universidad quiere un sistema que centralice la gestión académica: inscripción de estudiantes a cursos, registro de notas por parte de los profesores, generación de certificados analíticos y reportes para la dirección académica.
+
+1. Identifiquen al menos 6 actores externos (ej: estudiante, profesor, dirección académica, sistema de pagos de aranceles, ministerio de educación, sistema de email).
+2. Para cada actor, detallen los datos que envían y reciben (ej: el estudiante envía "solicitud de inscripción" y recibe "certificado analítico").
+3. Dibujen el diagrama de contexto.
+4. Definan el alcance: ¿gestiona el sistema la asistencia? ¿Las becas? ¿Los sueldos de los profesores? Justifiquen cada exclusión.
+5. Identifiquen al menos 2 actores que tienen tanto flujos de entrada como de salida y descríbanlos.
+
+**Preguntas de reflexión:**
+- ¿El "sistema de pagos de aranceles" debería ser un actor externo o una función interna del sistema? ¿Qué información necesitarían para decidirlo?
+- ¿Cómo cambia el diagrama si la universidad es pública y no cobra aranceles?
+
+---
+
+**Ejercicio E — Sistema de Gestión de Vehículos, Seguros, Multas y Mantenimientos**
+
+*Escenario:* Una empresa de transporte de carga necesita un sistema para gestionar su flota: registro de vehículos, vencimientos de seguros, multas recibidas, planes de mantenimiento preventivo y correctivo, y reportes de disponibilidad de unidades para el área operativa.
+
+1. Identifiquen al menos 7 actores externos (ej: mecánico/taller, compañía de seguros, organismo de tránsito, conductor, área operativa, proveedor de repuestos, sistema contable).
+2. Para cada actor, identifiquen los datos intercambiados (ej: el taller envía "informe de reparación" y recibe "orden de trabajo").
+3. Dibujen el diagrama de contexto.
+4. Definan 4 elementos fuera del alcance (ej: liquidación de sueldos de conductores, gestión de clientes de la empresa de transporte, GPS en tiempo real, licitaciones de seguros).
+5. Identifiquen qué actor genera la mayor cantidad de eventos en el sistema (el más "activo") y cuál recibe la mayor cantidad de reportes.
+
+**Preguntas de reflexión:**
+- ¿El conductor es usuario del sistema o solo un actor externo que genera datos? ¿Cambia algo si tiene acceso a una app mobile?
+- ¿Cómo afecta al alcance si la empresa también quiere gestionar el combustible?
+
+### Actividad práctica: Registro y configuración de Jira
+
+> **Objetivo:** Crear la cuenta de Jira, configurar el proyecto Scrum del grupo y dejar el entorno listo para registrar historias de usuario en la Clase 03.
+
+---
+
+#### Paso 1 — Crear cuenta gratuita en Jira
+
+1. Ve a `https://www.atlassian.com/software/jira/free` → clic en **Get it free**.
+2. Ingresa tu correo institucional y crea una contraseña segura.
+3. Selecciona el producto **Jira Software** → **Get it free**.
+4. En *"What is your team's name?"* escribe el nombre de tu grupo (ej: `Grupo-A`).
+5. Avanza con **Next** hasta llegar al dashboard inicial de Jira.
+
+---
+
+#### Paso 2 — Crear un proyecto Scrum por grupo
+
+Cada grupo crea **su propio proyecto** en Jira.
+
+1. En el menú lateral haz clic en **Projects** → **Create project**.
+2. Selecciona la plantilla **Scrum** → **Select**.
+3. Completa los campos:
+   - **Name:** Nombre del proyecto (ej: `NotasYa`, `FacturaYa`, `VehiculosYa`, `DoctorYa`, `ViajaYa`)
+   - **Key:** Clave corta de 3 letras (ej: `NYA`, `FYA`, `VYA`, `DYA`, `VJA`)
+   - **Access:** Private
+4. Clic en **Create project**.
+
+> **Claves recomendadas:**
+>
+> | Proyecto | Clave Jira |
+> |---|---|
+> | NotasYa | `NYA` |
+> | FacturaYa | `FYA` |
+> | VehiculosYa | `VYA` |
+> | DoctorYa | `DYA` |
+> | ViajaYa | `VJA` |
+
+---
+
+#### Paso 3 — Explorar el tablero Scrum
+
+1. En el menú lateral haz clic en **Board**.
+2. Observa las tres columnas por defecto: **To Do**, **In Progress**, **Done**.
+3. Haz clic en **Backlog** y nota la diferencia: el Backlog acumula todas las historias; el Board muestra solo las del sprint activo.
+
+---
+
+#### Paso 4 — Habilitar el campo Story Points
+
+1. Ve a **Project Settings** → **Features**.
+2. Activa la opción **Estimation** (habilita el campo Story Points en los issues).
+3. Ve a **Project Settings** → **Issue types** → **Story** y confirma que el campo **Story Points** aparece en el formulario del issue.
+
+> Los Story Points se asignarán en la **Clase 04** mediante Planning Poker.
+
+---
+
+#### Paso 5 — Crear una Épica de prueba
+
+1. Haz clic en **Create** (botón azul superior).
+2. En **Issue type** selecciona **Epic**.
+3. **Summary:** `Módulo de prueba` (o el módulo principal de tu proyecto).
+4. **Epic Name:** el mismo valor.
+5. Clic en **Create**.
+6. Verifica que la épica aparece en el Backlog con un color asignado automáticamente.
+
+#### Paso 6 — Crear una Historia de Usuario de prueba
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿En qué se parece el Backlog de Jira a la "lista de TODO" de la que habla el estándar ISO/IEC/IEEE 12207?
+2. ¿Qué diferencia hay entre un **Epic** y una **Story** en Jira?
+3. ¿Por qué el campo Story Points está desactivado por defecto y hay que habilitarlo?
+
+---
 
 #### Recursos
 - ISO/IEC/IEEE 29148:2018 — Systems and software engineering: Requirements engineering
@@ -156,7 +429,7 @@ Ejemplo: REQ-AUTH-003
          003 = número secuencial
 ```
 
-#### Actividad práctica (45 min)
+#### Actividad práctica
 
 **Ejercicio 2.1 — Clínica de requisitos (individual + pares)**
 
@@ -178,7 +451,7 @@ Dados los siguientes pares de requisitos, determinen si son consistentes o contr
 - REQ-001: "Solo los administradores pueden eliminar usuarios."
 - REQ-047: "Cualquier usuario puede desactivar su propia cuenta, lo que elimina todos sus datos."
 
-#### Ejercicio de código — Clase 02: Validador automático de criterios SMART-V (25 minutos)
+#### Ejercicio de código — Clase 02: Validador automático de criterios SMART-V
 
 **Problema:** revisar requisitos manualmente es tedioso y se presta a omisiones. Vamos a construir un script que evalúa automáticamente cuántos criterios SMART-V cumple un requisito.
 
@@ -352,22 +625,111 @@ Toda persona, grupo u organización que tiene un interés legítimo en el sistem
 - **De confirmación**: "Si entendí bien, el problema es X, ¿correcto?"
 - **Hipotéticas**: "¿Qué haría si pudiera rediseñar ese proceso desde cero?"
 
-#### Actividad práctica (45 min)
+#### Actividades prácticas
 
-**Ejercicio 3.1 — Mapeo de stakeholders (grupos de 3)**
+Cada grupo elige **uno** de los siguientes escenarios. Todos realizan los mismos pasos sobre dominios distintos.
 
-*Escenario:* Sistema de gestión de turnos para un hospital público.
+---
 
-1. Identifiquen al menos 8 stakeholders.
-2. Ubíquenlos en la matriz influencia-interés.
-3. Para cada cuadrante, definan la estrategia de participación y la técnica de elicitación más adecuada.
+**Ejercicio A — Sistema de Gestión de Citas Médicas**
 
-**Ejercicio 3.2 — Simulación de entrevista (parejas, roles: analista / stakeholder)**
+*Escenario:* Una clínica privada quiere digitalizar la gestión de turnos médicos. Pacientes, médicos, administrativos, obras sociales y sistemas de notificación deben interactuar con el sistema.
 
-Un estudiante es el analista, otro es el Jefe de Admisiones del hospital.
-- Duración: 10 minutos por entrevista.
-- El analista debe obtener al menos 5 requisitos candidatos.
-- Al finalizar, el "stakeholder" da feedback sobre la calidad de las preguntas.
+1. Identifiquen al menos 8 stakeholders del sistema (ej: paciente, médico, administrativo, director de clínica, obra social, sistema de email/SMS, laboratorio, proveedor de tecnología).
+2. Para cada stakeholder, anoten:
+   - ¿Cuán influyente es? (poder de decisión o veto)
+   - ¿Cuánto interés tiene en el sistema? (impacto directo en su trabajo)
+3. Ubíquenlos en la matriz influencia-interés (4 cuadrantes).
+4. Para cada cuadrante, definan:
+   - **Colaborar activamente**: ¿Quiénes son? ¿Qué técnica de elicitación usan?
+   - **Gestionar de cerca**: ¿Qué información necesitan? ¿Cada cuánto?
+   - **Mantener informado**: ¿Cómo los mantienen actualizado?
+   - **Monitorear**: ¿Cuál es su impacto mínimo?
+5. Diseñen un plan de participación para cada stakeholder del cuadrante "Colaborar activamente".
+
+**Preguntas de reflexión:**
+- ¿La obra social tiene más influencia que el paciente? ¿Por qué?
+- ¿El laboratorio debería estar en el sistema o es externo? ¿Qué información intercambiaría?
+
+---
+
+**Ejercicio B — Sistema de Gestión de Reservas de Vuelos y Hoteles**
+
+*Escenario:* Una agencia de viajes online gestiona reservas. Viajeros, aerolíneas, hoteles, pasarelas de pago, reguladores y proveedores de mapas son stakeholders.
+
+1. Identifiquen al menos 8 stakeholders (ej: viajero, agente de viajes, aerolínea, hotel, pasarela de pago, agencia reguladora, proveedor de mapas, gerente de agencia).
+2. Para cada uno, determinen:
+   - Influencia: ¿puede detener o acelerar el proyecto?
+   - Interés: ¿cuánto le afecta el sistema en su día a día?
+3. Construyan la matriz influencia-interés.
+4. Identifiquen conflictos potenciales:
+   - ¿Hay stakeholders con alto interés pero baja influencia que podrían sentirse ignorados?
+   - ¿Hay stakeholders con alta influencia pero bajo interés que podrían no priorizar este proyecto?
+5. Propongan una estrategia de comunicación que equilibre los intereses de los stakeholders en conflicto.
+
+**Preguntas de reflexión:**
+- ¿El regulador debería estar en el cuadrante de "Colaborar activamente" o de "Gestionar de cerca"? ¿Por qué?
+- ¿Cómo cambia la matriz si la aerolínea es también accionista de la agencia de viajes?
+
+---
+
+**Ejercicio C — Sistema de Gestión de Facturación de una Tienda de Productos**
+
+*Escenario:* Una tienda de electrónica digitaliza ventas y facturación. Clientes, vendedores, contabilidad, AFIP/SAT, proveedores y gerencia están involucrados.
+
+1. Identifiquen al menos 8 stakeholders (ej: cliente, vendedor, contador, AFIP/SAT, proveedor de stock, gerente de ventas, supervisor de caja, auditor externo).
+2. Para cada stakeholder:
+   - Analicen si su influencia es **ejecutiva** (toman decisiones), **técnica** (dan recomendaciones), o **consultiva** (dan información).
+   - Analicen su interés: ¿alto (afecta su trabajo diario)? ¿Bajo (afecta ocasionalmente)?
+3. Construyan la matriz influencia-interés.
+4. Identifiquen al menos 3 pares de stakeholders con intereses **conflictivos** y propongan cómo resolverlos (ej: vendedor quiere procesos rápidos, contador quiere precisión; AFIP quiere datos completos, cliente quiere privacidad).
+5. Diseñen la estrategia de elicitación para el cuadrante "Colaborar activamente" especificando técnicas concretas.
+
+**Preguntas de reflexión:**
+- ¿El auditor externo tiene influencia o solo interés? ¿Cómo lo tratarían en la matriz?
+- ¿Qué conflicto de intereses existe entre el AFIP/SAT y el cliente? ¿Cómo lo gestionan?
+
+---
+
+**Ejercicio D — Sistema de Gestión de Notas, Estudiantes, Profesores y Cursos**
+
+*Escenario:* Una universidad centraliza gestión académica. Estudiantes, profesores, dirección académica, dirección de finanzas, ministerio de educación y padres son stakeholders.
+
+1. Identifiquen al menos 8 stakeholders (ej: estudiante, profesor, coordinador académico, director de facultad, tesorero, ministerio de educación, padre/apoderado, empleado de admisión).
+2. Analicen para cada uno:
+   - ¿Es usuario directo del sistema o recibe información de él?
+   - ¿Qué tan afectado es por cambios en las reglas académicas?
+3. Construyan la matriz influencia-interés.
+4. Identifiquen stakeholders que probablemente estén en conflicto:
+   - Ejemplo: Estudiante quiere transparencia de calificaciones en tiempo real; Profesor quiere privacidad hasta publicación oficial.
+5. Propongan 3 técnicas de elicitación concretas para el cuadrante "Colaborar activamente" y justifiquen por qué las eligieron (ej: entrevista vs. taller vs. encuesta).
+
+**Preguntas de reflexión:**
+- ¿El padre/apoderado debería tener tanta influencia como el estudiante? ¿Por qué sí o no?
+- ¿El ministerio de educación está interesado en este sistema específico o solo en que cumpla estándares?
+
+---
+
+**Ejercicio E — Sistema de Gestión de Vehículos, Seguros, Multas y Mantenimientos**
+
+*Escenario:* Una empresa de transporte gestiona su flota. Conductores, mecánicos, compañía de seguros, organismo de tránsito, operadores y finanzas están involucrados.
+
+1. Identifiquen al menos 8 stakeholders (ej: conductor, mecánico/taller, compañía de seguros, organismo de tránsito, supervisor de operaciones, gerente de finanzas, proveedor de repuestos, contador de la empresa).
+2. Para cada stakeholder, clasifiquen:
+   - Influencia: ¿puede vetar decisiones? ¿Puede acelerar aprobaciones?
+   - Interés: ¿cuánto les importa que el sistema funcione bien?
+3. Construyan la matriz influencia-interés.
+4. Identifiquen stakeholders con **alta influencia y bajo interés** (riesgo de que bloqueen el proyecto sin entender bien por qué es importante):
+   - ¿Cómo los convencen de la importancia del sistema?
+   - ¿Qué información necesitan para mantenerlos conformes?
+5. Diseñen un plan de gestión de stakeholders que incluya:
+   - Frecuencia de comunicación para cada grupo
+   - Qué información comparten con cada uno
+   - Cómo manejan desacuerdos entre grupos
+
+**Preguntas de reflexión:**
+- ¿El conductor debería estar en "Colaborar activamente" o en "Mantener informado"? ¿Qué cambia si la app mobile es crítica para él?
+- ¿Cómo resuelven un conflicto entre lo que quiere el organismo de tránsito (datos detallados de multas) y lo que quiere el conductor (privacidad)?
 
 #### Recursos
 - Robertson, S. & J. — *Mastering the Requirements Process*, Cap. 3–4
@@ -431,26 +793,189 @@ de tu rol. Señala cualquier ambigüedad en mis preguntas.
 - Stakeholders que se contradicen entre sí sin saberlo.
 - "Eso es obvio, no hace falta documentarlo."
 
-#### Actividad práctica (50 min)
+#### Actividades prácticas (50 min)
 
-**Ejercicio 4.1 — JAD simulado (grupos de 6)**
+Cada grupo elige **uno** de los siguientes escenarios. Todos realizan la sesión JAD simulada y la elicitación asistida por IA sobre dominios distintos.
 
-La clase se divide en grupos. Cada grupo recibe un escenario diferente:
-- A: Sistema de matrícula universitaria en línea
-- B: App de seguimiento de pedidos para restaurante
-- C: Portal de declaraciones juradas para empleados públicos
+---
 
-Roles asignados: facilitador, 2 usuarios clave, patrocinador, analista (escriba), TI.  
-Duración: 25 minutos de sesión JAD estructurada.  
-Entregable: 8–10 requisitos candidatos documentados con ID, descripción y fuente.
+**Ejercicio A — Sistema de Gestión de Citas Médicas**
 
-**Ejercicio 4.2 — Elicitación asistida por IA (individual)**
+*Escenario:* Una clínica privada necesita digitalizar la gestión de turnos. Hay conflictos entre médicos (quieren control total de su agenda), administrativos (necesitan eficiencia operativa), y pacientes (quieren reservar online sin llamar).
+
+**Parte 1 — JAD simulado (25 min, grupos de 6)**
+
+Roles asignados:
+- **Facilitador**: modera la sesión, no toma partido.
+- **Patrocinador** (Director de la clínica): prioriza eficiencia y reducción de costos.
+- **Usuario clave 1** (Médico): defiende su autonomía sobre la agenda.
+- **Usuario clave 2** (Administrativo): quiere menos llamadas telefónicas y errores manuales.
+- **Usuario clave 3** (Paciente representativo): quiere disponibilidad 24/7 y confirmaciones automáticas.
+- **Analista (escriba)**: documenta todo en tiempo real.
+
+Agenda JAD:
+1. El facilitador presenta el objetivo: definir los límites del sistema (10 min).
+2. Cada usuario clave expone sus necesidades más urgentes (8 min).
+3. El grupo consensúa y documenta 8–10 requisitos candidatos con ID, descripción y stakeholder fuente (7 min).
+
+Entregable: tabla con columnas `ID | Requisito | Fuente | Prioridad (Alta/Media/Baja)`.
+
+**Parte 2 — Elicitación asistida por IA (25 min, individual)**
 
 Con acceso a un LLM (ChatGPT, Copilot, Gemini):
-1. Diseñen un prompt para que la IA actúe como stakeholder del escenario de su grupo.
-2. Realicen 5 preguntas de elicitación.
-3. Documenten las respuestas.
-4. Anoten cuáles respuestas son verosímiles y cuáles necesitarían validación con un experto real.
+1. Diseñen un prompt que haga que la IA actúe como **médico generalista** de la clínica, con 10 años de experiencia.
+2. Realicen exactamente 5 preguntas de elicitación enfocadas en: gestión de agenda, cancelaciones, recordatorios y confidencialidad del paciente.
+3. Documenten las respuestas de la IA.
+4. Para cada respuesta, clasifiquen: ✅ Verosímil sin validación / ⚠️ Verosímil pero requiere validación experta / ❌ Implausible para este dominio.
+5. Repitan el proceso actuando la IA como **paciente de 65 años con movilidad reducida**. ¿Cambian los requisitos?
+
+**Preguntas de reflexión:**
+- ¿Qué tipo de conflicto surgió en la sesión JAD entre el médico y el administrativo? ¿Cómo lo resolvió el facilitador?
+- ¿La IA simuló bien las preocupaciones de confidencialidad del paciente? ¿Qué no capturó?
+
+---
+
+**Ejercicio B — Sistema de Gestión de Reservas de Vuelos y Hoteles**
+
+*Escenario:* Una agencia de viajes online quiere una plataforma integrada. Hay tensión entre el equipo comercial (quiere mostrar la mayor oferta posible), el equipo técnico (quiere simplicidad de integración con APIs) y los clientes (quieren precios claros sin sorpresas).
+
+**Parte 1 — JAD simulado (25 min, grupos de 6)**
+
+Roles asignados:
+- **Facilitador**: modera la sesión.
+- **Patrocinador** (CEO de la agencia): prioriza conversión de ventas y comisiones.
+- **Usuario clave 1** (Gerente comercial): quiere integrar 10+ aerolíneas y 20+ cadenas hoteleras.
+- **Usuario clave 2** (Líder técnico): advierte sobre complejidad de integración y latencia de APIs.
+- **Usuario clave 3** (Cliente frecuente): quiere precio total sin letra chica, filtros claros y cancelación fácil.
+- **Analista (escriba)**: documenta todo en tiempo real.
+
+Agenda JAD:
+1. El facilitador presenta el objetivo: definir el MVP del buscador de viajes (10 min).
+2. Cada usuario clave presenta su lista de 3 requisitos no negociables (8 min).
+3. El grupo vota y prioriza 8–10 requisitos candidatos (7 min).
+
+Entregable: tabla con columnas `ID | Requisito | Fuente | Prioridad (Alta/Media/Baja)`.
+
+**Parte 2 — Elicitación asistida por IA (25 min, individual)**
+
+Con acceso a un LLM:
+1. Diseñen un prompt para que la IA actúe como **viajero frecuente de negocios** que viaja 15 veces al año.
+2. Realicen 5 preguntas sobre: búsqueda de vuelos, gestión de cambios, notificaciones y preferencias personalizadas.
+3. Documenten y clasifiquen cada respuesta: ✅ / ⚠️ / ❌.
+4. Repitan el proceso con la IA como **gerente de una aerolínea low-cost**. ¿Qué requisitos nuevos aparecen?
+5. Comparen ambos perfiles: ¿qué requisitos son contradictorios entre cliente y aerolínea?
+
+**Preguntas de reflexión:**
+- ¿Qué pasó cuando el gerente comercial y el líder técnico tuvieron requisitos incompatibles? ¿Quién cedió y por qué?
+- ¿La IA identificó requisitos no funcionales (rendimiento, seguridad de pago) o solo funcionales?
+
+---
+
+**Ejercicio C — Sistema de Gestión de Facturación de una Tienda de Productos**
+
+*Escenario:* Una tienda de electrodomésticos necesita modernizar su sistema de facturación. Hay conflicto entre el equipo de ventas (quiere rapidez en el cierre de caja), contabilidad (quiere precisión y trazabilidad completa) y la gerencia (quiere reportes en tiempo real).
+
+**Parte 1 — JAD simulado (25 min, grupos de 6)**
+
+Roles asignados:
+- **Facilitador**: modera la sesión.
+- **Patrocinador** (Dueño de la tienda): quiere reducir errores de caja y cumplir con AFIP/SAT.
+- **Usuario clave 1** (Vendedor de piso): quiere que la factura se genere en menos de 30 segundos.
+- **Usuario clave 2** (Contadora): quiere cierre contable diario automático y trazabilidad de cada transacción.
+- **Usuario clave 3** (Gerente de ventas): quiere dashboard de ventas por producto, vendedor y período.
+- **Analista (escriba)**: documenta todo.
+
+Agenda JAD:
+1. El facilitador define el problema central: ¿qué es lo mínimo que debe hacer el sistema? (10 min).
+2. Cada usuario clave presenta sus 3 requisitos prioritarios (8 min).
+3. El grupo identifica dependencias y conflictos entre requisitos, luego documenta 8–10 candidatos (7 min).
+
+Entregable: tabla con columnas `ID | Requisito | Fuente | Conflicto con (si aplica) | Prioridad`.
+
+**Parte 2 — Elicitación asistida por IA (25 min, individual)**
+
+Con acceso a un LLM:
+1. Diseñen un prompt para que la IA actúe como **contador público** con experiencia en retail y cumplimiento fiscal.
+2. Realicen 5 preguntas sobre: tipos de comprobantes, conciliaciones, integración con organismos fiscales, y manejo de devoluciones.
+3. Documenten y clasifiquen: ✅ / ⚠️ / ❌.
+4. Repitan con la IA como **auditor externo** que revisará el sistema post-implementación. ¿Qué requisitos de trazabilidad agrega?
+5. Identifiquen 2 requisitos que surgieron de la IA que no aparecieron en la sesión JAD.
+
+**Preguntas de reflexión:**
+- ¿El conflicto entre velocidad (vendedor) y trazabilidad (contadora) es resoluble técnicamente o requiere negociación de negocio?
+- ¿La IA como contador sugirió requisitos legales específicos del país? ¿Son válidos universalmente o locales?
+
+---
+
+**Ejercicio D — Sistema de Gestión de Notas, Estudiantes, Profesores y Cursos**
+
+*Escenario:* Una universidad privada necesita centralizar la gestión académica. Hay tensión entre profesores (quieren autonomía en su criterio de calificación), estudiantes (quieren transparencia y acceso inmediato a notas) y dirección académica (quiere control y reportes de rendimiento).
+
+**Parte 1 — JAD simulado (25 min, grupos de 6)**
+
+Roles asignados:
+- **Facilitador**: modera la sesión.
+- **Patrocinador** (Rector o Decano): prioriza cumplimiento con el ministerio y acreditación institucional.
+- **Usuario clave 1** (Profesor): quiere subir notas en su propio tiempo, con comentarios opcionales.
+- **Usuario clave 2** (Estudiante): quiere ver notas en tiempo real, historial completo y alertas de bajo rendimiento.
+- **Usuario clave 3** (Coordinador académico): quiere generar reportes automáticos de cursadas, aplazos y promedios.
+- **Analista (escriba)**: documenta todo.
+
+Agenda JAD:
+1. El facilitador define el alcance: ¿el sistema cubre solo notas o también asistencia y pagos? (10 min).
+2. Cada usuario presenta sus 3 requisitos no negociables y 1 que podría ceder (8 min).
+3. El grupo documenta 8–10 requisitos con fuente y nivel de consenso (7 min).
+
+Entregable: tabla con columnas `ID | Requisito | Fuente | Nivel de consenso (Total/Parcial/Conflicto)`.
+
+**Parte 2 — Elicitación asistida por IA (25 min, individual)**
+
+Con acceso a un LLM:
+1. Diseñen un prompt para que la IA actúe como **estudiante de ingeniería de 3er año** que repite una materia.
+2. Realicen 5 preguntas sobre: acceso a notas, instancias de recuperación, comunicación con profesores, y historial académico.
+3. Documenten y clasifiquen: ✅ / ⚠️ / ❌.
+4. Repitan con la IA como **rector de la institución** preocupado por acreditación ministerial. ¿Qué requisitos de reportes y cumplimiento normativo aparecen?
+5. Comparen: ¿qué requisito del rector podría violar la privacidad del estudiante?
+
+**Preguntas de reflexión:**
+- ¿El profesor y el estudiante llegaron a algún acuerdo sobre cuándo publicar notas? ¿Qué rol jugó el facilitador?
+- ¿La IA capturó la diferencia entre "ver mi nota" (estudiante) y "auditar todas las notas" (coordinador)? ¿Cómo lo expresó?
+
+---
+
+**Ejercicio E — Sistema de Gestión de Vehículos, Seguros, Multas y Mantenimientos**
+
+*Escenario:* Una empresa de logística necesita gestionar su flota. Hay conflicto entre el área operativa (quiere vehículos siempre disponibles), el área de finanzas (quiere minimizar costos de mantenimiento) y el organismo de tránsito (exige cumplimiento normativo).
+
+**Parte 1 — JAD simulado (25 min, grupos de 6)**
+
+Roles asignados:
+- **Facilitador**: modera la sesión.
+- **Patrocinador** (Gerente general): quiere reducir accidentes y costos de la flota en 20%.
+- **Usuario clave 1** (Supervisor de operaciones): quiere saber en tiempo real qué vehículos están disponibles y cuáles en taller.
+- **Usuario clave 2** (Jefe de finanzas): quiere aprobar presupuestos de mantenimiento con evidencia, no "de ojo".
+- **Usuario clave 3** (Conductor): quiere reportar fallas y multas fácilmente, sin papeleo burocrático.
+- **Analista (escriba)**: documenta todo.
+
+Agenda JAD:
+1. El facilitador define el problema: ¿qué información crítica hoy se pierde o llega tarde? (10 min).
+2. Cada usuario clave describe su "peor día" con el sistema actual y qué necesitaría para evitarlo (8 min).
+3. El grupo documenta 8–10 requisitos candidatos ordenados por impacto en el negocio (7 min).
+
+Entregable: tabla con columnas `ID | Requisito | Fuente | Impacto si no se implementa`.
+
+**Parte 2 — Elicitación asistida por IA (25 min, individual)**
+
+Con acceso a un LLM:
+1. Diseñen un prompt para que la IA actúe como **mecánico de taller** con 15 años de experiencia en flotas de camiones.
+2. Realicen 5 preguntas sobre: registro de mantenimientos, alertas de vencimiento de service, historial por vehículo, y gestión de repuestos.
+3. Documenten y clasifiquen: ✅ / ⚠️ / ❌.
+4. Repitan con la IA como **inspector del organismo de tránsito** que auditará la empresa. ¿Qué documentación y registros exige?
+5. Identifiquen qué requisitos del mecánico y del inspector son complementarios y cuáles entran en conflicto.
+
+**Preguntas de reflexión:**
+- ¿El jefe de finanzas y el supervisor de operaciones tuvieron prioridades distintas sobre el mantenimiento? ¿Cómo se resolvió?
+- ¿La IA como inspector de tránsito generó requisitos más formales y precisos que la IA como mecánico? ¿A qué se debe esa diferencia?
 
 #### Recursos
 - Wood, J. & Silver, D. — *Joint Application Development*
@@ -918,7 +1443,7 @@ Dada la siguiente regla de negocio, identifiquen al menos 6 ejemplos que la cubr
 
 *"Los usuarios premium pueden tener hasta 3 reservas activas simultáneas; los usuarios estándar, solo 1. Las reservas vencidas no cuentan como activas."*
 
-#### Ejercicio de código — Clase 09: De Gherkin a código ejecutable con pytest (30 minutos)
+#### Ejercicio de código — Clase 09: De Gherkin a código ejecutable con pytest
 
 **Problema:** escribiste escenarios Gherkin en el Ejercicio 9.1, pero ¿cómo se convierten en pruebas reales? Vamos a tomar un escenario Gherkin y ejecutarlo con Python y `pytest-bdd`.
 
@@ -1683,7 +2208,7 @@ Se recibe la siguiente RFC:
 3. Emitan una recomendación fundamentada para el CCB: aprobar, rechazar o diferir.
 4. Definan los artefactos que deberían actualizarse si se aprueba.
 
-#### Ejercicio de código — Clase 15: Calculadora de priorización MoSCoW con Value/Effort (25 minutos)
+#### Ejercicio de código — Clase 15: Calculadora de priorización MoSCoW con Value/Effort
 
 **Problema:** en el Ejercicio 15.1 priorizaste historias de usuario manualmente. Vamos a automatizar el cálculo con Python para poder iterar rápido y comparar distintos escenarios.
 

@@ -29,8 +29,8 @@ Profesional con experiencia en diseño, desarrollo y operación de sistemas de s
 | Universidad Autónoma de Manizales | Especialización en Ingeniería del Software con Énfasis en Pruebas | Posgrado |
 | Universidad Autónoma de Manizales | Maestría en Ingeniería de Sistemas | Posgrado |
 
-![alt text](image.png)
-![alt text](image-1.png)
+![alt text](../image.png)
+![alt text](../image-1.png)
 ---
 
 ## Índice de contenidos
@@ -99,7 +99,7 @@ Al finalizar esta clase, el estudiante será capaz de:
 
 ---
 
-### Contenido teórico (40 minutos)
+### Contenido teórico
 
 #### 1. ¿Qué procesos hay en un proyecto de software? — ISO/IEC/IEEE 12207:2017
 
@@ -327,7 +327,7 @@ La **pirámide de pruebas** establece la proporción: muchas unitarias (baratas,
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Kodak — Cascada fallida**
 
@@ -530,7 +530,7 @@ Cada grupo crea **su propio proyecto** en Jira.
 
 ---
 
-### Actividad práctica: Instalación y configuración de Jenkins (40 minutos)
+### Actividad práctica: Instalación y configuración de Jenkins
 
 > **Objetivo:** Instalar Jenkins directamente en el sistema operativo, crear el primer pipeline CI y entender cómo encaja en el flujo DevOps.
 
@@ -740,7 +740,7 @@ Conectar Jenkins a un repo real es el caso de uso habitual en equipos:
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Product Backlog — La lista de TODO lo que queda por hacer
 
@@ -832,7 +832,7 @@ Antes de que un programador empiece a codificar, la historia debe estar suficien
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Priorizar backlog con Value/Effort**
 
@@ -1497,7 +1497,7 @@ Stage View en verde = DoD técnico cumplido
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Story Points vs Horas — ¿Por qué no estimamos en horas?
 
@@ -1592,7 +1592,7 @@ Si el backlog tiene 100 SP y la velocidad es 21 SP/sprint → necesitarás ~5 sp
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Planning Poker en vivo**
 
@@ -1815,7 +1815,7 @@ Calcula el total de tu grupo y completa:
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Gestión de riesgos
 
@@ -1891,7 +1891,7 @@ Quality Gates:
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Matriz de riesgos para proyecto**
 
@@ -1936,13 +1936,13 @@ Proyecto: Migración de BD Oracle a PostgreSQL. 200GB datos. Sin downtime.
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
-**Actividad 1: Matriz de riesgos (12 min)**
+**Actividad 1: Matriz de riesgos**
 
 Equipo elige proyecto real/hipotético. Identifica 5-10 riesgos, completa matriz (Prob×Impacto), propone mitigación.
 
-**Actividad 2: Quality gates para proyecto (13 min)**
+**Actividad 2: Quality gates para proyecto**
 
 Diseña 6-8 quality gates específicos para proyecto elegido. Define métricas, thresholds, cómo medirlas.
 
@@ -1965,7 +1965,7 @@ Diseña 6-8 quality gates específicos para proyecto elegido. Define métricas, 
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Control de versiones — ¿Qué guardamos y por qué?
 
@@ -2054,7 +2054,7 @@ Es un archivo (`CHANGELOG.md`) que lista en lenguaje humano qué cambió en cada
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Conflicto de merge y resolución**
 
@@ -2113,7 +2113,7 @@ Decisión: Git Flow.
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Modelar branching strategy (12 min)**
 
@@ -2138,7 +2138,7 @@ v1.3.0 → v1.4.0. Cambios: nuevo endpoint, bug fix, deprecation. Escribe entrad
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico 
 
 #### 1. ¿Qué es la Integración Continua (CI)?
 
@@ -2231,7 +2231,7 @@ Estrategias:
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Diagnosar fallo de pipeline**
 
@@ -2277,7 +2277,7 @@ Optimizaciones:
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Diseñar pipeline (12 min)**
 
@@ -2291,7 +2291,7 @@ GitHub Actions workflow para proyecto anterior. Archivo `.github/workflows/ci.ym
 
 ---
 
-#### Ejercicio de código — Clase 07: Construir un pipeline CI real (25 minutos)
+#### Ejercicio de código — Clase 07: Construir un pipeline CI real
 
 **Objetivo:** Escribir desde cero un pipeline de CI funcional y el código que lo acompaña.
 
@@ -2439,7 +2439,7 @@ Sube el cambio. ¿Qué muestra el pipeline? ¿Qué prueba falla primero?
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Entrega Continua vs. Despliegue Continuo
 
@@ -2519,7 +2519,7 @@ Si algo devía → Alerta → Rollback automático.
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Elegir estrategia para contexto**
 
@@ -2562,7 +2562,7 @@ Post-deploy a producción:
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Elegir estrategia (12 min)**
 
@@ -2574,7 +2574,7 @@ Proyecto elegido. Detalla: detección (¿cómo sabemos que falló?), decisión (
 
 ---
 
-#### Ejercicio de código — Clase 08: Simula un despliegue Canary con feature flags (25 minutos)
+#### Ejercicio de código — Clase 08: Simula un despliegue Canary con feature flags
 
 **Objetivo:** Implementar en Python la lógica de un despliegue canary usando feature flags, para entender cómo un sistema envía solo el X% del tráfico a la nueva versión.
 
@@ -2700,7 +2700,7 @@ def test_100_porciento_siempre_activo():
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. DevSecOps — Seguridad desde el día 1, no como paso final
 
@@ -2769,7 +2769,7 @@ Escanea dependencias (npm packages, Python libs, etc.) contra CVE database.
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: SQL Injection y mitigación**
 
@@ -2838,7 +2838,7 @@ Largo plazo (1-2 meses):
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Threat modeling (12 min)**
 
@@ -2855,7 +2855,7 @@ Diseña quality gates de seguridad para pipeline CI:
 
 ---
 
-#### Ejercicio de código — Clase 09: Encuentra y corrige las vulnerabilidades (25 minutos)
+#### Ejercicio de código — Clase 09: Encuentra y corrige las vulnerabilidades
 
 **Objetivo:** Identificar vulnerabilidades reales del OWASP Top 10 en código Python y corregirlas.
 
@@ -2992,7 +2992,7 @@ def log_evento(evento: str):
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. SAST en profundidad
 
@@ -3103,7 +3103,7 @@ sonarqube:
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: SAST detecta SQL injection**
 
@@ -3181,7 +3181,7 @@ Secreto almacenado en GitHub Secrets (encriptado). Disponible solo en CI, no en 
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Generar SBOM (12 min)**
 
@@ -3200,7 +3200,7 @@ Proyecto con 10 secretos (DB password, API keys, etc.). Diseña:
 
 ---
 
-#### Ejercicio de código — Clase 10: De credenciales en el código a variables de entorno (20 minutos)
+#### Ejercicio de código — Clase 10: De credenciales en el código a variables de entorno
 
 **Objetivo:** Migrar un script con credenciales hardcodeadas a una versión segura que las lee desde variables de entorno, y verificar que gitleaks detecta el problema original.
 
@@ -3332,7 +3332,7 @@ if not STRIPE_API_KEY:
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Logs — El diario de eventos del sistema
 
@@ -3411,7 +3411,7 @@ Si algo empieza a tardar 1,500ms en lugar de 20ms, lo ves inmediatamente en la t
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Debugging con trazas**
 
@@ -3460,7 +3460,7 @@ On-call engineer recibe notificación. Acciones:
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Diseñar logs estructura (12 min)**
 
@@ -3472,7 +3472,7 @@ App de comercio. 10 alertas críticas (error rate, latencia, etc.). Define thres
 
 ---
 
-#### Ejercicio de código — Clase 11: Mejorar logs de texto plano a logs estructurados (25 minutos)
+#### Ejercicio de código — Clase 11: Mejorar logs de texto plano a logs estructurados
 
 **Objetivo:** Transformar logs de texto plano (difíciles de buscar) a logs estructurados en JSON que un sistema de monitoreo pueda analizar automáticamente.
 
@@ -3598,7 +3598,7 @@ def procesar_pago(usuario_id: int, monto: float, metodo: str) -> bool:
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Las 4 métricas clave (Golden Signals) — Lo que siempre debes monitorear
 
@@ -3667,7 +3667,7 @@ Presupuesto de error: 43,200 × 0.001 = 43 minutos/mes
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: SLI/SLO en app bancaria**
 
@@ -3723,7 +3723,7 @@ Pero si error budget fuese 0.5 min, decisión sería: **NO DEPLOY. Congelamos.**
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Definir SLI/SLO (12 min)**
 
@@ -3750,7 +3750,7 @@ Escenario: Ya gastaste 80% del budget. Un feature arriesgado solicita deploy. ¿
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Las 4 métricas DORA — El estándar de la industria para medir equipos de software
 
@@ -3827,7 +3827,7 @@ CFR: 2/22 = 9% = "High" (0-15%)
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Analizar DORA de equipo**
 
@@ -3869,7 +3869,7 @@ Target para fin año:
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Medir DORA de equipo (12 min)**
 
@@ -3894,7 +3894,7 @@ Plan de 6 meses para llevar equipo de "Medium" a "High" en todas métricas. Prop
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Niveles de severidad — ¿Qué tan urgente es el problema?
 
@@ -3972,7 +3972,7 @@ Reunión. "¿Por qué pasó? ¿Cómo prevenimos?"
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Incident de pagos**
 
@@ -4011,7 +4011,7 @@ Stripe se recupera. Error rate vuelve a 0.1%.
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Clasificar incidentes (12 min)**
 
@@ -4036,7 +4036,7 @@ Diseña runbook para incidente SEV-1 de tu app. Pasos, quién hace qué, escalac
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Los 5 Por qués — Encontrar el problema real, no el síntoma
 
@@ -4098,7 +4098,7 @@ Diseña runbook para incidente SEV-1 de tu app. Pasos, quién hace qué, escalac
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Postmortem de outage**
 
@@ -4153,7 +4153,7 @@ Diseña runbook para incidente SEV-1 de tu app. Pasos, quién hace qué, escalac
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Five Whys analysis (12 min)**
 
@@ -4167,7 +4167,7 @@ Mismo incident. Escribe postmortem blameless con: timeline, root causes, contrib
 
 ---
 
-#### Ejercicio de código — Clase 15: Traza el bug y aplica los 5 Por qués (25 minutos)
+#### Ejercicio de código — Clase 15: Traza el bug y aplica los 5 Por qués
 
 **Objetivo:** Practicar análisis de causa raíz leyendo código real, no solo describiendo el problema en abstracto.
 
@@ -4320,7 +4320,7 @@ class Sesion:
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Los 4 tipos de mantenimiento
 
@@ -4398,7 +4398,7 @@ else:
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Refactorización de función compleja**
 
@@ -4457,7 +4457,7 @@ assert(calculateTotal(
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Clasificar mantenimiento (12 min)**
 
@@ -4469,7 +4469,7 @@ Código complejo dado. Refactoriza: extrae funciones, mejora tests, reduce coupl
 
 ---
 
-#### Ejercicio de código — Clase 16: Refactorización paso a paso (25 minutos)
+#### Ejercicio de código — Clase 16: Refactorización paso a paso
 
 **Objetivo:** Aplicar 3 técnicas de refactorización concretas sobre un fragmento de código real, verificando en cada paso que el comportamiento no cambió.
 
@@ -4643,7 +4643,7 @@ pytest test_factura.py -v
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. ¿Big-Bang o Gradual? Las dos estrategias de migración
 
@@ -4712,7 +4712,7 @@ Beneficios:
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Migración monolito → microservicios**
 
@@ -4751,7 +4751,7 @@ Componentes:
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Plan de migración (12 min)**
 
@@ -4776,7 +4776,7 @@ Detalla: cómo transferir datos, validación, rollback, reconciliación.
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Deuda técnica cuantificada
 
@@ -4850,7 +4850,7 @@ Retrain trigger (si accuracy < threshold)
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Deuda técnica negociación**
 
@@ -4878,13 +4878,13 @@ Modelo: Detecta transacciones fraudulentas.
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
-**Actividad 1: MLOps pipeline (12 min)**
+**Actividad 1: MLOps pipeline**
 
 Diseña CI/CD para modelo IA. Stages: data, train, validate, deploy, monitor.
 
-**Actividad 2: Gestionar deuda técnica (13 min)**
+**Actividad 2: Gestionar deuda técnica**
 
 Proyecto con 25 días de deuda técnica. Plan de pago en 6 sprints. Decisiones: qué pagar primero?
 
@@ -4903,7 +4903,7 @@ Proyecto con 25 días de deuda técnica. Plan de pago en 6 sprints. Decisiones: 
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Ética profesional (ACM) — Lo correcto también es ingeniería
 
@@ -4966,7 +4966,7 @@ Checklist práctico (AA):
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Auditar licencias**
 
@@ -5004,15 +5004,15 @@ App de banca. Testing:
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
-**Actividad 1: Ethical scenario (12 min)**
+**Actividad 1: Ethical scenario**
 
 Scenario: PM pide agregar tracking de datos de usuarios sin consentimiento para "mejorar recomendaciones".
 
 Respuesta ética: Qué dirías? Cómo lo justificas?
 
-**Actividad 2: Accesibilidad audit (13 min)**
+**Actividad 2: Accesibilidad audit**
 
 App dada. Auditoría manual + herramienta Axe. Lista de issues WCAG AA. Prioriza fixes.
 
@@ -5031,7 +5031,7 @@ App dada. Auditoría manual + herramienta Axe. Lista de issues WCAG AA. Prioriza
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico
 
 #### 1. Green Software (Sostenibilidad)
 
@@ -5105,7 +5105,7 @@ Antes de deploy a producción:
 
 ---
 
-### Ejemplos prácticos (40 minutos)
+### Ejemplos prácticos
 
 **Ejemplo 1: Go/No-Go para producción**
 
@@ -5142,7 +5142,7 @@ Razón: Hay una vulnerabilidad alta (CVE) pendiente de actualización, pero la f
 
 ---
 
-### Actividades prácticas (25 minutos)
+### Actividades prácticas
 
 **Actividad 1: Go/No-Go análisis (12 min)**
 
