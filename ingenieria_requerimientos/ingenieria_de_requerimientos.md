@@ -226,7 +226,7 @@ Cada grupo elige **uno** de los siguientes escenarios. Todos realizan los mismos
 2. Para cada actor, describan los flujos de datos de entrada y salida con etiquetas concretas (ej: "consulta de disponibilidad", "confirmación de reserva", "notificación de cancelación").
 3. Dibujen el diagrama de contexto.
 4. Identifiquen 3 límites del sistema: qué gestiona la plataforma y qué gestionan los actores externos.
-5. Señalen qué flujos son **sincrónicos** (el sistema espera respuesta) y cuáles son **asincrónicos** (el sistema no espera).
+5. Redacten el alcance en una oración: "El sistema gestiona X, pero no gestiona Y."
 
 **Preguntas de reflexión:**
 - ¿Cuántos sistemas externos tiene este dominio comparado con el Ejercicio A? ¿Qué implica eso en términos de riesgo e integración?
@@ -279,6 +279,8 @@ Cada grupo elige **uno** de los siguientes escenarios. Todos realizan los mismos
 **Preguntas de reflexión:**
 - ¿El conductor es usuario del sistema o solo un actor externo que genera datos? ¿Cambia algo si tiene acceso a una app mobile?
 - ¿Cómo afecta al alcance si la empresa también quiere gestionar el combustible?
+
+CORREO: JLAGUIRRE@UMANIZALES.EDU.CO
 
 ### Actividad práctica: Registro y configuración de Jira
 
