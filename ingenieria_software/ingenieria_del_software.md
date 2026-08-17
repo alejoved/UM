@@ -3319,7 +3319,7 @@ if not STRIPE_API_KEY:
 
 ---
 
-## Clase 11: ¿Cómo saber qué pasa dentro del sistema? — Logs, métricas y trazas
+## Clase 11: Logs, métricas y trazas
 
 **Duración:** 2 horas | **Unidad:** 3 | **Semana:** 6
 
