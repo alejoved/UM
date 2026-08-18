@@ -77,22 +77,6 @@ Profesional con experiencia en diseño, desarrollo y operación de sistemas de s
 
 ---
 
-## Evaluación del curso
-
-| Componente | Porcentaje | Descripción |
-|---|---|---|
-| **Primer parcial** | 20 % | Evaluación escrita — Unidad 1: Ciclo de vida, gestión y calidad |
-| **Segundo parcial** | 20 % | Evaluación escrita — Unidad 2: Configuración, CI/CD y DevSecOps |
-| **Tercer parcial** | 20 % | Evaluación escrita — Unidades 3 y 4: Operación, mantenimiento y ética |
-| **Proyecto** | 20 % | Desarrollo incremental del proyecto de grupo (NotasYa / FacturaYa / VehiculosYa / DoctorYa / ViajaYa) con entregables por unidad |
-| **Talleres** | 20 % | Actividades prácticas realizadas en clase (Jira, Jenkins, pipelines, postmortems, etc.) |
-| **Total** | **100 %** | |
-
-> **Nota mínima aprobatoria:** 3.0 / 5.0 en cada componente.  
-> Los talleres se evalúan con entrega en clase; no tienen recuperación fuera de la sesión correspondiente.
-
----
-
 # UNIDAD 1. Ciclo de vida, gestión y calidad
 
 ---
@@ -358,6 +342,851 @@ Startup de 6 personas. Compiten con Uber. Deploy 5-10 veces/día.
 Empresa tradicional (500 personas, software médico). Ciclo regulatorio 6 meses.
 - Modelo: Git Flow.
 - Razón: Múltiples versiones simultáneas, planning formal.
+
+---
+
+### Ejemplo integrador: Sistema de Gestión de Citas Médicas
+
+> **Dominio:** Pacientes, Doctores, Citas y Historias Clínicas.  
+> A continuación se muestran los artefactos concretos que se producirían en cada fase del ciclo de vida para este sistema.
+
+---
+
+#### Fase 1 — Requisitos
+
+**Historia de usuario (formato Connextra):**
+
+```
+Como paciente registrado,
+quiero agendar una cita con un doctor por especialidad y fecha disponible
+para evitar desplazamientos innecesarios al consultorio.
+
+Criterios de aceptación:
+  - El sistema muestra solo horarios disponibles en tiempo real.
+  - La confirmación llega por correo en menos de 2 minutos.
+  - Solo puedo agendar citas a partir de mañana (no el mismo día).
+  - Si el doctor cancela, recibo notificación y se libera el turno.
+```
+
+**Casos de uso — Diagrama:**
+
+```mermaid
+graph TD
+    Paciente((Paciente))
+    Doctor((Doctor))
+    Admin((Administrador))
+
+    Paciente --> UC1[Registrarse / Iniciar sesión]
+    Paciente --> UC2[Buscar doctor por especialidad]
+    Paciente --> UC3[Agendar cita]
+    Paciente --> UC4[Cancelar cita]
+    Paciente --> UC5[Ver historia clínica propia]
+
+    Doctor --> UC6[Ver agenda del día]
+    Doctor --> UC7[Registrar consulta / historia clínica]
+    Doctor --> UC8[Cancelar cita]
+
+    Admin --> UC9[Gestionar doctores y especialidades]
+    Admin --> UC10[Generar reportes de ocupación]
+```
+
+**Glosario del dominio:**
+
+| Término | Definición |
+|---|---|
+| **Cita** | Reserva de un slot de tiempo de un doctor para atender a un paciente |
+| **Slot** | Bloque de tiempo disponible en la agenda de un doctor |
+| **Historia Clínica** | Registro médico acumulado de todas las consultas de un paciente |
+| **Especialidad** | Área médica (Cardiología, Pediatría, etc.) asociada a uno o más doctores |
+| **Turno** | Jornada laboral de un doctor (mañana / tarde / noche) |
+
+---
+
+#### Fase 2 — Diseño
+
+**Diagrama de contexto C4 — Nivel 1:**
+
+```mermaid
+graph TB
+    P((Paciente))
+    D((Doctor))
+    A((Admin))
+
+    subgraph Sistema["Sistema de Citas Médicas"]
+        S[Aplicación Web / Móvil]
+    end
+
+    P -- "Agenda / cancela citas\n(HTTPS)" --> S
+    D -- "Gestiona agenda\nRegistra consulta\n(HTTPS)" --> S
+    A -- "Administra catálogo\n(HTTPS)" --> S
+
+    S -- "Envía email de confirmación\n(SMTP/SendGrid)" --> Email[Servicio de Email]
+    S -- "Persiste datos\n(TCP 5432)" --> DB[(PostgreSQL)]
+    S -- "Autenticación\n(OAuth 2.0)" --> Auth[Auth Provider\nKeycloak / Auth0]
+```
+
+**Diagrama de clases:**
+
+```mermaid
+classDiagram
+    class Paciente {
+        +UUID id
+        +String nombre
+        +String apellido
+        +Date fechaNacimiento
+        +String email
+        +String telefono
+        +List~Cita~ citas
+        +HistoriaClinica historia
+        +agendarCita(doctor, slot) Cita
+        +cancelarCita(citaId) void
+    }
+
+    class Doctor {
+        +UUID id
+        +String nombre
+        +String apellido
+        +String numeroColegiatura
+        +Especialidad especialidad
+        +List~Slot~ agenda
+        +agregarSlot(fecha, hora) Slot
+        +registrarConsulta(citaId, notas) Consulta
+    }
+
+    class Especialidad {
+        +UUID id
+        +String nombre
+        +String descripcion
+    }
+
+    class Cita {
+        +UUID id
+        +DateTime fechaHora
+        +EstadoCita estado
+        +String motivoConsulta
+        +Paciente paciente
+        +Doctor doctor
+        +Consulta consulta
+        +confirmar() void
+        +cancelar(motivo) void
+    }
+
+    class Slot {
+        +UUID id
+        +DateTime inicio
+        +DateTime fin
+        +Boolean disponible
+        +Doctor doctor
+    }
+
+    class HistoriaClinica {
+        +UUID id
+        +Paciente paciente
+        +List~Consulta~ consultas
+        +Date fechaCreacion
+        +agregarConsulta(consulta) void
+    }
+
+    class Consulta {
+        +UUID id
+        +DateTime fecha
+        +String anamnesis
+        +String diagnostico
+        +String tratamiento
+        +String receta
+        +Doctor doctor
+        +Paciente paciente
+    }
+
+    class EstadoCita {
+        <<enumeration>>
+        PENDIENTE
+        CONFIRMADA
+        CANCELADA
+        COMPLETADA
+        NO_ASISTIO
+    }
+
+    Paciente "1" --> "0..*" Cita : tiene
+    Paciente "1" --> "1" HistoriaClinica : posee
+    Doctor "1" --> "0..*" Slot : publica
+    Doctor "1" --> "0..*" Cita : atiende
+    Doctor "0..*" --> "1" Especialidad : pertenece
+    Cita "1" --> "0..1" Consulta : genera
+    HistoriaClinica "1" --> "0..*" Consulta : contiene
+    Cita --> EstadoCita : tiene
+```
+
+**Diagrama Entidad-Relación:**
+
+```mermaid
+erDiagram
+    PACIENTE {
+        uuid id PK
+        varchar nombre
+        varchar apellido
+        date fecha_nacimiento
+        varchar email UK
+        varchar telefono
+        timestamp created_at
+    }
+
+    DOCTOR {
+        uuid id PK
+        varchar nombre
+        varchar apellido
+        varchar numero_colegiatura UK
+        uuid especialidad_id FK
+        timestamp created_at
+    }
+
+    ESPECIALIDAD {
+        uuid id PK
+        varchar nombre
+        varchar descripcion
+    }
+
+    SLOT {
+        uuid id PK
+        uuid doctor_id FK
+        timestamp inicio
+        timestamp fin
+        boolean disponible
+    }
+
+    CITA {
+        uuid id PK
+        uuid paciente_id FK
+        uuid doctor_id FK
+        uuid slot_id FK
+        varchar estado
+        text motivo_consulta
+        timestamp fecha_hora
+        timestamp created_at
+    }
+
+    HISTORIA_CLINICA {
+        uuid id PK
+        uuid paciente_id FK
+        timestamp created_at
+    }
+
+    CONSULTA {
+        uuid id PK
+        uuid cita_id FK
+        uuid historia_clinica_id FK
+        text anamnesis
+        text diagnostico
+        text tratamiento
+        text receta
+        timestamp fecha
+    }
+
+    PACIENTE ||--o{ CITA : "agenda"
+    DOCTOR   ||--o{ CITA : "atiende"
+    DOCTOR   ||--o{ SLOT : "publica"
+    DOCTOR   }o--|| ESPECIALIDAD : "pertenece_a"
+    SLOT     ||--o| CITA : "ocupa"
+    PACIENTE ||--|| HISTORIA_CLINICA : "posee"
+    CITA     ||--o| CONSULTA : "genera"
+    HISTORIA_CLINICA ||--o{ CONSULTA : "contiene"
+```
+
+**Diagrama de secuencia — Flujo "Agendar Cita":**
+
+```mermaid
+sequenceDiagram
+    actor P as Paciente
+    participant UI as Frontend (React)
+    participant API as API Gateway
+    participant CS as CitasService
+    participant NS as NotificacionService
+    participant DB as PostgreSQL
+
+    P->>UI: Selecciona especialidad + fecha
+    UI->>API: GET /doctores?especialidad=cardiologia&fecha=2026-08-20
+    API->>CS: buscarSlotsDisponibles(especialidad, fecha)
+    CS->>DB: SELECT slots WHERE disponible=true AND doctor.especialidad=...
+    DB-->>CS: Lista de slots
+    CS-->>API: Slots disponibles
+    API-->>UI: 200 OK [{doctor, slots[]}]
+    UI-->>P: Muestra grilla de horarios
+
+    P->>UI: Selecciona slot y confirma
+    UI->>API: POST /citas {pacienteId, slotId, motivo}
+    API->>CS: agendarCita(pacienteId, slotId, motivo)
+    CS->>DB: BEGIN TRANSACTION
+    CS->>DB: UPDATE slots SET disponible=false WHERE id=slotId
+    CS->>DB: INSERT INTO citas (paciente_id, slot_id, estado='CONFIRMADA', ...)
+    CS->>DB: COMMIT
+    DB-->>CS: Cita creada {citaId}
+    CS->>NS: enviarConfirmacion(pacienteEmail, citaDetalles)
+    NS-->>CS: Email encolado
+    CS-->>API: Cita {id, fechaHora, doctor, estado}
+    API-->>UI: 201 Created
+    UI-->>P: "Cita confirmada — recibirás un correo"
+```
+
+**Diagrama de estados — Ciclo de vida de una Cita:**
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDIENTE : Paciente agenda cita
+
+    PENDIENTE --> CONFIRMADA : Sistema confirma disponibilidad
+    PENDIENTE --> CANCELADA : Paciente o doctor cancela
+
+    CONFIRMADA --> COMPLETADA : Doctor registra la consulta
+    CONFIRMADA --> CANCELADA : Paciente o doctor cancela (≥24h antes)
+    CONFIRMADA --> NO_ASISTIO : Paciente no se presenta
+
+    CANCELADA --> [*]
+    COMPLETADA --> [*]
+    NO_ASISTIO --> [*]
+```
+
+**Contrato de API (OpenAPI 3.0):**
+
+```yaml
+openapi: 3.0.3
+info:
+  title: API - Sistema de Citas Médicas
+  version: 1.0.0
+
+paths:
+  /citas:
+    post:
+      summary: Agendar una cita
+      tags: [Citas]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pacienteId, slotId, motivoConsulta]
+              properties:
+                pacienteId:
+                  type: string
+                  format: uuid
+                slotId:
+                  type: string
+                  format: uuid
+                motivoConsulta:
+                  type: string
+                  maxLength: 500
+      responses:
+        '201':
+          description: Cita creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cita'
+        '409':
+          description: El slot ya no está disponible
+        '422':
+          description: Datos de entrada inválidos
+
+components:
+  schemas:
+    Cita:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fechaHora:
+          type: string
+          format: date-time
+        estado:
+          type: string
+          enum: [PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA, NO_ASISTIO]
+        doctor:
+          $ref: '#/components/schemas/DoctorResumen'
+        motivoConsulta:
+          type: string
+    DoctorResumen:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nombre:
+          type: string
+        especialidad:
+          type: string
+```
+
+---
+
+#### Fase 3 — Implementación
+
+**Migración de base de datos versionada (Flyway):**
+
+```sql
+-- V1__create_core_tables.sql
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE especialidades (
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre      VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE pacientes (
+    id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre            VARCHAR(100) NOT NULL,
+    apellido          VARCHAR(100) NOT NULL,
+    fecha_nacimiento  DATE NOT NULL,
+    email             VARCHAR(255) NOT NULL UNIQUE,
+    telefono          VARCHAR(20),
+    created_at        TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE doctores (
+    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre              VARCHAR(100) NOT NULL,
+    apellido            VARCHAR(100) NOT NULL,
+    numero_colegiatura  VARCHAR(50) NOT NULL UNIQUE,
+    especialidad_id     UUID NOT NULL REFERENCES especialidades(id),
+    created_at          TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE slots (
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    doctor_id   UUID NOT NULL REFERENCES doctores(id),
+    inicio      TIMESTAMP NOT NULL,
+    fin         TIMESTAMP NOT NULL,
+    disponible  BOOLEAN NOT NULL DEFAULT TRUE,
+    CONSTRAINT slot_duracion CHECK (fin > inicio)
+);
+
+CREATE TABLE citas (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    paciente_id     UUID NOT NULL REFERENCES pacientes(id),
+    doctor_id       UUID NOT NULL REFERENCES doctores(id),
+    slot_id         UUID NOT NULL REFERENCES slots(id),
+    estado          VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE'
+                    CHECK (estado IN ('PENDIENTE','CONFIRMADA','CANCELADA','COMPLETADA','NO_ASISTIO')),
+    motivo_consulta TEXT,
+    fecha_hora      TIMESTAMP NOT NULL,
+    created_at      TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE historias_clinicas (
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    paciente_id UUID NOT NULL UNIQUE REFERENCES pacientes(id),
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE consultas (
+    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    cita_id             UUID NOT NULL UNIQUE REFERENCES citas(id),
+    historia_clinica_id UUID NOT NULL REFERENCES historias_clinicas(id),
+    anamnesis           TEXT,
+    diagnostico         TEXT NOT NULL,
+    tratamiento         TEXT,
+    receta              TEXT,
+    fecha               TIMESTAMP NOT NULL DEFAULT NOW()
+);
+```
+
+**Entidad y Repositorio (Java / Spring Boot):**
+
+```java
+// Cita.java — Entidad JPA
+@Entity
+@Table(name = "citas")
+public class Cita {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id", nullable = false)
+    private Paciente paciente;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private Doctor doctor;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "slot_id", nullable = false)
+    private Slot slot;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoCita estado = EstadoCita.PENDIENTE;
+
+    @Column(name = "motivo_consulta", length = 500)
+    private String motivoConsulta;
+
+    @Column(name = "fecha_hora", nullable = false)
+    private LocalDateTime fechaHora;
+
+    public void confirmar() {
+        if (this.estado != EstadoCita.PENDIENTE) {
+            throw new IllegalStateException("Solo se puede confirmar una cita PENDIENTE");
+        }
+        this.estado = EstadoCita.CONFIRMADA;
+    }
+
+    public void cancelar() {
+        if (this.estado == EstadoCita.COMPLETADA) {
+            throw new IllegalStateException("No se puede cancelar una cita ya completada");
+        }
+        this.estado = EstadoCita.CANCELADA;
+        this.slot.setDisponible(true);  // liberar el slot
+    }
+}
+
+// CitaRepository.java
+@Repository
+public interface CitaRepository extends JpaRepository<Cita, UUID> {
+
+    List<Cita> findByPacienteIdAndEstado(UUID pacienteId, EstadoCita estado);
+
+    @Query("""
+        SELECT c FROM Cita c
+        WHERE c.doctor.id = :doctorId
+          AND c.fechaHora BETWEEN :inicio AND :fin
+          AND c.estado NOT IN ('CANCELADA')
+        ORDER BY c.fechaHora
+    """)
+    List<Cita> findAgendaDoctor(
+        @Param("doctorId") UUID doctorId,
+        @Param("inicio") LocalDateTime inicio,
+        @Param("fin") LocalDateTime fin
+    );
+}
+
+// CitaService.java — Caso de uso: agendar cita
+@Service
+@Transactional
+public class CitaService {
+
+    private final CitaRepository citaRepo;
+    private final SlotRepository slotRepo;
+    private final NotificacionService notificacionService;
+
+    public CitaService(CitaRepository citaRepo,
+                       SlotRepository slotRepo,
+                       NotificacionService notificacionService) {
+        this.citaRepo = citaRepo;
+        this.slotRepo = slotRepo;
+        this.notificacionService = notificacionService;
+    }
+
+    public Cita agendarCita(UUID pacienteId, UUID slotId, String motivo) {
+        Slot slot = slotRepo.findByIdWithLock(slotId)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Slot no encontrado"));
+
+        if (!slot.isDisponible()) {
+            throw new SlotNoDisponibleException("El horario seleccionado ya no está disponible");
+        }
+
+        slot.setDisponible(false);
+
+        Cita cita = new Cita();
+        cita.setPaciente(new Paciente(pacienteId));
+        cita.setDoctor(slot.getDoctor());
+        cita.setSlot(slot);
+        cita.setFechaHora(slot.getInicio());
+        cita.setMotivoConsulta(motivo);
+        cita.confirmar();
+
+        Cita citaGuardada = citaRepo.save(cita);
+        notificacionService.enviarConfirmacionCita(citaGuardada);
+        return citaGuardada;
+    }
+}
+```
+
+**Pipeline CI (GitHub Actions):**
+
+```yaml
+# .github/workflows/ci.yml
+name: CI — Citas Médicas Backend
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: citas_test
+          POSTGRES_USER: citas_user
+          POSTGRES_PASSWORD: citas_pass
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build y tests
+        run: mvn verify
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/citas_test
+          SPRING_DATASOURCE_USERNAME: citas_user
+          SPRING_DATASOURCE_PASSWORD: citas_pass
+
+      - name: Análisis SonarQube
+        run: mvn sonar:sonar -Dsonar.projectKey=citas-medicas
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+```
+
+---
+
+#### Fase 4 — Pruebas
+
+**Prueba unitaria — Lógica de negocio (JUnit 5):**
+
+```java
+// CitaTest.java
+class CitaTest {
+
+    @Test
+    void confirmar_deberiaActualizarEstadoAConfirmada() {
+        Cita cita = new Cita();
+        cita.setEstado(EstadoCita.PENDIENTE);
+
+        cita.confirmar();
+
+        assertThat(cita.getEstado()).isEqualTo(EstadoCita.CONFIRMADA);
+    }
+
+    @Test
+    void cancelar_deberiaLiberarElSlot() {
+        Slot slot = new Slot();
+        slot.setDisponible(false);
+
+        Cita cita = new Cita();
+        cita.setEstado(EstadoCita.CONFIRMADA);
+        cita.setSlot(slot);
+
+        cita.cancelar();
+
+        assertThat(cita.getEstado()).isEqualTo(EstadoCita.CANCELADA);
+        assertThat(slot.isDisponible()).isTrue();
+    }
+
+    @Test
+    void cancelar_citaCompletada_deberiaLanzarExcepcion() {
+        Cita cita = new Cita();
+        cita.setEstado(EstadoCita.COMPLETADA);
+
+        assertThatThrownBy(cita::cancelar)
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("No se puede cancelar");
+    }
+}
+```
+
+**Prueba de integración — API REST (Spring Boot Test):**
+
+```java
+// CitaControllerIntegrationTest.java
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
+@Transactional
+class CitaControllerIntegrationTest {
+
+    @Autowired MockMvc mockMvc;
+    @Autowired ObjectMapper objectMapper;
+
+    @Test
+    void agendarCita_conSlotDisponible_deberiaRetornar201() throws Exception {
+        UUID slotId = crearSlotDisponible();
+        UUID pacienteId = crearPaciente();
+
+        AgendarCitaRequest request = new AgendarCitaRequest(pacienteId, slotId, "Dolor de cabeza");
+
+        mockMvc.perform(post("/citas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.estado").value("CONFIRMADA"))
+            .andExpect(jsonPath("$.id").isNotEmpty());
+    }
+
+    @Test
+    void agendarCita_conSlotOcupado_deberiaRetornar409() throws Exception {
+        UUID slotId = crearSlotOcupado();
+        UUID pacienteId = crearPaciente();
+
+        AgendarCitaRequest request = new AgendarCitaRequest(pacienteId, slotId, "Revisión");
+
+        mockMvc.perform(post("/citas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.mensaje").value("El horario seleccionado ya no está disponible"));
+    }
+}
+```
+
+**Prueba E2E — Flujo completo (Playwright):**
+
+```typescript
+// agendar-cita.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('paciente puede agendar y recibir confirmación', async ({ page }) => {
+  // 1. Autenticación
+  await page.goto('/login');
+  await page.fill('[name=email]', 'paciente@test.com');
+  await page.fill('[name=password]', 'Test1234!');
+  await page.click('button[type=submit]');
+  await expect(page).toHaveURL('/dashboard');
+
+  // 2. Buscar doctor
+  await page.click('text=Agendar cita');
+  await page.selectOption('[name=especialidad]', 'Cardiología');
+  await page.fill('[name=fecha]', '2026-08-25');
+  await page.click('button:has-text("Buscar")');
+
+  // 3. Seleccionar slot
+  const primerSlot = page.locator('.slot-disponible').first();
+  await expect(primerSlot).toBeVisible();
+  await primerSlot.click();
+
+  // 4. Confirmar
+  await page.fill('[name=motivo]', 'Control cardíaco anual');
+  await page.click('button:has-text("Confirmar cita")');
+
+  // 5. Verificar confirmación
+  await expect(page.locator('.toast-success')).toContainText('Cita confirmada');
+  await expect(page).toHaveURL(/\/citas\/.+/);
+});
+```
+
+---
+
+#### Fase 5 — Despliegue
+
+**Dockerfile multi-stage:**
+
+```dockerfile
+# ---- Build stage ----
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline -q
+COPY src ./src
+RUN mvn package -DskipTests -q
+
+# ---- Runtime stage ----
+FROM eclipse-temurin:21-jre-alpine
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+WORKDIR /app
+COPY --from=build /app/target/citas-medicas-*.jar app.jar
+USER appuser
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+**Pipeline CD — Despliegue Canary:**
+
+```mermaid
+graph LR
+    PR[Pull Request] -->|merge a main| CI[CI: Build + Tests]
+    CI -->|✅ verde| STAGING[Deploy → Staging]
+    STAGING --> SMOKE[Smoke tests\nautomatizados]
+    SMOKE -->|✅ ok| CANARY[Deploy Canary\n10% tráfico producción]
+    CANARY --> MONITOR[Monitoreo\n15 min]
+    MONITOR -->|SLO ok| FULL[Rollout 100%]
+    MONITOR -->|❌ error rate > 1%| ROLLBACK[Rollback automático]
+```
+
+---
+
+#### Fase 6 — Mantenimiento y Operación
+
+**Dashboard de observabilidad — métricas clave (Prometheus / Grafana):**
+
+```yaml
+# alertas.yml — Reglas de alerta para el sistema de citas
+groups:
+  - name: citas-medicas
+    rules:
+      - alert: AltaTasaErroresAPI
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.01
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tasa de errores 5xx supera el 1%"
+          runbook: "https://wiki.internal/runbooks/alta-tasa-errores"
+
+      - alert: SlotsBloqueadosSinCita
+        expr: slots_disponible_false_sin_cita_total > 50
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Posible fuga de slots — más de 50 slots bloqueados sin cita asociada"
+
+      - alert: LatenciaAgendarCitaAlta
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{
+                endpoint="/citas", method="POST"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 de agendar cita supera 2 segundos"
+```
+
+**Runbook — Procedimiento: Slots bloqueados sin cita:**
+
+```markdown
+## Runbook: Slots bloqueados sin cita asociada
+
+**Alerta:** SlotsBloqueadosSinCita
+**Severidad:** Warning
+**Tiempo de resolución esperado:** < 30 min
+
+### Diagnóstico
+1. Verificar si hay transacciones largas abiertas:
+   SELECT pid, now() - xact_start AS duracion, query
+   FROM pg_stat_activity
+   WHERE state = 'idle in transaction'
+   ORDER BY duracion DESC;
+
+2. Cuantificar el problema:
+   SELECT COUNT(*) FROM slots s
+   LEFT JOIN citas c ON c.slot_id = s.id
+   WHERE s.disponible = false AND c.id IS NULL;
+
+### Remediación
+Si duracion > 5 minutos → terminar transacción: SELECT pg_terminate_backend(pid);
+Liberar slots huérfanos:
+   UPDATE slots SET disponible = true
+   WHERE disponible = false
+     AND id NOT IN (SELECT slot_id FROM citas WHERE estado != 'CANCELADA');
+
+### Causa raíz habitual
+Timeout de la aplicación luego de bloquear el slot pero antes del INSERT en citas.
+Solución permanente: usar SELECT ... FOR UPDATE con timeout y manejo de excepción.
+```
 
 ---
 
