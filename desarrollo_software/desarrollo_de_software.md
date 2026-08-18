@@ -1,5 +1,34 @@
 # Desarrollo de Software — Planificación de 20 Clases (2 horas c/u)
 
+---
+
+## Docente Jorge Alejandro Aguirre Gutierrez
+
+**Ingeniero de Software | SRE | AWS Certified ×4**
+
+Profesional con experiencia en diseño, desarrollo y operación de sistemas de software a escala, especializado en arquitecturas cloud, prácticas DevOps e IA.
+
+**Certificaciones y especialidades técnicas:**
+
+- ☁️ **AWS Certified** × 4: Solutions Architect, Developer, AI Practitioner y DevOps Engineer
+- 🖥️ **Desarrollo frontend:** Angular, React
+- ⚙️ **Desarrollo backend:** Spring (Java), NestJS (Node.js)
+- 🗄️ **Administración de bases de datos:** Relacionales y NoSQL
+- 🏗️ **Infraestructura como código (IaC):** Terraform, CloudFormation
+- 🚀 **AWS DevOps:** CI/CD, automatización de infraestructura, observabilidad en nube
+
+**Experiencia docente:**
+
+| Institución | Programa | Nivel |
+|---|---|---|
+| Universidad de Caldas | Ingeniería de Sistemas | Pregrado |
+| Universidad Autónoma de Manizales | Ingeniería de Sistemas | Pregrado |
+| Universidad Autónoma de Manizales | Especialización en Ingeniería del Software con Énfasis en Pruebas | Posgrado |
+| Universidad Autónoma de Manizales | Maestría en Ingeniería de Sistemas | Posgrado |
+
+![alt text](../image.png)
+![alt text](../image-1.png)
+
 ## Distribución del curso
 
 | Unidad | Clases | Horas |
@@ -17,25 +46,15 @@
 - Herramientas que se usarán: IDE (IntelliJ / VS Code), Git, GitHub, herramientas de IA.
 - Dinámica de clases: teoría + práctica en cada sesión.
 
-#### Sistema de evaluación
+## Evaluación
 
-| Instancia | Contenido | Peso |
-|---|---|---|
-| **Primer parcial** | Unidad 1: Análisis y diseño OO (Clases 1–6) — casos de uso, modelo del dominio, GRASP, SOLID, diagramas de secuencia | 20 % |
-| **Segundo parcial** | Unidad 2: Construcción, persistencia e integración (Clases 7–11) — Clean Code, excepciones, Repository, transacciones, DTOs | 20 % |
-| **Tercer parcial** | Unidad 3: Pruebas y calidad (Clases 12–17) — pruebas unitarias, TDD, dobles de prueba, Playwright, análisis estático | 20 % |
-| **Proyecto final** | Unidad 4: Sistema funcional completo con todas las unidades integradas — demo, defensa técnica individual y trazabilidad | 40 % |
-| **Total** | | **100 %** |
-
-**Composición del proyecto final (40 %):**
-
-| Componente | Descripción | Peso dentro del proyecto |
-|---|---|---|
-| Demo funcional | Sistema corriendo, flujo principal + alternativo + error | 30 % |
-| Calidad del código | Pruebas, cobertura > 80 %, sin issues críticos en SonarLint | 30 % |
-| Defensa técnica individual | Preguntas sobre decisiones de diseño propias del estudiante | 30 % |
-| Trazabilidad y documentación | Matriz de trazabilidad, AGENTS.md, PR con análisis de impacto | 10 % |
-
+| Componente | Porcentaje |
+|---|---|
+| Primer parcial | 20% |
+| Segundo parcial | 20% |
+| Tercer parcial | 20% |
+| Talleres | 20% |
+| Proyecto final | 20% |
 ---
 
 # UNIDAD 1. Análisis y diseño orientado a objetos

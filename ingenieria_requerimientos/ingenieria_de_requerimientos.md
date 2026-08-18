@@ -33,6 +33,16 @@ Profesional con experiencia en diseño, desarrollo y operación de sistemas de s
 ![alt text](../image.png)
 ![alt text](../image-1.png)
 
+## Evaluación
+
+| Componente | Porcentaje |
+|---|---|
+| Primer parcial | 20% |
+| Segundo parcial | 20% |
+| Tercer parcial | 20% |
+| Talleres | 20% |
+| Proyecto final | 20% |
+
 ---
 
 ## Unidad 1. Fundamentos, calidad, elicitación y modelado del dominio
