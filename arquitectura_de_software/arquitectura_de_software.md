@@ -245,6 +245,85 @@ Lección: La deuda arquitectónica se acumula con interés. Pagar temprano es m�
 - Richards, Ford. *Fundamentals of Software Architecture*
 - Fowler. *Patterns of Enterprise Application Architecture*
 
+#### Ejercicio de código — Clase 01: detectar dependencias y erosión (30 minutos)
+
+**Problema:** la arquitectura planeada sigue el flujo `UI → API → Service → Repository → DB`, pero una nueva funcionalidad puede haber creado accesos directos a la base de datos. Construye un script que detecte esa erosión y estime el impacto de cambiar un módulo.
+
+**Paso 1 — Crea `analizar_arquitectura.py`:**
+
+```python
+from collections import defaultdict
+
+CAPAS = ["UI", "API", "Service", "Repository", "DB"]
+DEPENDENCIAS = [
+  ("UI", "API"),
+  ("API", "Service"),
+  ("Service", "Repository"),
+  ("Repository", "DB"),
+  ("API", "DB"),  # Erosión: salta Service y Repository.
+]
+
+
+def construir_grafo(dependencias):
+  grafo = defaultdict(list)
+  for origen, destino in dependencias:
+    grafo[origen].append(destino)
+  return grafo
+
+
+def detectar_violaciones(dependencias):
+  posicion = {capa: indice for indice, capa in enumerate(CAPAS)}
+  return [
+    f"{origen} depende directamente de {destino}: salta capas"
+    for origen, destino in dependencias
+    if posicion[destino] - posicion[origen] > 1
+  ]
+
+
+def dependientes_de(modulo, grafo):
+  """Devuelve los módulos que dependen directa o indirectamente de modulo."""
+  dependientes = set()
+  pendientes = [modulo]
+  while pendientes:
+    actual = pendientes.pop()
+    for origen, destinos in grafo.items():
+      if actual in destinos and origen not in dependientes:
+        dependientes.add(origen)
+        pendientes.append(origen)
+  return dependientes
+
+
+if __name__ == "__main__":
+  grafo = construir_grafo(DEPENDENCIAS)
+  print("=== Posibles erosiones ===")
+  for violacion in detectar_violaciones(DEPENDENCIAS):
+    print(f"- {violacion}")
+
+  afectados = dependientes_de("DB", grafo)
+  print(f"Módulos afectados si cambia DB: {sorted(afectados)}")
+```
+
+**Paso 2 — Ejecuta:**
+
+```bash
+python analizar_arquitectura.py
+```
+
+Debe aparecer una violación `API → DB` y los módulos afectados deben ser `API`, `Repository`, `Service` y `UI`.
+
+**Paso 3 — Extiende el ejercicio:**
+
+1. Implementa `dependencias_circulares()` para detectar ciclos.
+2. Elimina `("API", "DB")` y verifica que desaparezca la erosión.
+3. Agrega una vista de despliegue con `LoadBalancer`, `AppServer` y `Database`.
+4. Compara el costo de cambiar `DB` y `UI` contando sus módulos dependientes.
+
+**Preguntas de cierre:**
+
+- ¿Por qué `API → DB` aumenta el costo de cambiar la base de datos?
+- ¿Qué diferencia hay entre una dependencia válida y una violación arquitectónica?
+- ¿Qué información de esta vista no aparece en una vista de despliegue?
+
 ---
 
 ## Clase 02: Requisitos arquitectónicamente significativos y drivers
@@ -357,6 +436,105 @@ Brief de sistema de telemedicina. Extraer: 3 restricciones, 4 atributos de calid
 **Actividad 2: Priorizar drivers (13 min)**
 
 10 drivers dados. Colocar en matriz Impact × Risk. Justificar Top 3. ¿Qué hace al Top 1 ser el más importante?
+
+#### Ejercicio de código — Clase 02: clasificador y priorizador de requisitos (30 minutos)
+
+**Problema:** recibe requisitos escritos en lenguaje natural. El script debe clasificar cada uno como ASR o no ASR usando palabras clave, asignar impacto y riesgo, y ordenar los requisitos que necesitan atención arquitectónica.
+
+**Paso 1 — Crea `priorizar_requisitos.py`:**
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Requisito:
+  texto: str
+  impacto: str
+  riesgo: str
+  tipo: str = "por analizar"
+
+
+REQUISITOS = [
+  Requisito("Procesar 100000 transacciones por segundo", "alto", "alto"),
+  Requisito("Permitir cambiar la foto de perfil", "bajo", "bajo"),
+  Requisito("Los datos de salud deben permanecer en Colombia", "alto", "alto"),
+  Requisito("Disponibilidad del 99.99%", "alto", "medio"),
+  Requisito("Agregar proveedores sin modificar el núcleo", "alto", "medio"),
+  Requisito("Enviar un correo de bienvenida", "bajo", "bajo"),
+]
+
+PALABRAS_ASR = {
+  "disponibilidad", "disponible", "transacciones", "segundo", "segundos",
+  "salud", "colombia", "proveedores", "escalar", "seguridad", "auditoría",
+}
+
+
+def es_asr(texto: str) -> bool:
+  palabras = set(texto.lower().replace("%", " ").split())
+  return bool(palabras & PALABRAS_ASR)
+
+
+def puntaje(requisito: Requisito) -> int:
+  valores = {"alto": 2, "medio": 1, "bajo": 0}
+  return valores[requisito.impacto] + valores[requisito.riesgo]
+
+
+def analizar(requisitos: list[Requisito]) -> list[Requisito]:
+  for requisito in requisitos:
+    requisito.tipo = "ASR" if es_asr(requisito.texto) else "No ASR"
+  return sorted(
+    [requisito for requisito in requisitos if requisito.tipo == "ASR"],
+    key=puntaje,
+    reverse=True,
+  )
+
+
+if __name__ == "__main__":
+  print("=== Requisitos que requieren decisión arquitectónica ===")
+  for requisito in analizar(REQUISITOS):
+    print(
+      f"[{puntaje(requisito)} puntos] "
+      f"Impacto: {requisito.impacto} | Riesgo: {requisito.riesgo}\n"
+      f"  {requisito.texto}"
+    )
+
+  print("\n=== Requisitos descartados como ASR ===")
+  for requisito in REQUISITOS:
+    if requisito.tipo == "No ASR":
+      print(f"- {requisito.texto}")
+```
+
+**Paso 2 — Ejecuta:**
+
+```bash
+python priorizar_requisitos.py
+```
+
+Los tres primeros requisitos ASR deben quedar por encima de los demás según la suma de impacto y riesgo.
+
+**Paso 3 — Convierte requisitos vagos en medibles:**
+
+Agrega `hacer_medible(texto)` para transformar estos ejemplos:
+
+| Requisito vago | Resultado esperado |
+|---|---|
+| El sistema debe ser rápido | El endpoint debe responder en P95 ≤ 500 ms con 200 solicitudes por segundo |
+| El sistema debe ser seguro | Debe rechazar el 100% de accesos no autorizados y registrar cada intento |
+| El sistema debe escalar | Debe soportar 1 millón de usuarios sin rediseño arquitectónico |
+
+**Paso 4 — Extiende el ejercicio:**
+
+1. Agrega `categoria` con los valores `restricción`, `calidad`, `funcional` o `stakeholder`.
+2. Reemplaza las palabras clave por reglas explícitas por categoría.
+3. Exporta los tres requisitos prioritarios a `drivers.csv` usando el módulo `csv`.
+4. Escribe dos pruebas con `assert`: 100000 transacciones debe ser ASR y el correo de bienvenida no debe ser ASR.
+
+**Preguntas de cierre:**
+
+- ¿Qué falsos positivos o falsos negativos produce la detección por palabras clave?
+- ¿Por qué impacto y riesgo deben analizarse por separado?
+- ¿Qué información adicional pedirías al stakeholder antes de aceptar un driver como definitivo?
 
 ---
 
