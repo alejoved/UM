@@ -1,8 +1,8 @@
-# Arquitectura de Software — Curso Completo (2 horas × 20 clases)
+# Arquitectura de Software — Curso Completo Ampliado (2 horas × 26 clases)
 
 > Material de referencia — Universidad de Manizales  
 > Última actualización: agosto 2026 | Versión: 1.0  
-> **Duración total: 40 horas** | 20 clases × 2 horas
+> **Duración total: 52 horas** | 26 clases × 2 horas
 
 ---
 
@@ -45,7 +45,9 @@ Profesional con experiencia en diseño, desarrollo y operación de sistemas de s
 | Talleres | 20% |
 | Proyecto final | 20% |
 
-## Mapa de clases
+## Mapa de clases recomendado
+
+La secuencia está organizada para que los estudiantes avancen desde fundamentos y vocabulario arquitectónico, luego diseño y evaluación, después plataforma y operación, y finalmente proyecto integrador. Los temas de seguridad, datos, DevOps, gobernanza y modernización se ubican antes del proyecto para que puedan aplicarse en los entregables finales.
 
 | Clase | Título | Unidad |
 |---|---|---|
@@ -53,26 +55,34 @@ Profesional con experiencia en diseño, desarrollo y operación de sistemas de s
 | 02 | Requisitos arquitectónicamente significativos y drivers | 1 |
 | 03 | Atributos de calidad y escenarios (ISO/IEC 25010) | 1 |
 | 04 | Estilos, patrones y tácticas arquitectónicas | 1 |
-| 05 | Documentación: ISO 42010, vistas 4+1 y modelo C4 | 1 |
-| 06 | ADR, arquitectura como código e IA como revisora | 1 |
-| 07 | Attribute-Driven Design (ADD): de drivers a estructuras | 2 |
-| 08 | Árbol de utilidad, sensitivity points y ATAM simplificado | 2 |
-| 09 | Principios cloud-native y Twelve-Factor App | 2 |
-| 10 | Docker y Docker Compose en arquitecturas reales | 2 |
-| 11 | Introducción a Kubernetes y orquestación de contenedores | 2 |
-| 12 | Comunicación síncrona, asíncrona, API Gateway y colas | 3 |
-| 13 | IA como componente arquitectónico: RAG, guardrails y fallback | 3 |
-| 14 | Patrones de resiliencia: timeout, retry, circuit breaker, bulkhead | 3 |
-| 15 | Estimación de capacidad y topología de despliegue | 3 |
-| 16 | Pruebas de carga (k6/JMeter) y observabilidad básica | 3 |
-| 17 | Proyecto: drivers, escenarios y arquitectura candidata | 4 |
-| 18 | Proyecto: prototipo contenerizado y resiliencia end-to-end | 4 |
-| 19 | Proyecto: validación, carga, observabilidad y análisis de impacto | 4 |
-| 20 | Defensa técnica individual y autorreferencia final | 4 |
+| 05 | Domain-Driven Design, bounded contexts y monolito modular | 2 |
+| 06 | Documentación arquitectónica — ISO 42010, 4+1 y C4 | 2 |
+| 07 | ADR, arquitectura como código e IA como revisora | 2 |
+| 08 | Attribute-Driven Design (ADD) | 2 |
+| 09 | Árbol de utilidad, sensitivity points y ATAM simplificado | 2 |
+| 10 | Arquitectura de datos, consistencia distribuida y eventos | 3 |
+| 11 | Comunicación síncrona, asíncrona, API Gateway y colas | 3 |
+| 12 | Arquitectura de seguridad — threat modeling, Zero Trust y controles | 3 |
+| 13 | Principios cloud-native y Twelve-Factor App | 3 |
+| 14 | Docker y Docker Compose en arquitecturas reales | 3 |
+| 15 | Introducción a Kubernetes y orquestación de contenedores | 3 |
+| 16 | DevOps avanzado, CI/CD, GitOps e infraestructura como código | 4 |
+| 17 | Patrones de resiliencia: timeout, retry, circuit breaker, bulkhead | 4 |
+| 18 | Estimación de capacidad y topología de despliegue | 4 |
+| 19 | Pruebas de carga y observabilidad básica | 4 |
+| 20 | Gobernanza arquitectónica, fitness functions y evolución | 4 |
+| 21 | IA como componente arquitectónico: RAG, guardrails y fallback | 5 |
+| 22 | Modernización de sistemas legacy y migración incremental | 5 |
+| 23 | Proyecto — Drivers, escenarios, arquitectura candidata y C4 | 6 |
+| 24 | Proyecto — Prototipo contenerizado y resiliencia end-to-end | 6 |
+| 25 | Proyecto — Pruebas de carga, observabilidad y análisis de impacto | 6 |
+| 26 | Defensa técnica individual y autorreferencia final | 6 |
 
 ---
 
-# UNIDAD 1. Fundamentos, drivers y documentación arquitectónica
+# UNIDAD 1. Fundamentos, drivers y vocabulario arquitectónico
+
+---
 
 ---
 
@@ -326,6 +336,8 @@ Debe aparecer una violación `API → DB` y los módulos afectados deben ser `AP
 
 ---
 
+---
+
 ## Clase 02: Requisitos arquitectónicamente significativos y drivers
 
 **Duración:** 2 horas | **Unidad:** 1 | **Semana:** 1
@@ -538,6 +550,8 @@ Agrega `hacer_medible(texto)` para transformar estos ejemplos:
 
 ---
 
+---
+
 ## Clase 03: Atributos de calidad y escenarios (ISO/IEC 25010)
 
 **Duración:** 2 horas | **Unidad:** 1 | **Semana:** 2
@@ -658,6 +672,8 @@ App de delivery. 4 escenarios (rendimiento, disponibilidad, seguridad, mantenibi
 **Actividad 2: Identificar trade-offs (13 min)**
 
 5 atributos priorizados. Para cada par relevante: ¿existe trade-off? ¿Cómo resolverlo arquitectónicamente?
+
+---
 
 ---
 
@@ -824,9 +840,168 @@ Columnas: 6 atributos de calidad. Filas: 5 estilos. Para cada celda: (+), (-) o 
 
 ---
 
-## Clase 05: Documentación arquitectónica — ISO 42010, 4+1 y C4
+---
 
-**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 3
+# UNIDAD 2. Modelado, documentación y evaluación arquitectónica
+
+---
+
+---
+
+## Clase 05: Domain-Driven Design, bounded contexts y monolito modular
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 3
+
+### Objetivos de aprendizaje
+
+- Explicar el valor de Domain-Driven Design (DDD) en decisiones arquitectónicas.
+- Identificar bounded contexts y relaciones entre contextos.
+- Diseñar un monolito modular como alternativa pragmática a microservicios prematuros.
+- Aplicar reglas de dependencia entre módulos de dominio.
+
+---
+
+### Contenido teórico (50 minutos)
+
+#### 1. DDD como herramienta arquitectónica
+
+DDD no es solo una técnica de modelado de clases. En arquitectura ayuda a decidir límites de módulos, servicios, equipos y contratos.
+
+**Conceptos principales:**
+- **Dominio:** área de conocimiento del negocio.
+- **Subdominio core:** lo que diferencia estratégicamente al sistema.
+- **Subdominio de soporte:** necesario para operar, pero no diferencial.
+- **Subdominio genérico:** problema común que puede resolverse con software estándar.
+- **Lenguaje ubicuo:** vocabulario compartido entre negocio y desarrollo.
+
+#### 2. Bounded contexts
+
+Un bounded context define dónde un modelo tiene significado preciso. La misma palabra puede significar cosas distintas según el contexto.
+
+**Ejemplo — universidad:**
+
+| Contexto | Concepto "estudiante" significa |
+|---|---|
+| Admisiones | Aspirante en proceso de ingreso |
+| Matrícula | Persona inscrita en asignaturas |
+| Financiera | Responsable de pagos y cartera |
+| Bienestar | Usuario de servicios de acompañamiento |
+
+#### 3. Context mapping
+
+Relaciones típicas entre contextos:
+- **Customer/Supplier:** un contexto depende del contrato de otro.
+- **Conformist:** un contexto adopta el modelo de otro sin poder cambiarlo.
+- **Anti-corruption Layer:** traduce modelos para evitar contaminación conceptual.
+- **Shared Kernel:** dos contextos comparten una parte pequeña del modelo.
+
+#### 4. Monolito modular
+
+Un monolito modular puede ser una arquitectura excelente cuando el equipo es pequeño o el dominio aún cambia rápido.
+
+```text
+src/
+  admisiones/
+    api.py
+    dominio.py
+    repositorio.py
+  matricula/
+    api.py
+    dominio.py
+    repositorio.py
+  financiera/
+    api.py
+    dominio.py
+    repositorio.py
+  shared/
+    eventos.py
+```
+
+Regla: los módulos no acceden directamente a la base de datos ni a clases internas de otros módulos. Se comunican por interfaces públicas o eventos de dominio.
+
+---
+
+### Actividades prácticas (25 minutos)
+
+**Actividad 1: Event storming ligero (10 min)**
+
+Sistema de matrícula universitaria. Identificar eventos de dominio: `EstudianteAdmitido`, `AsignaturaInscrita`, `PagoRegistrado`, `CupoAgotado`. Agruparlos en bounded contexts.
+
+**Actividad 2: Context map (15 min)**
+
+Dibujar relaciones entre `Admisiones`, `Matrícula`, `Financiera` y `Bienestar`. Marcar dónde usar Anti-corruption Layer y dónde exponer APIs públicas.
+
+#### Ejercicio de código — detectar violaciones entre bounded contexts (35 minutos)
+
+**Problema:** un monolito modular debe impedir que un contexto importe archivos internos de otro contexto.
+
+**Paso 1 — Crea `verificar_contextos.py`:**
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Importacion:
+  archivo: str
+  importado: str
+
+
+IMPORTACIONES = [
+  Importacion("src/matricula/api.py", "src/matricula/dominio.py"),
+  Importacion("src/matricula/api.py", "src/admisiones/public.py"),
+  Importacion("src/matricula/dominio.py", "src/financiera/repositorio.py"),
+  Importacion("src/financiera/api.py", "src/shared/eventos.py"),
+]
+
+
+def contexto(ruta: str) -> str:
+  partes = ruta.split("/")
+  return partes[1] if len(partes) > 1 and partes[0] == "src" else "externo"
+
+
+def es_api_publica(ruta: str) -> bool:
+  return ruta.endswith("/public.py") or "/shared/" in ruta
+
+
+def detectar_violaciones(importaciones: list[Importacion]) -> list[str]:
+  violaciones = []
+  for item in importaciones:
+    origen = contexto(item.archivo)
+    destino = contexto(item.importado)
+    if origen != destino and destino != "shared" and not es_api_publica(item.importado):
+      violaciones.append(
+        f"{item.archivo} importa {item.importado}: cruza el límite de {destino}"
+      )
+  return violaciones
+
+
+if __name__ == "__main__":
+  print("=== Violaciones de bounded contexts ===")
+  for violacion in detectar_violaciones(IMPORTACIONES):
+    print(f"- {violacion}")
+```
+
+**Paso 2 — Ejecuta:**
+
+```bash
+python verificar_contextos.py
+```
+
+**Extensión:** agrega una regla para permitir dependencias solo en una dirección: `admisiones -> matricula -> financiera` no es igual a `financiera -> matricula`.
+
+**Preguntas de cierre:**
+- ¿Cuándo un bounded context merece convertirse en microservicio?
+- ¿Qué señales indican que el monolito modular se está erosionando?
+- ¿Qué diferencia hay entre una dependencia de dominio y una dependencia técnica?
+
+---
+
+---
+
+## Clase 06: Documentación arquitectónica — ISO 42010, 4+1 y C4
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 3
 
 ### Objetivos de aprendizaje
 
@@ -935,9 +1110,11 @@ Sistema de telemedicina. Dibujar Nivel 1 (contexto) y Nivel 2 (contenedores).
 
 ---
 
-## Clase 06: ADR, arquitectura como código e IA como revisora
+---
 
-**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 3
+## Clase 07: ADR, arquitectura como código e IA como revisora
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
 
 ### Objetivos de aprendizaje
 
@@ -1099,7 +1276,7 @@ Decisión: Elegir entre MongoDB y PostgreSQL para catálogo de productos con atr
 
 Texto arquitectónico con 4-5 ambigüedades intencionales. Identificarlas. Luego: ¿Qué validación humana es necesaria que IA no puede hacer?
 
-#### Ejercicio de código — Clase 06: Validador de ADR en formato MADR (25 minutos)
+#### Ejercicio de código — Clase 07: Validador de ADR en formato MADR (25 minutos)
 
 **Problema:** tu equipo decide usar ADRs para documentar decisiones arquitectónicas, pero nadie verifica que estén bien escritas. Vamos a construir un script que valida si un ADR en Markdown tiene todas las secciones requeridas del formato MADR.
 
@@ -1263,11 +1440,7 @@ jobs:
 
 ---
 
-# UNIDAD 2. Diseño orientado por atributos y arquitecturas cloud-native
-
----
-
-## Clase 07: Attribute-Driven Design (ADD)
+## Clase 08: Attribute-Driven Design (ADD)
 
 **Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
 
@@ -1359,9 +1532,11 @@ Tomar un contenedor del resultado anterior. ADD para su interior. Producir compo
 
 ---
 
-## Clase 08: Árbol de utilidad, sensitivity points y ATAM simplificado
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
+## Clase 09: Árbol de utilidad, sensitivity points y ATAM simplificado
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
 
 ### Objetivos de aprendizaje
 
@@ -1467,9 +1642,385 @@ Arquitectura propuesta (C4 nivel 2) + 3 escenarios top. Para cada uno: ¿La arqu
 
 ---
 
-## Clase 09: Principios cloud-native y Twelve-Factor App
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
+# UNIDAD 3. Arquitecturas distribuidas, seguridad y plataforma cloud-native
+
+---
+
+---
+
+## Clase 10: Arquitectura de datos, consistencia distribuida y eventos
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 5
+
+### Objetivos de aprendizaje
+
+- Comparar consistencia fuerte, consistencia eventual y modelos híbridos.
+- Diseñar transacciones distribuidas usando Saga y Outbox Pattern.
+- Identificar cuándo usar CQRS o Event Sourcing.
+- Evaluar el impacto arquitectónico de elegir SQL, NoSQL o event streaming.
+
+---
+
+### Contenido teórico (50 minutos)
+
+#### 1. Datos como decisión arquitectónica
+
+La base de datos no es un detalle de implementación cuando determina consistencia, escalabilidad, latencia, recuperación y forma del dominio.
+
+#### 2. Consistencia distribuida
+
+| Modelo | Ventaja | Costo |
+|---|---|---|
+| ACID local | Simplicidad y consistencia fuerte | Menor flexibilidad entre servicios |
+| Saga | Escala entre servicios | Requiere compensaciones |
+| Eventual consistency | Alta disponibilidad | Lecturas temporalmente desactualizadas |
+| Event sourcing | Auditoría completa | Mayor complejidad operacional |
+
+#### 3. Saga
+
+Una saga divide una transacción de negocio en pasos locales con acciones compensatorias.
+
+```text
+Crear orden -> Reservar inventario -> Cobrar pago -> Confirmar orden
+     si falla pago: liberar inventario y cancelar orden
+```
+
+#### 4. Outbox Pattern
+
+Problema: guardar en BD y publicar evento no es atómico si se hacen en dos operaciones separadas.
+
+Solución: guardar el cambio y el evento pendiente en la misma transacción local. Un publicador lee la tabla outbox y envía eventos.
+
+---
+
+### Actividades prácticas (25 minutos)
+
+**Actividad 1: Diseñar una saga (12 min)**
+
+Sistema de e-commerce. Diseñar la saga para crear pedido, reservar inventario, cobrar y despachar. Incluir compensaciones.
+
+**Actividad 2: Elegir modelo de datos (13 min)**
+
+Comparar PostgreSQL, DynamoDB y Kafka para auditoría de pagos. Justificar usando consistencia, costo, operación y consultas necesarias.
+
+#### Ejercicio de código — outbox pattern en memoria (35 minutos)
+
+**Problema:** simular una transacción local que guarda una orden y registra el evento pendiente para publicación.
+
+**Paso 1 — Crea `outbox_demo.py`:**
+
+```python
+from dataclasses import dataclass, asdict
+from uuid import uuid4
+
+
+@dataclass
+class Orden:
+  id: str
+  cliente: str
+  total: float
+  estado: str
+
+
+@dataclass
+class EventoOutbox:
+  id: str
+  tipo: str
+  payload: dict
+  publicado: bool = False
+
+
+ordenes: dict[str, Orden] = {}
+outbox: list[EventoOutbox] = []
+
+
+def crear_orden(cliente: str, total: float) -> Orden:
+  orden = Orden(id=str(uuid4()), cliente=cliente, total=total, estado="CREADA")
+  evento = EventoOutbox(
+    id=str(uuid4()),
+    tipo="OrdenCreada",
+    payload=asdict(orden),
+  )
+  ordenes[orden.id] = orden
+  outbox.append(evento)
+  return orden
+
+
+def publicar_eventos_pendientes() -> None:
+  for evento in outbox:
+    if not evento.publicado:
+      print(f"Publicando {evento.tipo}: {evento.payload}")
+      evento.publicado = True
+
+
+if __name__ == "__main__":
+  orden = crear_orden("cliente-123", 250000)
+  print(f"Orden guardada: {orden.id}")
+  print(f"Eventos pendientes: {sum(not e.publicado for e in outbox)}")
+  publicar_eventos_pendientes()
+  print(f"Eventos pendientes: {sum(not e.publicado for e in outbox)}")
+```
+
+**Extensión:** agrega reintentos al publicador y una lista `dead_letter` para eventos que fallen 3 veces.
+
+**Preguntas de cierre:**
+- ¿Qué problema resuelve Outbox frente a publicar directamente a Kafka o RabbitMQ?
+- ¿Cuándo una saga coreografiada se vuelve difícil de entender?
+- ¿Qué indicadores muestran problemas de consistencia eventual?
+
+---
+
+---
+
+## Clase 11: Comunicación síncrona, asíncrona, API Gateway y colas
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 6
+
+### Objetivos de aprendizaje
+
+- Comparar comunicación síncrona vs. asíncrona con casos de uso concretos.
+- Implementar idempotencia en consumidores de colas.
+- Diseñar API Gateway como punto de entrada único.
+- Elegir herramienta de mensajería según requisitos.
+
+---
+
+### Contenido teórico (45 minutos)
+
+#### 1. Comunicación síncrona
+
+Llamador espera respuesta antes de continuar.
+
+Protocolos: REST/HTTP (estándar), gRPC (binary, más rápido), GraphQL (flexible para frontend).
+
+Cuándo usar: Respuesta inmediata requerida, validación antes de continuar, simple request/response.
+
+Cuándo NO: Operaciones largas (> 2s), destinatario puede no estar disponible, múltiples consumidores.
+
+#### 2. Comunicación asíncrona
+
+Llamador NO espera. Continúa inmediatamente.
+
+Patrones:
+- **Punto a punto (Queue):** Mensaje va a UN consumidor.
+- **Publicar/Suscribir (Topic):** Mensaje va a TODOS los suscriptores.
+
+Herramientas: RabbitMQ (queues, reliable delivery), Apache Kafka (event streaming, replay), AWS SQS/SNS (cloud managed), Redis Streams (simple, baja latencia).
+
+Cuándo usar: Operaciones lentas, múltiples consumidores, desacoplar producer/consumer, consumer puede estar caído.
+
+#### 3. Idempotencia
+
+Si consumer falla y reintenta, ¿procesa dos veces?
+
+Solución: Operaciones idempotentes (N ejecuciones = mismo resultado que 1).
+
+```python
+def process_payment(payment_id, amount):
+    if redis.get(f"processed:{payment_id}"):
+        return "already_processed"
+
+    result = payment_gateway.charge(amount)
+    redis.setex(f"processed:{payment_id}", 86400, "true")
+    return result
+```
+
+#### 4. API Gateway
+
+Responsabilidades: Autenticación/Autorización, Rate limiting, SSL termination, Load balancing, Request routing, Logging, API versioning.
+
+Herramientas: Kong, AWS API Gateway, Nginx, Envoy.
+
+```
+Cliente (Mobile/Web)
+    ↓ HTTPS
+API Gateway (Kong)
+  ├─ Auth: Validar JWT
+  ├─ Rate limit: 100 req/seg/user
+  ├─ Route: /score/* → Scoring Service
+  │         /users/* → User Service
+  └─ Log: Cada request
+```
+
+---
+
+### Ejemplos prácticos (40 minutos)
+
+**Ejemplo 1: Sync vs Async por operación**
+
+E-commerce — 5 operaciones:
+
+| Operación | Patrón | Razón |
+|---|---|---|
+| Verificar stock | Sync | Necesita respuesta inmediata |
+| Procesar pago | Sync | Usuario espera confirmación |
+| Enviar email confirmación | Async | No bloquea al usuario |
+| Actualizar índice de búsqueda | Async | No es urgente |
+| Generar reporte de ventas | Async | Puede tardar minutos |
+
+**Diseño resultante:**
+```
+POST /orders
+  → [Sync] Verificar stock
+  → [Sync] Procesar pago
+  → Responder: "Pedido confirmado #12345"
+  → [Async] Queue: "send_confirmation_email"
+  → [Async] Queue: "update_search_index"
+  → [Async] Queue: "update_inventory"
+```
+
+---
+
+**Ejemplo 2: Retry con dead-letter queue**
+
+```
+Normal Queue → Consumer
+  → Si falla: Retry 1 (30s delay)
+  → Si falla: Retry 2 (120s delay)
+  → Si falla: Retry 3 (600s delay)
+  → Si sigue fallando: Dead Letter Queue → Alerta equipo → Revisión manual
+```
+
+---
+
+### Actividades prácticas (25 minutos)
+
+**Actividad 1: Clasificar operaciones (12 min)**
+
+Sistema de reservas de vuelos. 8 operaciones. Clasificar: sync, async, o ambas. Justificar.
+
+**Actividad 2: API Gateway config (13 min)**
+
+Sistema con 4 servicios. Diseñar: rate limits, routing rules, autenticación. Dibujar configuración.
+
+---
+
+---
+
+## Clase 12: Arquitectura de seguridad — threat modeling, Zero Trust y controles
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 6
+
+### Objetivos de aprendizaje
+
+- Incorporar seguridad como atributo arquitectónico desde el diseño.
+- Aplicar STRIDE para modelar amenazas.
+- Definir controles arquitectónicos para autenticación, autorización, auditoría y secretos.
+- Diseñar una postura Zero Trust básica para servicios internos.
+
+---
+
+### Contenido teórico (50 minutos)
+
+#### 1. Seguridad como arquitectura
+
+La seguridad no se agrega al final. Decisiones como identidad, segmentación de red, gestión de secretos, cifrado y auditoría cambian la estructura del sistema.
+
+#### 2. STRIDE
+
+| Amenaza | Pregunta guía | Control típico |
+|---|---|---|
+| Spoofing | ¿Alguien puede hacerse pasar por otro? | MFA, OAuth2, mTLS |
+| Tampering | ¿Puede alterar datos o mensajes? | Firmas, hashes, integridad |
+| Repudiation | ¿Puede negar una acción? | Audit logs inmutables |
+| Information disclosure | ¿Puede ver datos no autorizados? | Cifrado, RBAC, masking |
+| Denial of service | ¿Puede degradar el sistema? | Rate limit, WAF, quotas |
+| Elevation of privilege | ¿Puede obtener más permisos? | Least privilege, ABAC |
+
+#### 3. Zero Trust
+
+Principios:
+1. Verificar explícitamente cada solicitud.
+2. Usar privilegio mínimo.
+3. Asumir brecha: segmentar y monitorear.
+
+```text
+Cliente -> API Gateway -> Servicio A -> Servicio B
+       JWT validado   mTLS + scope   mTLS + policy
+```
+
+#### 4. Controles arquitectónicos mínimos
+
+- Autenticación centralizada.
+- Autorización por scopes o políticas.
+- Secretos fuera del código.
+- Cifrado en tránsito y en reposo.
+- Auditoría de acciones críticas.
+- Rate limiting por usuario, IP o token.
+
+---
+
+### Actividades prácticas (25 minutos)
+
+**Actividad 1: DFD y amenazas (12 min)**
+
+Dibujar un Data Flow Diagram simple para un sistema de pagos. Marcar boundaries de confianza: internet, red interna, base de datos y proveedor externo.
+
+**Actividad 2: Controles por amenaza (13 min)**
+
+Para cada amenaza STRIDE identificada, seleccionar un control arquitectónico y explicar el trade-off de costo, latencia o complejidad.
+
+#### Ejercicio de código — analizador simple de amenazas STRIDE (35 minutos)
+
+**Problema:** dado un flujo entre componentes, genera amenazas y controles recomendados.
+
+**Paso 1 — Crea `threat_model.py`:**
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Flujo:
+  origen: str
+  destino: str
+  protocolo: str
+  datos_sensibles: bool
+  autenticado: bool
+
+
+FLUJOS = [
+  Flujo("MobileApp", "APIGateway", "HTTPS", True, True),
+  Flujo("APIGateway", "PaymentService", "HTTP", True, True),
+  Flujo("PaymentService", "FraudService", "HTTP", True, False),
+  Flujo("PaymentService", "AuditLog", "HTTPS", True, True),
+]
+
+
+def evaluar_flujo(flujo: Flujo) -> list[str]:
+  hallazgos = []
+  if flujo.datos_sensibles and flujo.protocolo != "HTTPS":
+    hallazgos.append("Information disclosure: usar TLS/mTLS para datos sensibles")
+  if not flujo.autenticado:
+    hallazgos.append("Spoofing: autenticar origen con JWT, mTLS o firma")
+  if flujo.destino.lower().endswith("service"):
+    hallazgos.append("Elevation of privilege: validar scopes por operación")
+  return hallazgos
+
+
+if __name__ == "__main__":
+  for flujo in FLUJOS:
+    print(f"\n{flujo.origen} -> {flujo.destino}")
+    for hallazgo in evaluar_flujo(flujo):
+      print(f"- {hallazgo}")
+```
+
+**Extensión:** agrega una regla de DoS que sugiera rate limiting para flujos expuestos a internet.
+
+**Preguntas de cierre:**
+- ¿Qué amenazas aparecen por introducir un API Gateway?
+- ¿Por qué mTLS entre servicios no reemplaza la autorización?
+- ¿Qué controles deben quedar documentados en ADR?
+
+---
+
+---
+
+## Clase 13: Principios cloud-native y Twelve-Factor App
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
 
 ### Objetivos de aprendizaje
 
@@ -1591,7 +2142,7 @@ Código legacy dado. Identificar violaciones. Priorizar por severidad.
 
 Tomar la violación más grave. Reescribir el fragmento para cumplir el factor correspondiente.
 
-#### Ejercicio de código — Clase 09: Aplicación con los 12 factores en Python (30 minutos)
+#### Ejercicio de código — Clase 13: Aplicación con los 12 factores en Python (30 minutos)
 
 **Problema:** el código legacy siguiente viola varios factores de la Twelve-Factor App. Tu tarea es identificar los problemas y corregirlos.
 
@@ -1725,9 +2276,11 @@ echo ".env" >> .gitignore
 
 ---
 
-## Clase 10: Docker y Docker Compose en arquitecturas reales
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
+## Clase 14: Docker y Docker Compose en arquitecturas reales
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
 
 ### Objetivos de aprendizaje
 
@@ -1882,9 +2435,11 @@ App Node.js + Express. Requiere build (webpack), runtime liviano. Escribir Docke
 
 ---
 
-## Clase 11: Introducción a Kubernetes y orquestación de contenedores
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 6
+## Clase 15: Introducción a Kubernetes y orquestación de contenedores
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 8
 
 ### Objetivos de aprendizaje
 
@@ -2041,275 +2596,108 @@ App Node.js. Escribir: Deployment (2 réplicas), Service, ConfigMap. Resource li
 
 ---
 
-# UNIDAD 3. Integración, resiliencia, capacidad y validación
+# UNIDAD 4. Operación, resiliencia, validación y gobernanza
 
 ---
 
-## Clase 12: Comunicación síncrona, asíncrona, API Gateway y colas
+---
 
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
+## Clase 16: DevOps avanzado, CI/CD, GitOps e infraestructura como código
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 8
 
 ### Objetivos de aprendizaje
 
-- Comparar comunicación síncrona vs. asíncrona con casos de uso concretos.
-- Implementar idempotencia en consumidores de colas.
-- Diseñar API Gateway como punto de entrada único.
-- Elegir herramienta de mensajería según requisitos.
+- Diseñar pipelines CI/CD que protejan decisiones arquitectónicas.
+- Explicar GitOps como modelo operativo declarativo.
+- Escribir infraestructura como código mínima y revisable.
+- Incorporar validaciones automáticas de seguridad, pruebas y arquitectura.
 
 ---
 
-### Contenido teórico (45 minutos)
+### Contenido teórico (50 minutos)
 
-#### 1. Comunicación síncrona
+#### 1. Pipeline como parte de la arquitectura
 
-Llamador espera respuesta antes de continuar.
+El pipeline define cómo cambia el sistema. Si no hay pruebas, escaneo, despliegue repetible ni rollback, la arquitectura real incluye riesgo operacional alto.
 
-Protocolos: REST/HTTP (estándar), gRPC (binary, más rápido), GraphQL (flexible para frontend).
+#### 2. CI/CD recomendado
 
-Cuándo usar: Respuesta inmediata requerida, validación antes de continuar, simple request/response.
-
-Cuándo NO: Operaciones largas (> 2s), destinatario puede no estar disponible, múltiples consumidores.
-
-#### 2. Comunicación asíncrona
-
-Llamador NO espera. Continúa inmediatamente.
-
-Patrones:
-- **Punto a punto (Queue):** Mensaje va a UN consumidor.
-- **Publicar/Suscribir (Topic):** Mensaje va a TODOS los suscriptores.
-
-Herramientas: RabbitMQ (queues, reliable delivery), Apache Kafka (event streaming, replay), AWS SQS/SNS (cloud managed), Redis Streams (simple, baja latencia).
-
-Cuándo usar: Operaciones lentas, múltiples consumidores, desacoplar producer/consumer, consumer puede estar caído.
-
-#### 3. Idempotencia
-
-Si consumer falla y reintenta, ¿procesa dos veces?
-
-Solución: Operaciones idempotentes (N ejecuciones = mismo resultado que 1).
-
-```python
-def process_payment(payment_id, amount):
-    if redis.get(f"processed:{payment_id}"):
-        return "already_processed"
-
-    result = payment_gateway.charge(amount)
-    redis.setex(f"processed:{payment_id}", 86400, "true")
-    return result
+```text
+Commit -> Lint -> Tests -> Build image -> Scan -> Push registry -> Deploy staging -> Smoke test -> Deploy prod
 ```
 
-#### 4. API Gateway
+#### 3. GitOps
 
-Responsabilidades: Autenticación/Autorización, Rate limiting, SSL termination, Load balancing, Request routing, Logging, API versioning.
+Git es la fuente de verdad del estado deseado. Un controlador sincroniza el cluster con lo declarado.
 
-Herramientas: Kong, AWS API Gateway, Nginx, Envoy.
+Ventajas: auditoría, rollback por commit, revisión por pull request, menor drift manual.
 
-```
-Cliente (Mobile/Web)
-    ↓ HTTPS
-API Gateway (Kong)
-  ├─ Auth: Validar JWT
-  ├─ Rate limit: 100 req/seg/user
-  ├─ Route: /score/* → Scoring Service
-  │         /users/* → User Service
-  └─ Log: Cada request
-```
+#### 4. Infraestructura como código
 
----
-
-### Ejemplos prácticos (40 minutos)
-
-**Ejemplo 1: Sync vs Async por operación**
-
-E-commerce — 5 operaciones:
-
-| Operación | Patrón | Razón |
-|---|---|---|
-| Verificar stock | Sync | Necesita respuesta inmediata |
-| Procesar pago | Sync | Usuario espera confirmación |
-| Enviar email confirmación | Async | No bloquea al usuario |
-| Actualizar índice de búsqueda | Async | No es urgente |
-| Generar reporte de ventas | Async | Puede tardar minutos |
-
-**Diseño resultante:**
-```
-POST /orders
-  → [Sync] Verificar stock
-  → [Sync] Procesar pago
-  → Responder: "Pedido confirmado #12345"
-  → [Async] Queue: "send_confirmation_email"
-  → [Async] Queue: "update_search_index"
-  → [Async] Queue: "update_inventory"
-```
-
----
-
-**Ejemplo 2: Retry con dead-letter queue**
-
-```
-Normal Queue → Consumer
-  → Si falla: Retry 1 (30s delay)
-  → Si falla: Retry 2 (120s delay)
-  → Si falla: Retry 3 (600s delay)
-  → Si sigue fallando: Dead Letter Queue → Alerta equipo → Revisión manual
-```
+Buenas prácticas:
+- Módulos pequeños.
+- Variables explícitas.
+- Estado remoto.
+- Plan revisado en PR.
+- Secretos gestionados fuera del repositorio.
 
 ---
 
 ### Actividades prácticas (25 minutos)
 
-**Actividad 1: Clasificar operaciones (12 min)**
+**Actividad 1: Diseñar pipeline (12 min)**
 
-Sistema de reservas de vuelos. 8 operaciones. Clasificar: sync, async, o ambas. Justificar.
+Definir etapas obligatorias para un servicio de pagos: pruebas unitarias, análisis estático, build de imagen, escaneo, despliegue staging, smoke tests y aprobación para producción.
 
-**Actividad 2: API Gateway config (13 min)**
+**Actividad 2: Política de despliegue (13 min)**
 
-Sistema con 4 servicios. Diseñar: rate limits, routing rules, autenticación. Dibujar configuración.
+Comparar rolling deployment, blue/green y canary. Elegir uno para un sistema regulado y justificar rollback, auditoría y riesgo.
+
+#### Ejercicio práctico — pipeline CI con validación arquitectónica (35 minutos)
+
+**Problema:** crear un pipeline que ejecute pruebas, valide ADRs y construya imagen Docker.
+
+**Paso 1 — Crea `.github/workflows/arquitectura-ci.yml`:**
+
+```yaml
+name: Arquitectura CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Ejecutar pruebas
+        run: python -m pytest tests
+      - name: Validar ADRs
+        run: python scripts/validar_adr.py docs/adr/*.md
+      - name: Construir imagen
+        run: docker build -t arquitectura-demo:${{ github.sha }} .
+```
+
+**Extensión:** agrega un paso de escaneo con Trivy o Snyk y una política que falle si hay vulnerabilidades críticas.
+
+**Preguntas de cierre:**
+- ¿Qué decisiones arquitectónicas puede proteger un pipeline?
+- ¿Qué diferencia hay entre CI/CD tradicional y GitOps?
+- ¿Por qué el rollback debe diseñarse antes del incidente?
 
 ---
 
-## Clase 13: IA como componente arquitectónico
-
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
-
-### Objetivos de aprendizaje
-
-- Integrar modelos de inferencia como componentes de servicio.
-- Diseñar pipeline RAG (Retrieval-Augmented Generation).
-- Implementar guardrails de entrada y salida.
-- Definir políticas de human-in-the-loop y fallback.
-
 ---
 
-### Contenido teórico (45 minutos)
+## Clase 17: Patrones de resiliencia: timeout, retry, circuit breaker, bulkhead
 
-#### 1. IA predictiva vs. Generativa
-
-**IA predictiva (ML clásico):**
-- Determinístico (mismo input → mismo output).
-- Scoring crediticio, detección de fraude, recomendaciones.
-- Arquitectura: Model Registry → Load → Inferencia → Cache resultado.
-
-**IA generativa (LLM):**
-- No determinístico. Genera texto, código, imágenes.
-- Chatbots, resumen de documentos, asistentes.
-- Arquitectura: LLM API + RAG + guardrails.
-
-#### 2. Embeddings y RAG
-
-**Embeddings:** Representación vectorial de texto. Permite búsqueda semántica.
-
-**RAG (Retrieval-Augmented Generation):**
-```
-Pregunta del usuario
-    ↓
-Embedding de la pregunta
-    ↓
-Vector Search → Documentos relevantes (pgvector, Pinecone)
-    ↓
-Prompt = "Contexto: [docs] + Pregunta: [user question]"
-    ↓
-LLM (GPT-4, Claude, Llama)
-    ↓
-Guardrails validation
-    ↓
-Respuesta al usuario
-```
-
-Ventaja: El LLM responde con información actualizada y específica del dominio.
-
-#### 3. Guardrails
-
-**Input guardrails:** ¿Está dentro del scope? ¿Contiene PII? ¿Es prompt injection?
-
-**Output guardrails:** ¿Formato correcto? ¿Información confidencial? ¿Puntaje de confianza > threshold?
-
-```python
-def generate_with_guardrails(user_input):
-    if contains_pii(user_input):
-        return "No puedo procesar información personal."
-    if is_out_of_scope(user_input):
-        return "Solo puedo responder sobre servicios de crédito."
-
-    response = llm.generate(build_prompt(user_input))
-
-    if confidence_score(response) < 0.7:
-        return escalate_to_human(user_input)
-
-    return response
-```
-
-#### 4. Human-in-the-loop y Fallback
-
-**Human-in-the-loop:** IA propone, humano decide para casos de alto impacto.
-
-Ejemplo fintech:
-- Score >= 80 + monto < $10M → Auto-aprobación.
-- Score 60-79 → Revisión humana (< 4 horas).
-- Score < 60 → Auto-rechazo.
-
-**Fallback:**
-```python
-def get_recommendation(application):
-    try:
-        score = ml_model.predict(application)
-        if score.confidence > 0.8:
-            return score
-        score = bureau_api.get_score(application.id)
-        return score
-    except Exception:
-        return rules_engine.evaluate(application)  # Fallback determinístico
-    finally:
-        audit_log.record(application, score)
-```
-
----
-
-### Ejemplos prácticos (40 minutos)
-
-**Ejemplo 1: Arquitectura RAG para atención al cliente bancario**
-
-Documentos en Vector DB: FAQs, políticas de crédito, reglamentos, tarifas.
-
-Pipeline: Usuario → Chatbot UI → [Input guardrail] → Embedding(pregunta) → VectorDB → Top-3 docs → LLM → [Output guardrail] → Respuesta.
-
-Guardrails: Input: No procesar números de cuenta. Output: No revelar información de otros clientes.
-
-Si guardrail falla → Escalada a agente humano.
-
----
-
-**Ejemplo 2: Human-in-the-loop para scoring crediticio**
-
-```
-Solicitud recibida → ML Score: 72/100
-    ↓
-Política: Score 60-79 → Cola de revisión humana
-    ↓
-Analista recibe alerta → Revisa en < 4 horas
-    ↓
-Analista aprueba con condiciones ($3M en lugar de $5M)
-    ↓
-Notificación automática al cliente
-```
-
----
-
-### Actividades prácticas (25 minutos)
-
-**Actividad 1: Diseñar pipeline RAG (12 min)**
-
-Empresa legal. Asistente que responde preguntas sobre contratos internos. Diseñar pipeline RAG completo con guardrails. Identificar riesgos.
-
-**Actividad 2: Política human-in-the-loop (13 min)**
-
-Sistema médico de diagnóstico asistido. Definir: ¿Cuándo IA sola? ¿Cuándo human-in-the-loop? ¿Cuándo fallback? Justificar con ética y riesgo.
-
----
-
-## Clase 14: Patrones de resiliencia
-
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 8
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 9
 
 ### Objetivos de aprendizaje
 
@@ -2470,7 +2858,7 @@ Sistema de pagos que llama Stripe y Paypal. Circuit breaker simple: estados, tra
 
 Microservicio que depende de 4 servicios externos. Para cada uno: Timeout (cuánto?), Retry (cuántos? delay?), Circuit Breaker (threshold?), Fallback (qué devolver?).
 
-#### Ejercicio de código — Clase 14: Implementar un Circuit Breaker desde cero en Python (35 minutos)
+#### Ejercicio de código — Clase 17: Implementar un Circuit Breaker desde cero en Python (35 minutos)
 
 **Problema:** tienes un microservicio de pagos que llama a una API externa (Stripe). Si Stripe está caído, tu servicio no debe seguir intentando llamadas que van a fallar — eso desperdicia recursos y empeora el tiempo de respuesta. El **Circuit Breaker** resuelve esto.
 
@@ -2623,9 +3011,11 @@ python circuit_breaker.py
 
 ---
 
-## Clase 15: Estimación de capacidad y topología de despliegue
+---
 
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 8
+## Clase 18: Estimación de capacidad y topología de despliegue
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 9
 
 ### Objetivos de aprendizaje
 
@@ -2746,9 +3136,11 @@ Diseñar topología HA para sistema anterior. Dibujar diagrama. Identificar comp
 
 ---
 
-## Clase 16: Pruebas de carga y observabilidad básica
+---
 
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 9
+## Clase 19: Pruebas de carga y observabilidad básica
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
 
 ### Objetivos de aprendizaje
 
@@ -2888,13 +3280,363 @@ Resultados de k6 con violaciones dadas. Identificar problema específico (con tr
 
 ---
 
-# UNIDAD 4. Proyecto integrador: grupo de arquitectura
+## Clase 20: Gobernanza arquitectónica, fitness functions y evolución
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
+
+### Objetivos de aprendizaje
+
+- Diseñar mecanismos ligeros de gobernanza arquitectónica.
+- Implementar fitness functions para verificar reglas de arquitectura.
+- Medir erosión arquitectónica con indicadores técnicos.
+- Definir un proceso de evolución basado en ADRs y revisiones periódicas.
 
 ---
 
-## Clase 17: Proyecto — Drivers, escenarios, arquitectura candidata y C4
+### Contenido teórico (50 minutos)
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 9
+#### 1. Gobernanza sin burocracia
+
+Gobernar arquitectura no significa crear comités lentos. Significa definir reglas explícitas, automatizar verificaciones y revisar decisiones importantes.
+
+#### 2. Fitness functions
+
+Una fitness function es una prueba automatizada que verifica una propiedad arquitectónica.
+
+Ejemplos:
+- Ningún módulo `ui` importa directamente `repository`.
+- Todo endpoint público tiene autenticación.
+- Ningún Dockerfile usa `latest`.
+- P95 de un endpoint debe ser menor a 500 ms en prueba de carga.
+
+#### 3. Indicadores de erosión
+
+- Dependencias cíclicas.
+- Módulos con demasiadas responsabilidades.
+- Aumento de acoplamiento entre servicios.
+- ADRs obsoletos frente al código.
+- Excepciones manuales repetidas.
+
+#### 4. Proceso recomendado
+
+1. Decisiones relevantes se documentan en ADR.
+2. Las reglas repetibles se convierten en fitness functions.
+3. Las excepciones tienen fecha de expiración.
+4. La arquitectura se revisa cada iteración o release importante.
+
+---
+
+### Actividades prácticas (25 minutos)
+
+**Actividad 1: Definir fitness functions (12 min)**
+
+Para un sistema de microservicios, escribir 5 reglas verificables automáticamente y clasificarlas por atributo de calidad.
+
+**Actividad 2: Revisión de erosión (13 min)**
+
+Dado un grafo de dependencias, identificar ciclos, dependencias prohibidas y excepciones que requieren ADR.
+
+#### Ejercicio de código — fitness function para Dockerfiles (35 minutos)
+
+**Problema:** validar que los Dockerfiles no usen imágenes `latest` y declaren usuario no-root.
+
+**Paso 1 — Crea `fitness_dockerfile.py`:**
+
+```python
+from pathlib import Path
+
+
+def validar_dockerfile(path: Path) -> list[str]:
+  contenido = path.read_text(encoding="utf-8")
+  problemas = []
+  for linea in contenido.splitlines():
+    if linea.strip().startswith("FROM") and ":latest" in linea:
+      problemas.append("No usar imágenes con tag latest")
+  if "\nUSER " not in f"\n{contenido}":
+    problemas.append("Declarar USER no-root en la imagen")
+  return problemas
+
+
+if __name__ == "__main__":
+  dockerfiles = list(Path(".").rglob("Dockerfile"))
+  if not dockerfiles:
+    print("No se encontraron Dockerfiles")
+  for dockerfile in dockerfiles:
+    problemas = validar_dockerfile(dockerfile)
+    if problemas:
+      print(f"{dockerfile}:")
+      for problema in problemas:
+        print(f"- {problema}")
+    else:
+      print(f"{dockerfile}: OK")
+```
+
+**Extensión:** agrega reglas para exigir `HEALTHCHECK` y bloquear secretos como `PASSWORD=` o `API_KEY=` en el Dockerfile.
+
+**Preguntas de cierre:**
+- ¿Qué reglas arquitectónicas conviene automatizar?
+- ¿Qué riesgos aparecen si toda gobernanza depende de revisiones manuales?
+- ¿Cómo se maneja una excepción válida sin debilitar la arquitectura?
+
+---
+
+---
+
+# UNIDAD 5. IA arquitectónica, evolución y modernización
+
+---
+
+---
+
+## Clase 21: IA como componente arquitectónico: RAG, guardrails y fallback
+
+**Duración:** 2 horas | **Unidad:** 5 | **Semana:** 11
+
+### Objetivos de aprendizaje
+
+- Integrar modelos de inferencia como componentes de servicio.
+- Diseñar pipeline RAG (Retrieval-Augmented Generation).
+- Implementar guardrails de entrada y salida.
+- Definir políticas de human-in-the-loop y fallback.
+
+---
+
+### Contenido teórico (45 minutos)
+
+#### 1. IA predictiva vs. Generativa
+
+**IA predictiva (ML clásico):**
+- Determinístico (mismo input → mismo output).
+- Scoring crediticio, detección de fraude, recomendaciones.
+- Arquitectura: Model Registry → Load → Inferencia → Cache resultado.
+
+**IA generativa (LLM):**
+- No determinístico. Genera texto, código, imágenes.
+- Chatbots, resumen de documentos, asistentes.
+- Arquitectura: LLM API + RAG + guardrails.
+
+#### 2. Embeddings y RAG
+
+**Embeddings:** Representación vectorial de texto. Permite búsqueda semántica.
+
+**RAG (Retrieval-Augmented Generation):**
+```
+Pregunta del usuario
+    ↓
+Embedding de la pregunta
+    ↓
+Vector Search → Documentos relevantes (pgvector, Pinecone)
+    ↓
+Prompt = "Contexto: [docs] + Pregunta: [user question]"
+    ↓
+LLM (GPT-4, Claude, Llama)
+    ↓
+Guardrails validation
+    ↓
+Respuesta al usuario
+```
+
+Ventaja: El LLM responde con información actualizada y específica del dominio.
+
+#### 3. Guardrails
+
+**Input guardrails:** ¿Está dentro del scope? ¿Contiene PII? ¿Es prompt injection?
+
+**Output guardrails:** ¿Formato correcto? ¿Información confidencial? ¿Puntaje de confianza > threshold?
+
+```python
+def generate_with_guardrails(user_input):
+    if contains_pii(user_input):
+        return "No puedo procesar información personal."
+    if is_out_of_scope(user_input):
+        return "Solo puedo responder sobre servicios de crédito."
+
+    response = llm.generate(build_prompt(user_input))
+
+    if confidence_score(response) < 0.7:
+        return escalate_to_human(user_input)
+
+    return response
+```
+
+#### 4. Human-in-the-loop y Fallback
+
+**Human-in-the-loop:** IA propone, humano decide para casos de alto impacto.
+
+Ejemplo fintech:
+- Score >= 80 + monto < $10M → Auto-aprobación.
+- Score 60-79 → Revisión humana (< 4 horas).
+- Score < 60 → Auto-rechazo.
+
+**Fallback:**
+```python
+def get_recommendation(application):
+    try:
+        score = ml_model.predict(application)
+        if score.confidence > 0.8:
+            return score
+        score = bureau_api.get_score(application.id)
+        return score
+    except Exception:
+        return rules_engine.evaluate(application)  # Fallback determinístico
+    finally:
+        audit_log.record(application, score)
+```
+
+---
+
+### Ejemplos prácticos (40 minutos)
+
+**Ejemplo 1: Arquitectura RAG para atención al cliente bancario**
+
+Documentos en Vector DB: FAQs, políticas de crédito, reglamentos, tarifas.
+
+Pipeline: Usuario → Chatbot UI → [Input guardrail] → Embedding(pregunta) → VectorDB → Top-3 docs → LLM → [Output guardrail] → Respuesta.
+
+Guardrails: Input: No procesar números de cuenta. Output: No revelar información de otros clientes.
+
+Si guardrail falla → Escalada a agente humano.
+
+---
+
+**Ejemplo 2: Human-in-the-loop para scoring crediticio**
+
+```
+Solicitud recibida → ML Score: 72/100
+    ↓
+Política: Score 60-79 → Cola de revisión humana
+    ↓
+Analista recibe alerta → Revisa en < 4 horas
+    ↓
+Analista aprueba con condiciones ($3M en lugar de $5M)
+    ↓
+Notificación automática al cliente
+```
+
+---
+
+### Actividades prácticas (25 minutos)
+
+**Actividad 1: Diseñar pipeline RAG (12 min)**
+
+Empresa legal. Asistente que responde preguntas sobre contratos internos. Diseñar pipeline RAG completo con guardrails. Identificar riesgos.
+
+**Actividad 2: Política human-in-the-loop (13 min)**
+
+Sistema médico de diagnóstico asistido. Definir: ¿Cuándo IA sola? ¿Cuándo human-in-the-loop? ¿Cuándo fallback? Justificar con ética y riesgo.
+
+---
+
+---
+
+## Clase 22: Modernización de sistemas legacy y migración incremental
+
+**Duración:** 2 horas | **Unidad:** 5 | **Semana:** 11
+
+### Objetivos de aprendizaje
+
+- Diagnosticar riesgos arquitectónicos en sistemas legacy.
+- Aplicar patrones de modernización como Strangler Fig, Branch by Abstraction y Anti-corruption Layer.
+- Diseñar una migración incremental con bajo riesgo operacional.
+- Validar una migración mediante pruebas de contrato y comparación de respuestas.
+
+---
+
+### Contenido teórico (50 minutos)
+
+#### 1. Modernizar no es reescribir todo
+
+Las reescrituras completas suelen fallar porque congelan aprendizaje y duplican complejidad. La modernización incremental reduce riesgo al reemplazar partes verificables.
+
+#### 2. Patrones principales
+
+| Patrón | Uso | Riesgo que reduce |
+|---|---|---|
+| Strangler Fig | Reemplazar funcionalidades gradualmente | Big bang migration |
+| Branch by Abstraction | Cambiar implementación detrás de una interfaz | Cambios masivos simultáneos |
+| Anti-corruption Layer | Integrar legacy sin contaminar el nuevo modelo | Acoplamiento conceptual |
+| Parallel Run | Ejecutar viejo y nuevo en paralelo | Regresiones invisibles |
+
+#### 3. Ruta de migración típica
+
+1. Identificar capacidad de negocio pequeña.
+2. Poner proxy o gateway delante del legacy.
+3. Redirigir una ruta al nuevo servicio.
+4. Comparar respuestas y métricas.
+5. Aumentar tráfico gradualmente.
+6. Retirar la funcionalidad vieja.
+
+---
+
+### Actividades prácticas (25 minutos)
+
+**Actividad 1: Mapa de modernización (12 min)**
+
+Para un sistema monolítico de biblioteca, elegir una capacidad pequeña para extraer primero. Justificar por riesgo, dependencia y valor de negocio.
+
+**Actividad 2: Plan de migración (13 min)**
+
+Diseñar un plan de 4 incrementos con criterios de rollback y métricas de éxito.
+
+#### Ejercicio de código — router Strangler Fig (35 minutos)
+
+**Problema:** dirigir algunas rutas al sistema nuevo y mantener las demás en el legacy.
+
+**Paso 1 — Crea `strangler_router.py`:**
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Solicitud:
+  metodo: str
+  ruta: str
+  usuario: str
+
+
+RUTAS_NUEVAS = {
+  "/api/v2/pagos",
+  "/api/v2/usuarios/perfil",
+}
+
+
+def enrutar(solicitud: Solicitud) -> str:
+  if solicitud.ruta in RUTAS_NUEVAS:
+    return f"nuevo-servicio <- {solicitud.metodo} {solicitud.ruta}"
+  return f"legacy <- {solicitud.metodo} {solicitud.ruta}"
+
+
+if __name__ == "__main__":
+  solicitudes = [
+    Solicitud("POST", "/api/v2/pagos", "ana"),
+    Solicitud("GET", "/api/v1/reportes", "luis"),
+    Solicitud("GET", "/api/v2/usuarios/perfil", "maria"),
+  ]
+  for solicitud in solicitudes:
+    print(enrutar(solicitud))
+```
+
+**Extensión:** agrega una regla de canary release: solo 10% de usuarios van al nuevo servicio para una ruta migrada.
+
+**Preguntas de cierre:**
+- ¿Qué parte del legacy conviene migrar primero?
+- ¿Cómo se decide cuándo apagar una funcionalidad vieja?
+- ¿Qué métricas usarías para probar que la migración no degradó el sistema?
+
+---
+
+---
+
+# UNIDAD 6. Proyecto integrador: grupo de arquitectura
+
+---
+
+---
+
+## Clase 23: Proyecto — Drivers, escenarios, arquitectura candidata y C4
+
+**Duración:** 2 horas | **Unidad:** 6 | **Semana:** 12
 
 ### Descripción del proyecto integrador
 
@@ -2908,10 +3650,10 @@ Opciones: Plataforma de pagos P2P, App de salud con telemedicina, Sistema de log
 
 | Clase | Entregable |
 |---|---|
-| 17 | Drivers + Árbol de utilidad + C4 Nivel 1 y 2 + ADR inicial |
-| 18 | Arquitectura refinada + ADRs + Prototipo contenerizado |
-| 19 | Resultados carga + Observabilidad + Análisis de impacto |
-| 20 | Defensa técnica individual |
+| 23 | Drivers + Árbol de utilidad + C4 Nivel 1 y 2 + ADR inicial |
+| 24 | Arquitectura refinada + ADRs + Prototipo contenerizado |
+| 25 | Resultados carga + Observabilidad + Análisis de impacto |
+| 26 | Defensa técnica individual |
 
 ---
 
@@ -2969,9 +3711,11 @@ Mobile App → API Gateway → Payment Service → PostgreSQL (RDS Multi-AZ)
 
 ---
 
-## Clase 18: Proyecto — Prototipo contenerizado y resiliencia
+---
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
+## Clase 24: Proyecto — Prototipo contenerizado y resiliencia end-to-end
+
+**Duración:** 2 horas | **Unidad:** 6 | **Semana:** 12
 
 ### Objetivos
 
@@ -3031,9 +3775,11 @@ Endpoint principal: validar datos, llamar servicio de fraude (con circuit breake
 
 ---
 
-## Clase 19: Proyecto — Pruebas de carga, observabilidad y análisis de impacto
+---
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
+## Clase 25: Proyecto — Pruebas de carga, observabilidad y análisis de impacto
+
+**Duración:** 2 horas | **Unidad:** 6 | **Semana:** 13
 
 ### Trabajo en clase (90 minutos)
 
@@ -3067,9 +3813,11 @@ Documentar como ADR nuevo: Aceptar o rechazar el cambio con justificación.
 
 ---
 
-## Clase 20: Defensa técnica individual y autorreferencia final
+---
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 11
+## Clase 26: Defensa técnica individual y autorreferencia final
+
+**Duración:** 2 horas | **Unidad:** 6 | **Semana:** 13
 
 ### Estructura de la clase
 
@@ -3250,5 +3998,5 @@ Táctica arquitectónica que lo satisface:
 **Fin del curso — Arquitectura de Software**
 
 *Última actualización: agosto 2026*  
-*Versión: 1.0 (Completo: 20 clases, 40 horas)*  
+*Versión: 1.0 (Completo ampliado: 26 clases, 52 horas)*  
 *Público: Ingenieros de software, arquitectos de soluciones*
