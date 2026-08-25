@@ -77,7 +77,9 @@ Profesional con experiencia en diseño, desarrollo y operación de sistemas de s
 
 ---
 
-# UNIDAD 1. Ciclo de vida, gestión y calidad
+# UNIDAD 1. Fundamentos, requisitos, planificación y calidad
+
+---
 
 ---
 
@@ -1198,379 +1200,239 @@ Solución permanente: usar SELECT ... FOR UPDATE con timeout y manejo de excepci
 
 ---
 
-## Clase 02: DevOps — Más allá de herramientas (dimensión humana)
+---
 
-**Duración:** 2 horas | **Unidad:** 1
+## Clase 02: Ingeniería de requerimientos dentro del ciclo de vida del software
+
+**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 1
 
 ### Objetivos de aprendizaje
 
-- Explicar que DevOps no es solo herramientas: personas + procesos + técnica.
-- Identificar barreras culturales comunes en organizaciones.
-- Comparar diferentes estrategias de transformación (liderazgo, equipos, híbrida).
-- Entender qué métricas indican que la transformación está funcionando.
+- Explicar el rol de los requisitos en el éxito o fracaso de un proyecto de software.
+- Diferenciar requisitos de negocio, usuario, sistema y software.
+- Escribir historias de usuario y criterios de aceptación verificables.
+- Conectar requisitos con diseño, pruebas y trazabilidad.
 
 ---
 
 ### Contenido teórico
 
-#### 1. DevOps más allá de herramientas
+#### 1. Requisitos como punto de partida de la ingeniería
 
-**Mito:** DevOps = Jenkins, Kubernetes, Terraform.
+La ingeniería del software no empieza cuando alguien abre el IDE. Empieza cuando el equipo entiende qué problema vale la pena resolver, para quién y bajo qué restricciones.
 
-**Realidad:** DevOps = Personas + Procesos + Técnica.
-
-```
-        Técnica (CI/CD, IaC, containers)
-        /                              \
-       /                                \
-      /                                  \
-     /                                    \
-Personas ─────────────────── Procesos
-(Cultura, confianza,        (Flujo, feedback,
-autonomía, aprendizaje)      responsabilidad)
-```
-
-Ignorar un vértice → Fracaso.
-
-#### 2. El pilar "Personas" — El más importante y el más difícil
-
-**El problema clásico (silos):**
-
-Dev: "Necesito desplegar ahora, tengo urgencia del cliente."  
-Ops: "Lo siento, los deploys son el primer martes de cada mes."  
-Resultado: Conflicto, culpa, software desactualizado, cliente insatisfecho.
-
-**Con DevOps:**
-- Ambos equipos comparten el mismo objetivo: "El sistema debe funcionar 99.9% del tiempo."
-- Si el sistema cae, ambos son responsables (no solo Ops).
-- La confianza se construye mediante automatización (si el deploy tiene pruebas automáticas, Ops confía en dejarlo pasar).
-
-**Equipos autónomos:** Un equipo pequeño (6-10 personas) es dueño completo de su funcionalidad: desde los requisitos hasta el soporte en producción.
-
-**Postmortem sin culpa (Blameless postmortem):**  
-Cuando algo falla, en lugar de preguntar "¿Quién tuvo la culpa?", se pregunta "¿Qué condiciones del sistema permitieron este error?"  
-Resultado: Las personas reportan errores temprano porque no temen castigo.
-
-#### 3. El pilar "Proceso" — Cuánto tarda una idea en llegar al usuario
-
-**Flujo de valor:** Desde que un desarrollador escribe una línea de código hasta que el usuario lo usa.
-
-- Cascada tradicional: 6 meses.
-- DevOps bien implementado: menos de 1 hora.
-
-**Ciclos de retroalimentación (feedback loops) — Qué tan rápido sabes que algo está mal:**
-
-| Velocidad | ¿Qué detecta? | Ejemplo |
+| Nivel | Pregunta | Ejemplo |
 |---|---|---|
-| Segundos | Errores de sintaxis | El IDE subraya en rojo |
-| Minutos | Pruebas unitarias fallan | CI ejecuta tests y falla |
-| Horas | El sistema se comportó raro en producción | Monitoreo muestra métricas anómalas |
-| Días | Los usuarios usan la nueva función | Analytics muestra adopción |
+| Negocio | ¿Por qué existe el proyecto? | Reducir tiempos de atención 30% |
+| Usuario | ¿Qué necesita lograr una persona? | Paciente agenda cita desde el celular |
+| Sistema | ¿Qué capacidades debe ofrecer el sistema completo? | Integrarse con pasarela de pagos |
+| Software | ¿Qué debe implementar el componente software? | Endpoint `POST /citas` crea una cita válida |
 
-**Regla:** Mientras más rápido detectas un error, más barato es arreglarlo.
+#### 2. Historias, casos de uso y criterios de aceptación
 
-#### 4. El pilar "Técnica" — Las herramientas que habilitan todo
+Una historia de usuario comunica valor:
 
-| Herramienta | ¿Qué hace? | Ejemplo |
+```text
+Como paciente,
+quiero agendar una cita médica desde la aplicación,
+para evitar llamar a la clínica.
+```
+
+Un criterio de aceptación convierte esa conversación en una condición verificable:
+
+```gherkin
+Scenario: Cita creada exitosamente
+  Given el médico tiene un horario disponible mañana a las 10:00
+  When el paciente confirma la cita
+  Then el sistema registra la cita como CONFIRMADA
+  And envía una notificación al paciente
+```
+
+#### 3. Trazabilidad mínima
+
+Cada requisito debe poder seguirse hacia adelante y hacia atrás:
+
+```text
+Objetivo de negocio -> Historia -> Criterio de aceptación -> Código -> Prueba -> Release
+```
+
+Sin trazabilidad, el equipo no puede responder con confianza qué se implementó, qué falta probar o qué impacto tiene un cambio.
+
+---
+
+### Actividades prácticas
+
+**Actividad 1: Del problema al requisito**
+
+Tomar el dominio de citas médicas y redactar:
+1. 2 objetivos de negocio.
+2. 3 historias de usuario.
+3. 2 criterios de aceptación por historia.
+4. 1 requisito de calidad medible.
+
+**Actividad 2: Mini matriz de trazabilidad**
+
+Construir una tabla con columnas: `Objetivo | Historia | Criterio | Prueba esperada | Prioridad`.
+
+#### Ejercicio de código — Clase 02: validar historias de usuario
+
+**Problema:** automatizar una revisión básica de historias para detectar si falta rol, acción, beneficio o criterios.
+
+**Paso 1 — Crea `validar_historias.py`:**
+
+```python
+historias = [
+    {
+        "id": "HU-001",
+        "texto": "Como paciente quiero agendar una cita para recibir atención médica",
+        "criterios": ["Cita confirmada", "Notificación enviada"],
+    },
+    {
+        "id": "HU-002",
+        "texto": "El sistema debe ser rápido",
+        "criterios": [],
+    },
+]
+
+
+def evaluar(historia: dict) -> list[str]:
+    texto = historia["texto"].lower()
+    problemas = []
+    if "como " not in texto:
+        problemas.append("falta rol")
+    if "quiero " not in texto:
+        problemas.append("falta acción")
+    if "para " not in texto:
+        problemas.append("falta beneficio")
+    if not historia["criterios"]:
+        problemas.append("faltan criterios de aceptación")
+    return problemas
+
+
+if __name__ == "__main__":
+    for historia in historias:
+        problemas = evaluar(historia)
+        estado = "OK" if not problemas else "REVISAR"
+        print(f"{historia['id']} - {estado}")
+        for problema in problemas:
+            print(f"  - {problema}")
+```
+
+**Extensión:** detectar palabras vagas como `rápido`, `fácil`, `intuitivo` y sugerir que se agregue una métrica.
+
+---
+
+### Preguntas de cierre
+
+1. ¿Qué diferencia hay entre historia de usuario y requisito formal?
+2. ¿Qué se pierde cuando un criterio de aceptación no es verificable?
+3. ¿Por qué una buena historia reduce retrabajo técnico?
+
+---
+
+## Clase 03: Modelado de dominio, análisis OO y UML esencial
+
+**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 2
+
+### Objetivos de aprendizaje
+
+- Identificar entidades, objetos de valor, reglas de negocio y relaciones.
+- Usar UML esencial para comunicar análisis y diseño.
+- Distinguir modelo de dominio, modelo de datos y modelo de implementación.
+- Convertir reglas de negocio en código verificable.
+
+---
+
+### Contenido teórico
+
+#### 1. Modelo de dominio
+
+El modelo de dominio describe los conceptos importantes del negocio. No es una base de datos ni una pantalla. Es el lenguaje común entre usuarios, analistas y desarrolladores.
+
+| Concepto | Ejemplo | Criterio |
 |---|---|---|
-| **CI** (Integración Continua) | Compila y ejecuta pruebas automáticamente cada vez que alguien hace un commit | GitHub Actions ejecuta 200 pruebas en 5 minutos |
-| **CD** (Despliegue Continuo) | Despliega el software automáticamente si las pruebas pasan | Nuevo código en producción en 10 minutos |
-| **Observabilidad** | Ver en tiempo real cómo se comporta el sistema | Grafana muestra que la latencia subió 200ms |
-| **IaC** (Infraestructura como Código) | Los servidores se configuran con archivos, no a mano | Terraform crea 10 servidores en 3 minutos |
+| Entidad | `Cita`, `Paciente`, `Doctor` | Tiene identidad propia |
+| Objeto de valor | `Email`, `RangoHorario`, `Dinero` | Se compara por valor |
+| Regla de negocio | Una cita no se cancela con menos de 24 horas | Restringe comportamiento |
+| Servicio de dominio | Calcular disponibilidad | Coordina reglas que no pertenecen a una sola entidad |
 
-#### 5. ¿Cómo adoptan DevOps las empresas?
+#### 2. UML esencial
 
-**Desde arriba (Top-Down):** La gerencia decide: "Hacemos DevOps." Compran herramientas, hacen capacitaciones.  
-⚠️ Riesgo: Herramientas nuevas, misma cultura vieja. No cambia nada real.
+No todo UML aporta valor. En ingeniería de software conviene usar diagramas cuando aclaran decisiones:
 
-**Desde abajo (Bottom-Up):** Los mismos equipos experimentan con nuevas prácticas porque ven el beneficio.  
-✅ Ventaja: El cambio es genuino porque viene de quienes trabajan.  
-❌ Desventaja: Muy lento, sin apoyo de dirección.
+- **Diagrama de clases:** estructura estática y relaciones.
+- **Diagrama de secuencia:** colaboración entre objetos para un caso de uso.
+- **Diagrama de estados:** ciclo de vida de entidades importantes.
+- **Diagrama de actividad:** flujo de proceso con decisiones.
 
-**Híbrido (el mejor):** La dirección crea el entorno (herramientas, presupuesto, permiso para experimentar) y los equipos adoptan a su ritmo.  
-✅ Balance entre velocidad y adopción real.
+#### 3. Del diagrama al código
 
----
-
-### Actividad práctica: Registro y configuración de Jira
-
-> **Objetivo:** Crear la cuenta de Jira, configurar el proyecto Scrum del grupo y dejar el entorno listo para registrar historias de usuario en la Clase 03.
+El modelo debe bajar a código con invariantes claras. Si una regla vive solo en una diapositiva, no protege al sistema.
 
 ---
 
-#### Paso 1 — Crear cuenta gratuita en Jira
+### Actividades prácticas
 
-1. Ve a `https://www.atlassian.com/software/jira/free` → clic en **Get it free**.
-2. Ingresa tu correo institucional y crea una contraseña segura.
-3. Selecciona el producto **Jira Software** → **Get it free**.
-4. En *"What is your team's name?"* escribe el nombre de tu grupo (ej: `Grupo-A`).
-5. Avanza con **Next** hasta llegar al dashboard inicial de Jira.
+**Actividad 1: Modelo de dominio**
 
----
+Para un sistema de turnos médicos, identificar 5 entidades, 3 objetos de valor y 6 reglas de negocio.
 
-#### Paso 2 — Crear un proyecto Scrum por grupo
+**Actividad 2: Diagrama UML mínimo**
 
-Cada grupo crea **su propio proyecto** en Jira.
+Dibujar un diagrama de clases con `Paciente`, `Doctor`, `Cita`, `Especialidad` y `RangoHorario`. Marcar multiplicidades.
 
-1. En el menú lateral haz clic en **Projects** → **Create project**.
-2. Selecciona la plantilla **Scrum** → **Select**.
-3. Completa los campos:
-   - **Name:** Nombre del proyecto (ej: `NotasYa`, `FacturaYa`, `VehiculosYa`, `DoctorYa`, `ViajaYa`)
-   - **Key:** Clave corta de 3 letras (ej: `NYA`, `FYA`, `VYA`, `DYA`, `VJA`)
-   - **Access:** Private
-4. Clic en **Create project**.
+#### Ejercicio de código — Clase 03: objeto de valor e invariante
 
-> **Claves recomendadas:**
->
-> | Proyecto | Clave Jira |
-> |---|---|
-> | NotasYa | `NYA` |
-> | FacturaYa | `FYA` |
-> | VehiculosYa | `VYA` |
-> | DoctorYa | `DYA` |
-> | ViajaYa | `VJA` |
+**Problema:** evitar que un email inválido circule como `String` por todo el sistema.
 
----
+**Paso 1 — Crea `email_vo.py`:**
 
-#### Paso 3 — Explorar el tablero Scrum
+```python
+import re
+from dataclasses import dataclass
 
-1. En el menú lateral haz clic en **Board**.
-2. Observa las tres columnas por defecto: **To Do**, **In Progress**, **Done**.
-3. Haz clic en **Backlog** y nota la diferencia: el Backlog acumula todas las historias; el Board muestra solo las del sprint activo.
 
----
+@dataclass(frozen=True)
+class Email:
+    valor: str
 
-#### Paso 4 — Habilitar el campo Story Points
+    def __post_init__(self):
+        normalizado = self.valor.strip().lower()
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", normalizado):
+            raise ValueError(f"Email inválido: {self.valor}")
+        object.__setattr__(self, "valor", normalizado)
 
-1. Ve a **Project Settings** → **Features**.
-2. Activa la opción **Estimation** (habilita el campo Story Points en los issues).
-3. Ve a **Project Settings** → **Issue types** → **Story** y confirma que el campo **Story Points** aparece en el formulario del issue.
 
-> Los Story Points se asignarán en la **Clase 04** mediante Planning Poker.
+@dataclass
+class Paciente:
+    nombre: str
+    email: Email
 
----
 
-#### Paso 5 — Crear una Épica de prueba
-
-1. Haz clic en **Create** (botón azul superior).
-2. En **Issue type** selecciona **Epic**.
-3. **Summary:** `Módulo de prueba` (o el módulo principal de tu proyecto).
-4. **Epic Name:** el mismo valor.
-5. Clic en **Create**.
-6. Verifica que la épica aparece en el Backlog con un color asignado automáticamente.
-
-#### Paso 6 — Crear una Historia de Usuario de prueba
-
----
-
-#### Puntos de discusión post-actividad
-
-1. ¿En qué se parece el Backlog de Jira a la "lista de TODO" de la que habla el estándar ISO/IEC/IEEE 12207?
-2. ¿Qué diferencia hay entre un **Epic** y una **Story** en Jira?
-3. ¿Por qué el campo Story Points está desactivado por defecto y hay que habilitarlo?
-
----
-
-### Actividad práctica: Instalación y configuración de Jenkins
-
-> **Objetivo:** Instalar Jenkins directamente en el sistema operativo, crear el primer pipeline CI y entender cómo encaja en el flujo DevOps.
-
-**Prerrequisitos:** JDK 17 o superior instalado. Verificar con `java -version` en la terminal.
-
----
-
-#### Paso 1 — Instalar Java (si no está instalado) (3 min)
-
-Jenkins requiere Java 17 como mínimo. Según tu sistema operativo:
-
-**Windows:**
-1. Descarga el instalador JDK 17 desde [adoptium.net](https://adoptium.net).
-2. Ejecuta el `.msi` y sigue el asistente (siguiente → siguiente → finalizar).
-3. Verifica en PowerShell: `java -version`
-
-**macOS:**
-```bash
-brew install openjdk@17
+if __name__ == "__main__":
+    paciente = Paciente("Ana", Email("ANA@correo.com"))
+    print(paciente)
+    try:
+        Email("correo-invalido")
+    except ValueError as error:
+        print(error)
 ```
 
-**Ubuntu / Debian:**
-```bash
-sudo apt update
-sudo apt install -y openjdk-17-jdk
-java -version
-```
+**Extensión:** crea `RangoHorario` con inicio, fin y validación `fin > inicio`.
 
 ---
 
-#### Paso 2 — Descargar e instalar Jenkins (5 min)
+### Preguntas de cierre
 
-**Windows:**
-1. Ve a [jenkins.io/download](https://www.jenkins.io/download/) → sección **LTS** → descarga el instalador `.msi`.
-2. Ejecuta el instalador:
-   - Elige la carpeta de instalación (por defecto `C:\Program Files\Jenkins`).
-   - En **"Run service as LocalSystem"** deja la opción marcada.
-   - Puerto: deja `8080`.
-   - Selecciona el JDK instalado en el paso anterior.
-3. Haz clic en **Install** y luego **Finish**. Jenkins queda instalado como servicio de Windows y arranca automáticamente.
-
-**macOS:**
-```bash
-brew install jenkins-lts
-brew services start jenkins-lts
-```
-
-**Ubuntu / Debian:**
-```bash
-# Agregar repositorio oficial de Jenkins
-curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key \
-  | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
-
-echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
-  https://pkg.jenkins.io/debian-stable binary/" \
-  | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
-
-sudo apt update
-sudo apt install -y jenkins
-
-# Iniciar el servicio
-sudo systemctl enable jenkins
-sudo systemctl start jenkins
-sudo systemctl status jenkins   # debe mostrar "active (running)"
-```
+1. ¿Por qué `Email` es objeto de valor y `Paciente` es entidad?
+2. ¿Qué regla de negocio se entiende mejor con un diagrama de estados?
+3. ¿Qué problemas aparecen si el código no usa el lenguaje del dominio?
 
 ---
 
-#### Paso 3 — Obtener la contraseña inicial (2 min)
+## Clase 04: Planificación orientada a valor
 
-Jenkins genera una contraseña de administrador al primer arranque. Recupérala según tu SO:
-
-**Windows** (PowerShell como administrador):
-```powershell
-Get-Content "C:\ProgramData\Jenkins\.jenkins\secrets\initialAdminPassword"
-```
-
-**macOS:**
-```bash
-cat ~/.jenkins/secrets/initialAdminPassword
-```
-
-**Linux:**
-```bash
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-```
-
-Copia el valor que aparece (cadena de 32 caracteres hexadecimales).
-
----
-
-#### Paso 4 — Configuración inicial en el navegador (8 min)
-
-1. Abre `http://localhost:8080` en tu navegador.
-2. Pega la contraseña copiada → **Continue**.
-3. Selecciona **"Install suggested plugins"** y espera a que termine (≈ 2-3 min).
-4. Crea el usuario administrador:
-   - Username: `admin`
-   - Password: elige una segura
-   - Full name y email: los tuyos
-5. En **"Instance Configuration"** deja la URL `http://localhost:8080/` → **Save and Finish**.
-6. Haz clic en **"Start using Jenkins"**.
-
----
-
-#### Paso 5 — Crear el primer Pipeline (10 min)
-
-1. En el dashboard, haz clic en **"New Item"**.
-2. Nombre: `mi-primer-pipeline` | Tipo: **Pipeline** → **OK**.
-3. Baja hasta la sección **"Pipeline"** → en **Definition** selecciona `Pipeline script`.
-4. Pega el siguiente `Jenkinsfile` de ejemplo:
-
-```groovy
-pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                echo 'Clonando repositorio...'
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'Compilando el proyecto...'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Ejecutando pruebas unitarias...'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Desplegando a staging...'
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline ejecutado correctamente.'
-        }
-        failure {
-            echo 'El pipeline falló. Revisar logs.'
-        }
-    }
-}
-```
-
-5. Haz clic en **Save**.
-
----
-
-#### Paso 6 — Ejecutar y analizar el pipeline (5 min)
-
-1. En la página del job, haz clic en **"Build Now"** (panel izquierdo).
-2. Observa el **Stage View**: cada etapa aparece como una columna con su tiempo de ejecución y estado (verde = ok, rojo = fallo).
-3. Haz clic en el número de build `#1` → **Console Output** para ver el log completo.
-4. Identifica en el log cada mensaje `echo` de las cuatro etapas.
-
----
-
-#### Paso 7 — Conectar el Pipeline a un repositorio Git (7 min)
-
-Conectar Jenkins a un repo real es el caso de uso habitual en equipos:
-
-1. Ve al job → **Configure**.
-2. En **Pipeline → Definition**, cambia a `Pipeline script from SCM`.
-3. En **SCM** selecciona `Git`.
-4. En **Repository URL** ingresa la URL HTTPS de un repositorio tuyo en GitHub (puede ser público).
-5. En **Branch Specifier** escribe `*/main`.
-6. En **Script Path** deja `Jenkinsfile`.
-7. Haz clic en **Save** → **Build Now**.
-
-> Jenkins clonará el repositorio, leerá el `Jenkinsfile` de la raíz y ejecutará el pipeline. Así el pipeline **viaja con el código** y no vive solo dentro de Jenkins.
-
----
-
-#### Puntos de discusión post-actividad
-
-1. ¿Qué ocurre si el stage `Test` falla? ¿Se ejecuta `Deploy`?
-2. ¿En qué se diferencia tener el `Jenkinsfile` en el repositorio vs. definirlo dentro de Jenkins?
-3. ¿Cómo detener Jenkins si necesitas reiniciar el servicio? (`sudo systemctl stop jenkins` en Linux, `brew services stop jenkins-lts` en macOS)
-4. ¿Cómo extenderías este pipeline para que ejecute pruebas reales con Maven (`mvn test`) o npm (`npm test`)?
-
----
-
-### Preguntas de reflexión
-
-1. ¿Puedes tener DevOps sin cambio cultural?
-2. ¿Error budgets generan confianza o irresponsabilidad?
-3. ¿Cómo medir éxito de transformación?
-
----
-
-## Clase 03: Planificación orientada a valor
-
-**Duración:** 2 horas | **Unidad:** 1
+**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 2
 
 ### Objetivos de aprendizaje
 
@@ -2325,9 +2187,11 @@ Stage View en verde = DoD técnico cumplido
 
 ---
 
-## Clase 04: Estimación — Story Points, Planning Poker, Three-Point
+---
 
-**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 2
+## Clase 05: Estimación — Story Points, Planning Poker, Three-Point
+
+**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 3
 
 ### Objetivos de aprendizaje
 
@@ -2643,7 +2507,9 @@ Calcula el total de tu grupo y completa:
 ---
 🔴 VOY ACA
 
-## Clase 05: Gestión de riesgos y calidad (ISO/IEC 25010)
+---
+
+## Clase 06: Gestión de riesgos y calidad (ISO/IEC 25010)
 
 **Duración:** 2 horas | **Unidad:** 1 | **Semana:** 3
 
@@ -2793,9 +2659,327 @@ Diseña 6-8 quality gates específicos para proyecto elegido. Define métricas, 
 
 ---
 
-## Clase 06: Control de versiones, ramas y versionamiento semántico
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 3
+# UNIDAD 2. Diseño, construcción, pruebas y configuración
+
+---
+
+---
+
+## Clase 07: Diseño de software, arquitectura base y patrones
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
+
+### Objetivos de aprendizaje
+
+- Relacionar requisitos con decisiones de diseño.
+- Comparar arquitectura en capas, hexagonal y MVC.
+- Aplicar patrones de diseño básicos con criterio.
+- Separar dominio, aplicación, infraestructura e interfaz.
+
+---
+
+### Contenido teórico
+
+#### 1. Diseño como puente entre requisitos y código
+
+Diseñar software es decidir responsabilidades, dependencias, contratos e intercambio de datos. Un buen diseño permite cambiar una parte sin romper todo el sistema.
+
+#### 2. Arquitecturas base
+
+| Estilo | Cuándo usarlo | Riesgo típico |
+|---|---|---|
+| Capas | Aplicaciones empresariales tradicionales | Lógica de negocio en controladores |
+| MVC | Aplicaciones web con interfaz clara | Modelo anémico si se usa mal |
+| Hexagonal | Dominio importante y dependencias externas cambiantes | Más clases iniciales |
+| Modular monolith | Equipo pequeño, dominio amplio | Erosión entre módulos |
+
+#### 3. Patrones de diseño útiles
+
+- **Repository:** aislar persistencia.
+- **Adapter:** integrar servicios externos sin contaminar dominio.
+- **Factory:** crear objetos complejos con reglas.
+- **Strategy:** intercambiar algoritmos sin `if` gigantes.
+- **Facade:** simplificar acceso a subsistemas.
+
+---
+
+### Actividades prácticas
+
+**Actividad 1: Elegir arquitectura**
+
+Para una app de citas médicas con pagos y notificaciones, elegir entre capas, MVC, hexagonal o monolito modular. Justificar con 3 criterios.
+
+**Actividad 2: Ubicar responsabilidades**
+
+Clasificar clases en capas: `CitaController`, `AgendarCitaUseCase`, `Cita`, `CitaRepository`, `EmailAdapter`.
+
+#### Ejercicio de código — Clase 07: Strategy para cálculo de descuentos
+
+**Problema:** reemplazar condicionales por estrategias intercambiables.
+
+**Paso 1 — Crea `descuentos.py`:**
+
+```python
+from abc import ABC, abstractmethod
+
+
+class EstrategiaDescuento(ABC):
+    @abstractmethod
+    def calcular(self, total: float) -> float:
+        pass
+
+
+class SinDescuento(EstrategiaDescuento):
+    def calcular(self, total: float) -> float:
+        return 0.0
+
+
+class DescuentoEstudiante(EstrategiaDescuento):
+    def calcular(self, total: float) -> float:
+        return total * 0.10
+
+
+class DescuentoConvenio(EstrategiaDescuento):
+    def calcular(self, total: float) -> float:
+        return min(total * 0.20, 50000)
+
+
+def total_a_pagar(total: float, estrategia: EstrategiaDescuento) -> float:
+    return total - estrategia.calcular(total)
+
+
+if __name__ == "__main__":
+    print(total_a_pagar(200000, DescuentoEstudiante()))
+    print(total_a_pagar(400000, DescuentoConvenio()))
+```
+
+**Extensión:** agrega una nueva estrategia `DescuentoAdultoMayor` sin modificar `total_a_pagar`.
+
+---
+
+### Preguntas de cierre
+
+1. ¿Cuándo un patrón agrega claridad y cuándo agrega complejidad?
+2. ¿Qué dependencia no debería tener una entidad del dominio?
+3. ¿Qué decisión de diseño merece un ADR?
+
+---
+
+## Clase 08: Construcción disciplinada, code review y estándares de código
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
+
+### Objetivos de aprendizaje
+
+- Aplicar estándares de código y convenciones de equipo.
+- Realizar revisiones de código enfocadas en defectos, diseño y mantenibilidad.
+- Automatizar formato, linting y chequeos básicos.
+- Escribir comentarios y documentación técnica con criterio.
+
+---
+
+### Contenido teórico
+
+#### 1. Construcción disciplinada
+
+La construcción profesional no es solo hacer que compile. Incluye estilo consistente, legibilidad, pruebas, revisión, manejo de errores y documentación mínima.
+
+**Buenas prácticas:**
+- Nombres expresivos.
+- Funciones pequeñas.
+- Manejo explícito de errores.
+- Validaciones en la capa correcta.
+- Sin secretos ni configuración hardcodeada.
+- Commits pequeños y revisables.
+
+#### 2. Code review
+
+Un buen code review revisa:
+
+| Aspecto | Pregunta |
+|---|---|
+| Correctitud | ¿Hace lo que la historia pide? |
+| Diseño | ¿Las responsabilidades están bien ubicadas? |
+| Seguridad | ¿Valida entradas y permisos? |
+| Pruebas | ¿Cubre casos normales, borde y error? |
+| Mantenibilidad | ¿Será fácil cambiarlo en 6 meses? |
+
+#### 3. Automatización local
+
+Antes de subir código, el equipo puede correr formato, lint y pruebas rápidas.
+
+---
+
+### Actividades prácticas
+
+**Actividad 1: Review guiado**
+
+Revisar un pull request ficticio e identificar al menos 8 comentarios clasificados como: bug, diseño, seguridad, prueba o legibilidad.
+
+**Actividad 2: Checklist del equipo**
+
+Definir un checklist de revisión para el proyecto final.
+
+#### Ejercicio práctico — Clase 08: pre-commit básico
+
+**Problema:** evitar que código con formato incorrecto o pruebas rotas llegue al repositorio.
+
+**Paso 1 — Crea `.pre-commit-config.yaml`:**
+
+```yaml
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+```
+
+**Paso 2 — Ejecuta:**
+
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```
+
+**Extensión:** agregar un hook que ejecute `pytest` antes de cada commit.
+
+---
+
+### Preguntas de cierre
+
+1. ¿Qué comentarios de code review son útiles y cuáles son ruido?
+2. ¿Qué reglas deben automatizarse y cuáles conviene discutir humanamente?
+3. ¿Por qué un estándar de código reduce costo de mantenimiento?
+
+---
+
+## Clase 09: Estrategia de pruebas, pirámide de testing y automatización
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
+
+### Objetivos de aprendizaje
+
+- Diseñar una estrategia de pruebas alineada al riesgo del producto.
+- Diferenciar pruebas unitarias, integración, contrato, E2E, rendimiento y seguridad.
+- Automatizar pruebas como parte del flujo de ingeniería.
+- Relacionar criterios de aceptación con casos de prueba.
+
+---
+
+### Contenido teórico
+
+#### 1. La pirámide de pruebas
+
+```text
+          E2E
+      Integración
+   Unitarias y dominio
+```
+
+Las pruebas unitarias deben ser numerosas, rápidas y baratas. Las E2E deben ser pocas, enfocadas en flujos críticos y estables.
+
+#### 2. Tipos de pruebas
+
+| Tipo | Qué verifica | Ejemplo |
+|---|---|---|
+| Unitaria | Una función o clase aislada | Cálculo de multa |
+| Integración | Colaboración con BD o API | Guardar cita en PostgreSQL |
+| Contrato | Compatibilidad entre consumidor y proveedor | API cumple OpenAPI/Pact |
+| E2E | Flujo completo de usuario | Login + agendar cita |
+| Rendimiento | Latencia y carga | P95 < 500 ms |
+| Seguridad | Vulnerabilidades | SQL injection bloqueado |
+
+#### 3. Criterios para elegir pruebas
+
+La profundidad de pruebas debe crecer con el riesgo: pagos, salud, datos personales y procesos regulatorios requieren más evidencia que una pantalla informativa.
+
+---
+
+### Actividades prácticas
+
+**Actividad 1: Matriz de pruebas**
+
+Para 5 historias de usuario, definir: tipo de prueba, datos, resultado esperado y prioridad.
+
+**Actividad 2: Automatizar criterios**
+
+Convertir 3 criterios de aceptación en pruebas unitarias o de integración.
+
+#### Ejercicio de código — Clase 09: pruebas unitarias con pytest
+
+**Problema:** validar una regla de negocio del dominio de citas médicas.
+
+**Paso 1 — Crea `citas.py`:**
+
+```python
+from datetime import datetime, timedelta
+
+
+class Cita:
+    def __init__(self, inicio: datetime):
+        self.inicio = inicio
+        self.cancelada = False
+
+    def cancelar(self, ahora: datetime) -> None:
+        if self.inicio - ahora < timedelta(hours=24):
+            raise ValueError("La cita solo puede cancelarse con 24 horas de anticipación")
+        self.cancelada = True
+```
+
+**Paso 2 — Crea `test_citas.py`:**
+
+```python
+from datetime import datetime, timedelta
+import pytest
+from citas import Cita
+
+
+AHORA = datetime(2026, 8, 25, 10, 0)
+
+
+def test_cancelar_con_mas_de_24_horas():
+    cita = Cita(AHORA + timedelta(hours=25))
+    cita.cancelar(AHORA)
+    assert cita.cancelada is True
+
+
+def test_cancelar_con_menos_de_24_horas_lanza_error():
+    cita = Cita(AHORA + timedelta(hours=2))
+    with pytest.raises(ValueError):
+        cita.cancelar(AHORA)
+```
+
+**Paso 3 — Ejecuta:**
+
+```bash
+pytest test_citas.py -v
+```
+
+**Extensión:** agrega una prueba de borde exactamente a 24 horas.
+
+---
+
+### Preguntas de cierre
+
+1. ¿Por qué no todo debe probarse con E2E?
+2. ¿Qué prueba demuestra mejor una regla de negocio?
+3. ¿Cómo se decide qué flujos van al pipeline obligatorio?
+
+---
+
+## Clase 10: Control de versiones, ramas y versionamiento semántico
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
 
 ### Objetivos de aprendizaje
 
@@ -2966,9 +3150,11 @@ v1.3.0 → v1.4.0. Cambios: nuevo endpoint, bug fix, deprecation. Escribe entrad
 
 ---
 
-## Clase 07: Integración Continua (CI) — Verificación automática del código
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
+## Clase 11: Integración Continua (CI) — Verificación automática del código
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 6
 
 ### Objetivos de aprendizaje
 
@@ -3132,7 +3318,7 @@ GitHub Actions workflow para proyecto anterior. Archivo `.github/workflows/ci.ym
 
 ---
 
-#### Ejercicio de código — Clase 07: Construir un pipeline CI real
+#### Ejercicio de código — Clase 11: Construir un pipeline CI real
 
 **Objetivo:** Escribir desde cero un pipeline de CI funcional y el código que lo acompaña.
 
@@ -3267,9 +3453,11 @@ Sube el cambio. ¿Qué muestra el pipeline? ¿Qué prueba falla primero?
 
 ---
 
-## Clase 08: Despliegue continuo y estrategias para lanzar sin apagar el sistema
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 4
+## Clase 12: Despliegue continuo y estrategias para lanzar sin apagar el sistema
+
+**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 6
 
 ### Objetivos de aprendizaje
 
@@ -3415,7 +3603,7 @@ Proyecto elegido. Detalla: detección (¿cómo sabemos que falló?), decisión (
 
 ---
 
-#### Ejercicio de código — Clase 08: Simula un despliegue Canary con feature flags
+#### Ejercicio de código — Clase 12: Simula un despliegue Canary con feature flags
 
 **Objetivo:** Implementar en Python la lógica de un despliegue canary usando feature flags, para entender cómo un sistema envía solo el X% del tráfico a la nueva versión.
 
@@ -3528,9 +3716,389 @@ def test_100_porciento_siempre_activo():
 
 ---
 
-## Clase 09: Seguridad en el desarrollo — DevSecOps y las 10 vulnerabilidades más comunes
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
+# UNIDAD 3. DevOps, seguridad, operación e incidentes
+
+---
+
+---
+
+## Clase 13: DevOps sociotécnico y transformación cultural
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
+
+### Objetivos de aprendizaje
+
+- Explicar que DevOps no es solo herramientas: personas + procesos + técnica.
+- Identificar barreras culturales comunes en organizaciones.
+- Comparar diferentes estrategias de transformación (liderazgo, equipos, híbrida).
+- Entender qué métricas indican que la transformación está funcionando.
+
+---
+
+### Contenido teórico
+
+#### 1. DevOps más allá de herramientas
+
+**Mito:** DevOps = Jenkins, Kubernetes, Terraform.
+
+**Realidad:** DevOps = Personas + Procesos + Técnica.
+
+```
+        Técnica (CI/CD, IaC, containers)
+        /                              \
+       /                                \
+      /                                  \
+     /                                    \
+Personas ─────────────────── Procesos
+(Cultura, confianza,        (Flujo, feedback,
+autonomía, aprendizaje)      responsabilidad)
+```
+
+Ignorar un vértice → Fracaso.
+
+#### 2. El pilar "Personas" — El más importante y el más difícil
+
+**El problema clásico (silos):**
+
+Dev: "Necesito desplegar ahora, tengo urgencia del cliente."  
+Ops: "Lo siento, los deploys son el primer martes de cada mes."  
+Resultado: Conflicto, culpa, software desactualizado, cliente insatisfecho.
+
+**Con DevOps:**
+- Ambos equipos comparten el mismo objetivo: "El sistema debe funcionar 99.9% del tiempo."
+- Si el sistema cae, ambos son responsables (no solo Ops).
+- La confianza se construye mediante automatización (si el deploy tiene pruebas automáticas, Ops confía en dejarlo pasar).
+
+**Equipos autónomos:** Un equipo pequeño (6-10 personas) es dueño completo de su funcionalidad: desde los requisitos hasta el soporte en producción.
+
+**Postmortem sin culpa (Blameless postmortem):**  
+Cuando algo falla, en lugar de preguntar "¿Quién tuvo la culpa?", se pregunta "¿Qué condiciones del sistema permitieron este error?"  
+Resultado: Las personas reportan errores temprano porque no temen castigo.
+
+#### 3. El pilar "Proceso" — Cuánto tarda una idea en llegar al usuario
+
+**Flujo de valor:** Desde que un desarrollador escribe una línea de código hasta que el usuario lo usa.
+
+- Cascada tradicional: 6 meses.
+- DevOps bien implementado: menos de 1 hora.
+
+**Ciclos de retroalimentación (feedback loops) — Qué tan rápido sabes que algo está mal:**
+
+| Velocidad | ¿Qué detecta? | Ejemplo |
+|---|---|---|
+| Segundos | Errores de sintaxis | El IDE subraya en rojo |
+| Minutos | Pruebas unitarias fallan | CI ejecuta tests y falla |
+| Horas | El sistema se comportó raro en producción | Monitoreo muestra métricas anómalas |
+| Días | Los usuarios usan la nueva función | Analytics muestra adopción |
+
+**Regla:** Mientras más rápido detectas un error, más barato es arreglarlo.
+
+#### 4. El pilar "Técnica" — Las herramientas que habilitan todo
+
+| Herramienta | ¿Qué hace? | Ejemplo |
+|---|---|---|
+| **CI** (Integración Continua) | Compila y ejecuta pruebas automáticamente cada vez que alguien hace un commit | GitHub Actions ejecuta 200 pruebas en 5 minutos |
+| **CD** (Despliegue Continuo) | Despliega el software automáticamente si las pruebas pasan | Nuevo código en producción en 10 minutos |
+| **Observabilidad** | Ver en tiempo real cómo se comporta el sistema | Grafana muestra que la latencia subió 200ms |
+| **IaC** (Infraestructura como Código) | Los servidores se configuran con archivos, no a mano | Terraform crea 10 servidores en 3 minutos |
+
+#### 5. ¿Cómo adoptan DevOps las empresas?
+
+**Desde arriba (Top-Down):** La gerencia decide: "Hacemos DevOps." Compran herramientas, hacen capacitaciones.  
+⚠️ Riesgo: Herramientas nuevas, misma cultura vieja. No cambia nada real.
+
+**Desde abajo (Bottom-Up):** Los mismos equipos experimentan con nuevas prácticas porque ven el beneficio.  
+✅ Ventaja: El cambio es genuino porque viene de quienes trabajan.  
+❌ Desventaja: Muy lento, sin apoyo de dirección.
+
+**Híbrido (el mejor):** La dirección crea el entorno (herramientas, presupuesto, permiso para experimentar) y los equipos adoptan a su ritmo.  
+✅ Balance entre velocidad y adopción real.
+
+---
+
+### Actividad práctica: Registro y configuración de Jira
+
+> **Objetivo:** Crear la cuenta de Jira, configurar el proyecto Scrum del grupo y dejar el entorno listo para registrar historias de usuario en la Clase 03.
+
+---
+
+#### Paso 1 — Crear cuenta gratuita en Jira
+
+1. Ve a `https://www.atlassian.com/software/jira/free` → clic en **Get it free**.
+2. Ingresa tu correo institucional y crea una contraseña segura.
+3. Selecciona el producto **Jira Software** → **Get it free**.
+4. En *"What is your team's name?"* escribe el nombre de tu grupo (ej: `Grupo-A`).
+5. Avanza con **Next** hasta llegar al dashboard inicial de Jira.
+
+---
+
+#### Paso 2 — Crear un proyecto Scrum por grupo
+
+Cada grupo crea **su propio proyecto** en Jira.
+
+1. En el menú lateral haz clic en **Projects** → **Create project**.
+2. Selecciona la plantilla **Scrum** → **Select**.
+3. Completa los campos:
+   - **Name:** Nombre del proyecto (ej: `NotasYa`, `FacturaYa`, `VehiculosYa`, `DoctorYa`, `ViajaYa`)
+   - **Key:** Clave corta de 3 letras (ej: `NYA`, `FYA`, `VYA`, `DYA`, `VJA`)
+   - **Access:** Private
+4. Clic en **Create project**.
+
+> **Claves recomendadas:**
+>
+> | Proyecto | Clave Jira |
+> |---|---|
+> | NotasYa | `NYA` |
+> | FacturaYa | `FYA` |
+> | VehiculosYa | `VYA` |
+> | DoctorYa | `DYA` |
+> | ViajaYa | `VJA` |
+
+---
+
+#### Paso 3 — Explorar el tablero Scrum
+
+1. En el menú lateral haz clic en **Board**.
+2. Observa las tres columnas por defecto: **To Do**, **In Progress**, **Done**.
+3. Haz clic en **Backlog** y nota la diferencia: el Backlog acumula todas las historias; el Board muestra solo las del sprint activo.
+
+---
+
+#### Paso 4 — Habilitar el campo Story Points
+
+1. Ve a **Project Settings** → **Features**.
+2. Activa la opción **Estimation** (habilita el campo Story Points en los issues).
+3. Ve a **Project Settings** → **Issue types** → **Story** y confirma que el campo **Story Points** aparece en el formulario del issue.
+
+> Los Story Points se asignarán en la **Clase 04** mediante Planning Poker.
+
+---
+
+#### Paso 5 — Crear una Épica de prueba
+
+1. Haz clic en **Create** (botón azul superior).
+2. En **Issue type** selecciona **Epic**.
+3. **Summary:** `Módulo de prueba` (o el módulo principal de tu proyecto).
+4. **Epic Name:** el mismo valor.
+5. Clic en **Create**.
+6. Verifica que la épica aparece en el Backlog con un color asignado automáticamente.
+
+#### Paso 6 — Crear una Historia de Usuario de prueba
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿En qué se parece el Backlog de Jira a la "lista de TODO" de la que habla el estándar ISO/IEC/IEEE 12207?
+2. ¿Qué diferencia hay entre un **Epic** y una **Story** en Jira?
+3. ¿Por qué el campo Story Points está desactivado por defecto y hay que habilitarlo?
+
+---
+
+### Actividad práctica: Instalación y configuración de Jenkins
+
+> **Objetivo:** Instalar Jenkins directamente en el sistema operativo, crear el primer pipeline CI y entender cómo encaja en el flujo DevOps.
+
+**Prerrequisitos:** JDK 17 o superior instalado. Verificar con `java -version` en la terminal.
+
+---
+
+#### Paso 1 — Instalar Java (si no está instalado) (3 min)
+
+Jenkins requiere Java 17 como mínimo. Según tu sistema operativo:
+
+**Windows:**
+1. Descarga el instalador JDK 17 desde [adoptium.net](https://adoptium.net).
+2. Ejecuta el `.msi` y sigue el asistente (siguiente → siguiente → finalizar).
+3. Verifica en PowerShell: `java -version`
+
+**macOS:**
+```bash
+brew install openjdk@17
+```
+
+**Ubuntu / Debian:**
+```bash
+sudo apt update
+sudo apt install -y openjdk-17-jdk
+java -version
+```
+
+---
+
+#### Paso 2 — Descargar e instalar Jenkins (5 min)
+
+**Windows:**
+1. Ve a [jenkins.io/download](https://www.jenkins.io/download/) → sección **LTS** → descarga el instalador `.msi`.
+2. Ejecuta el instalador:
+   - Elige la carpeta de instalación (por defecto `C:\Program Files\Jenkins`).
+   - En **"Run service as LocalSystem"** deja la opción marcada.
+   - Puerto: deja `8080`.
+   - Selecciona el JDK instalado en el paso anterior.
+3. Haz clic en **Install** y luego **Finish**. Jenkins queda instalado como servicio de Windows y arranca automáticamente.
+
+**macOS:**
+```bash
+brew install jenkins-lts
+brew services start jenkins-lts
+```
+
+**Ubuntu / Debian:**
+```bash
+# Agregar repositorio oficial de Jenkins
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key \
+  | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/" \
+  | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+sudo apt install -y jenkins
+
+# Iniciar el servicio
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins   # debe mostrar "active (running)"
+```
+
+---
+
+#### Paso 3 — Obtener la contraseña inicial (2 min)
+
+Jenkins genera una contraseña de administrador al primer arranque. Recupérala según tu SO:
+
+**Windows** (PowerShell como administrador):
+```powershell
+Get-Content "C:\ProgramData\Jenkins\.jenkins\secrets\initialAdminPassword"
+```
+
+**macOS:**
+```bash
+cat ~/.jenkins/secrets/initialAdminPassword
+```
+
+**Linux:**
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+Copia el valor que aparece (cadena de 32 caracteres hexadecimales).
+
+---
+
+#### Paso 4 — Configuración inicial en el navegador (8 min)
+
+1. Abre `http://localhost:8080` en tu navegador.
+2. Pega la contraseña copiada → **Continue**.
+3. Selecciona **"Install suggested plugins"** y espera a que termine (≈ 2-3 min).
+4. Crea el usuario administrador:
+   - Username: `admin`
+   - Password: elige una segura
+   - Full name y email: los tuyos
+5. En **"Instance Configuration"** deja la URL `http://localhost:8080/` → **Save and Finish**.
+6. Haz clic en **"Start using Jenkins"**.
+
+---
+
+#### Paso 5 — Crear el primer Pipeline (10 min)
+
+1. En el dashboard, haz clic en **"New Item"**.
+2. Nombre: `mi-primer-pipeline` | Tipo: **Pipeline** → **OK**.
+3. Baja hasta la sección **"Pipeline"** → en **Definition** selecciona `Pipeline script`.
+4. Pega el siguiente `Jenkinsfile` de ejemplo:
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Clonando repositorio...'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Compilando el proyecto...'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Ejecutando pruebas unitarias...'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Desplegando a staging...'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline ejecutado correctamente.'
+        }
+        failure {
+            echo 'El pipeline falló. Revisar logs.'
+        }
+    }
+}
+```
+
+5. Haz clic en **Save**.
+
+---
+
+#### Paso 6 — Ejecutar y analizar el pipeline (5 min)
+
+1. En la página del job, haz clic en **"Build Now"** (panel izquierdo).
+2. Observa el **Stage View**: cada etapa aparece como una columna con su tiempo de ejecución y estado (verde = ok, rojo = fallo).
+3. Haz clic en el número de build `#1` → **Console Output** para ver el log completo.
+4. Identifica en el log cada mensaje `echo` de las cuatro etapas.
+
+---
+
+#### Paso 7 — Conectar el Pipeline a un repositorio Git (7 min)
+
+Conectar Jenkins a un repo real es el caso de uso habitual en equipos:
+
+1. Ve al job → **Configure**.
+2. En **Pipeline → Definition**, cambia a `Pipeline script from SCM`.
+3. En **SCM** selecciona `Git`.
+4. En **Repository URL** ingresa la URL HTTPS de un repositorio tuyo en GitHub (puede ser público).
+5. En **Branch Specifier** escribe `*/main`.
+6. En **Script Path** deja `Jenkinsfile`.
+7. Haz clic en **Save** → **Build Now**.
+
+> Jenkins clonará el repositorio, leerá el `Jenkinsfile` de la raíz y ejecutará el pipeline. Así el pipeline **viaja con el código** y no vive solo dentro de Jenkins.
+
+---
+
+#### Puntos de discusión post-actividad
+
+1. ¿Qué ocurre si el stage `Test` falla? ¿Se ejecuta `Deploy`?
+2. ¿En qué se diferencia tener el `Jenkinsfile` en el repositorio vs. definirlo dentro de Jenkins?
+3. ¿Cómo detener Jenkins si necesitas reiniciar el servicio? (`sudo systemctl stop jenkins` en Linux, `brew services stop jenkins-lts` en macOS)
+4. ¿Cómo extenderías este pipeline para que ejecute pruebas reales con Maven (`mvn test`) o npm (`npm test`)?
+
+---
+
+### Preguntas de reflexión
+
+1. ¿Puedes tener DevOps sin cambio cultural?
+2. ¿Error budgets generan confianza o irresponsabilidad?
+3. ¿Cómo medir éxito de transformación?
+
+---
+
+---
+
+## Clase 14: Seguridad en el desarrollo — DevSecOps y las 10 vulnerabilidades más comunes
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
 
 ### Objetivos de aprendizaje
 
@@ -3696,7 +4264,7 @@ Diseña quality gates de seguridad para pipeline CI:
 
 ---
 
-#### Ejercicio de código — Clase 09: Encuentra y corrige las vulnerabilidades
+#### Ejercicio de código — Clase 14: Encuentra y corrige las vulnerabilidades
 
 **Objetivo:** Identificar vulnerabilidades reales del OWASP Top 10 en código Python y corregirlas.
 
@@ -3820,9 +4388,11 @@ def log_evento(evento: str):
 
 ---
 
-## Clase 10: Herramientas de seguridad automática y manejo seguro de contraseñas
+---
 
-**Duración:** 2 horas | **Unidad:** 2 | **Semana:** 5
+## Clase 15: Herramientas de seguridad automática y manejo seguro de contraseñas
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 8
 
 ### Objetivos de aprendizaje
 
@@ -4041,7 +4611,7 @@ Proyecto con 10 secretos (DB password, API keys, etc.). Diseña:
 
 ---
 
-#### Ejercicio de código — Clase 10: De credenciales en el código a variables de entorno
+#### Ejercicio de código — Clase 15: De credenciales en el código a variables de entorno
 
 **Objetivo:** Migrar un script con credenciales hardcodeadas a una versión segura que las lee desde variables de entorno, y verificar que gitleaks detecta el problema original.
 
@@ -4160,9 +4730,11 @@ if not STRIPE_API_KEY:
 
 ---
 
-## Clase 11: Logs, métricas y trazas
+---
 
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 6
+## Clase 16: Logs, métricas y trazas
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 8
 
 ### Objetivos de aprendizaje
 
@@ -4313,7 +4885,7 @@ App de comercio. 10 alertas críticas (error rate, latencia, etc.). Define thres
 
 ---
 
-#### Ejercicio de código — Clase 11: Mejorar logs de texto plano a logs estructurados
+#### Ejercicio de código — Clase 16: Mejorar logs de texto plano a logs estructurados
 
 **Objetivo:** Transformar logs de texto plano (difíciles de buscar) a logs estructurados en JSON que un sistema de monitoreo pueda analizar automáticamente.
 
@@ -4426,9 +4998,11 @@ def procesar_pago(usuario_id: int, monto: float, metodo: str) -> bool:
 
 ---
 
-## Clase 12: Las 4 métricas clave y cómo definir objetivos de servicio
+---
 
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 6
+## Clase 17: Las 4 métricas clave y cómo definir objetivos de servicio
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 9
 
 ### Objetivos de aprendizaje
 
@@ -4578,9 +5152,11 @@ Escenario: Ya gastaste 80% del budget. Un feature arriesgado solicita deploy. ¿
 
 ---
 
-## Clase 13: Métricas DORA — ¿Cómo saber si tu equipo es eficiente?
+---
 
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
+## Clase 18: Métricas DORA — ¿Cómo saber si tu equipo es eficiente?
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 9
 
 ### Objetivos de aprendizaje
 
@@ -4722,9 +5298,11 @@ Plan de 6 meses para llevar equipo de "Medium" a "High" en todas métricas. Prop
 
 ---
 
-## Clase 14: Gestión de incidentes — ¿Qué hacer cuando algo falla en producción?
+---
 
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 7
+## Clase 19: Gestión de incidentes — ¿Qué hacer cuando algo falla en producción?
+
+**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 10
 
 ### Objetivos de aprendizaje
 
@@ -4864,9 +5442,17 @@ Diseña runbook para incidente SEV-1 de tu app. Pasos, quién hace qué, escalac
 
 ---
 
-## Clase 15: Cómo aprender de los fallos — Análisis de causa raíz y postmortem
+---
 
-**Duración:** 2 horas | **Unidad:** 3 | **Semana:** 8
+# UNIDAD 4. Mantenimiento, evolución, ética y liberación
+
+---
+
+---
+
+## Clase 20: Cómo aprender de los fallos — Análisis de causa raíz y postmortem
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
 
 ### Objetivos de aprendizaje
 
@@ -5008,7 +5594,7 @@ Mismo incident. Escribe postmortem blameless con: timeline, root causes, contrib
 
 ---
 
-#### Ejercicio de código — Clase 15: Traza el bug y aplica los 5 Por qués
+#### Ejercicio de código — Clase 20: Traza el bug y aplica los 5 Por qués
 
 **Objetivo:** Practicar análisis de causa raíz leyendo código real, no solo describiendo el problema en abstracto.
 
@@ -5148,9 +5734,11 @@ class Sesion:
 
 ---
 
-## Clase 16: Mantenimiento del software — El trabajo que ocurre después de lanzar
+---
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 8
+## Clase 21: Tipos de mantenimiento y refactorización
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 11
 
 ### Objetivos de aprendizaje
 
@@ -5310,7 +5898,7 @@ Código complejo dado. Refactoriza: extrae funciones, mejora tests, reduce coupl
 
 ---
 
-#### Ejercicio de código — Clase 16: Refactorización paso a paso
+#### Ejercicio de código — Clase 21: Refactorización paso a paso
 
 **Objetivo:** Aplicar 3 técnicas de refactorización concretas sobre un fragmento de código real, verificando en cada paso que el comportamiento no cambió.
 
@@ -5471,9 +6059,11 @@ pytest test_factura.py -v
 
 ---
 
-## Clase 17: Cómo reemplazar un sistema viejo sin apagarlo — Migración y sistemas heredados
+---
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 9
+## Clase 22: Migración y sistemas heredados
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 11
 
 ### Objetivos de aprendizaje
 
@@ -5604,9 +6194,11 @@ Detalla: cómo transferir datos, validación, rollback, reconciliación.
 
 ---
 
-## Clase 18: Deuda técnica y modelos de IA en producción
+---
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 9
+## Clase 23: Deuda técnica y ciclo de vida de componentes con IA
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 12
 
 ### Objetivos de aprendizaje
 
@@ -5731,9 +6323,11 @@ Proyecto con 25 días de deuda técnica. Plan de pago en 6 sprints. Decisiones: 
 
 ---
 
-## Clase 19: Ética, licencias y accesibilidad — Decisiones técnicas con impacto real
+---
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
+## Clase 24: Ética profesional, licencias y accesibilidad
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 12
 
 ### Objetivos de aprendizaje
 
@@ -5859,9 +6453,11 @@ App dada. Auditoría manual + herramienta Axe. Lista de issues WCAG AA. Prioriza
 
 ---
 
-## Clase 20: Lanzamiento responsable — Sostenibilidad, decisión go/no-go y sustentación
+---
 
-**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 10
+## Clase 25: Sostenibilidad y decisión go/no-go
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 13
 
 ### Objetivos de aprendizaje
 
@@ -5992,6 +6588,107 @@ Proyecto dado. Llenar checklist. Decision: GO / NO-GO / GO-WITH-RISK.
 **Actividad 2: Sustentación prep (13 min)**
 
 Preparar outline de sustentación para proyecto personal (5 minutos hablado).
+
+---
+
+---
+
+## Clase 26: Proyecto integrador, sustentación final y portafolio profesional
+
+**Duración:** 2 horas | **Unidad:** 4 | **Semana:** 13
+
+### Objetivos de aprendizaje
+
+- Integrar los artefactos principales del curso en una entrega coherente.
+- Defender decisiones de proceso, diseño, pruebas, seguridad y operación.
+- Presentar evidencia técnica verificable del proyecto.
+- Construir un portafolio profesional a partir del trabajo realizado.
+
+---
+
+### Contenido teórico
+
+#### 1. El proyecto como evidencia de ingeniería
+
+La sustentación final no debe ser una exposición de diapositivas desconectada del trabajo. Debe demostrar evidencia:
+
+- Backlog priorizado.
+- Requisitos y criterios de aceptación.
+- Diseño y decisiones técnicas.
+- Código, pruebas y pipeline.
+- Métricas de calidad y seguridad.
+- Evidencia de operación: logs, alertas o runbooks.
+- Lecciones aprendidas.
+
+#### 2. Portafolio profesional
+
+Un buen portafolio muestra proceso, no solo resultado. Debe permitir que otro ingeniero entienda el problema, las decisiones y cómo ejecutar el proyecto.
+
+**Estructura sugerida del README final:**
+
+```markdown
+# Proyecto final
+
+## Problema
+## Alcance
+## Arquitectura
+## Historias implementadas
+## Cómo ejecutar
+## Cómo probar
+## Pipeline CI/CD
+## Métricas y calidad
+## Riesgos y deuda técnica
+## Lecciones aprendidas
+```
+
+#### 3. Defensa técnica
+
+Cada estudiante debe poder explicar una decisión concreta y navegar el repositorio: código, prueba, issue, pull request y evidencia del pipeline.
+
+---
+
+### Actividad práctica
+
+**Ejercicio práctico — generar checklist de sustentación**
+
+**Paso 1 — Crea `checklist_sustentacion.py`:**
+
+```python
+checks = {
+    "README con instrucciones": False,
+    "Backlog priorizado": False,
+    "Al menos 5 historias implementadas": False,
+    "Pruebas automatizadas ejecutadas": False,
+    "Pipeline CI verde": False,
+    "Quality gates documentados": False,
+    "Runbook o guía de operación": False,
+    "Deuda técnica documentada": False,
+}
+
+
+def estado(checks: dict[str, bool]) -> str:
+    completados = sum(1 for valor in checks.values() if valor)
+    total = len(checks)
+    porcentaje = completados / total * 100
+    return f"{completados}/{total} completados ({porcentaje:.0f}%)"
+
+
+if __name__ == "__main__":
+    print(estado(checks))
+    for nombre, listo in checks.items():
+        marca = "OK" if listo else "PENDIENTE"
+        print(f"- {marca}: {nombre}")
+```
+
+**Extensión:** leer el checklist desde un archivo YAML y fallar el pipeline si hay pendientes críticos.
+
+---
+
+### Preguntas de cierre
+
+1. ¿Qué evidencia convence más: una explicación o una prueba automatizada pasando?
+2. ¿Qué decisión técnica defenderías si te preguntan por mantenibilidad?
+3. ¿Qué parte del proyecto pondrías en tu portafolio profesional?
 
 ---
 

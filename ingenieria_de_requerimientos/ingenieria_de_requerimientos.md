@@ -1,8 +1,9 @@
-# Ingeniería de Requerimientos — Contenido de Clases
+# Ingeniería de Requerimientos — Contenido de Clases Ampliado
 
 > **Materia:** Ingeniería de Requerimientos  
 > **Duración por clase:** 2 horas (120 minutos)  
-> **Total de clases:** 20
+> **Total de clases:** 26  
+> **Duración total:** 52 horas
 
 ---
 
@@ -42,6 +43,52 @@ Profesional con experiencia en diseño, desarrollo y operación de sistemas de s
 | Tercer parcial | 20% |
 | Talleres | 20% |
 | Proyecto final | 20% |
+
+---
+
+## Distribución del curso
+
+| Unidad | Clases | Horas |
+|---|---|---|
+| Unidad 1: Fundamentos, calidad, elicitación y modelado del dominio | Clases 1–5 | 10 h |
+| Unidad 2: Especificación estructurada e historias de usuario | Clases 6–10 | 10 h |
+| Unidad 3: Calidad, validación y trazabilidad | Clases 11–15 | 10 h |
+| Unidad 4: Modelado avanzado, cumplimiento y automatización | Clases 16–21 | 12 h |
+| Unidad 5: Proyecto integrador | Clases 22–26 | 10 h |
+| **Total** | **26 clases** | **52 h** |
+
+## Mapa de clases recomendado
+
+La secuencia inicia con fundamentos y lenguaje común, avanza hacia técnicas de elicitación y especificación, luego fortalece calidad, trazabilidad y control de cambios, después incorpora temas universitarios avanzados como objetivos de negocio, modelos formales, interfaces, datos, seguridad, cumplimiento y automatización, y finalmente cierra con un proyecto integrador completo.
+
+| Clase | Título | Unidad |
+|---|---|---|
+| 01 | Introducción a la Ingeniería de Requerimientos | 1 |
+| 02 | Calidad del requisito y del conjunto | 1 |
+| 03 | Stakeholders y técnicas de elicitación | 1 |
+| 04 | Elicitación avanzada y uso de IA como simuladora | 1 |
+| 05 | Modelado del dominio: lenguaje ubicuo y BPMN 2.0 | 1 |
+| 06 | Estándar ISO/IEC/IEEE 29148 y estructura de la especificación | 2 |
+| 07 | Redacción estructurada y atributos del requisito | 2 |
+| 08 | Historias de usuario y criterios INVEST | 2 |
+| 09 | BDD, lenguaje Gherkin y especificación mediante ejemplos | 2 |
+| 10 | Refinamiento del backlog y uso de IA para borradores | 2 |
+| 11 | Requisitos funcionales vs. de calidad e ISO/IEC 25010 | 3 |
+| 12 | Métricas, umbrales y accesibilidad WCAG 2.2 | 3 |
+| 13 | Verificación, validación y prototipado | 3 |
+| 14 | Trazabilidad y matriz de trazabilidad | 3 |
+| 15 | Priorización, línea base y control de cambios | 3 |
+| 16 | Requisitos orientados a objetivos: OKR, KPI, árbol de objetivos y conflictos | 4 |
+| 17 | Modelado funcional avanzado: casos de uso, UML y reglas de negocio | 4 |
+| 18 | Requisitos de datos, interfaces e integración entre sistemas | 4 |
+| 19 | Requisitos de seguridad, privacidad y cumplimiento regulatorio | 4 |
+| 20 | Automatización y análisis de requisitos con IA y scripts de validación | 4 |
+| 21 | Requisitos para sistemas con IA: riesgo, explicabilidad y monitoreo | 4 |
+| 22 | Arranque del proyecto integrador | 5 |
+| 23 | Especificación integrada: SRS, historias y calidad | 5 |
+| 24 | Prototipo navegable y matriz de trazabilidad completa | 5 |
+| 25 | Análisis de impacto de cambio y actualización de artefactos | 5 |
+| 26 | Defensa técnica individual y autorreferencia final | 5 |
 
 ---
 
@@ -2329,11 +2376,582 @@ US-04    Notificación de recordatorio por email       4   3  1.33  Should Have
 
 ---
 
-## Unidad 4. Proyecto integrador: factoría de requisitos
+## Unidad 4. Modelado avanzado, cumplimiento y automatización
 
 ---
 
-### Clase 16 — Arranque del proyecto integrador
+### Clase 16 — Requisitos orientados a objetivos: OKR, KPI, árbol de objetivos y conflictos
+
+#### Objetivos
+- Conectar requisitos con objetivos de negocio medibles.
+- Construir árboles de objetivos y derivar requisitos desde metas estratégicas.
+- Identificar conflictos entre objetivos de stakeholders.
+- Diferenciar objetivos, indicadores, requisitos y soluciones.
+
+#### Contenido teórico
+
+**Por qué empezar por objetivos**
+
+Un requisito bien redactado puede seguir siendo inútil si no responde a un objetivo real. La ingeniería de requerimientos moderna conecta cada requisito con una razón de negocio verificable.
+
+| Concepto | Pregunta | Ejemplo |
+|---|---|---|
+| Objetivo de negocio | ¿Qué resultado busca la organización? | Reducir ausentismo en citas médicas |
+| KPI | ¿Cómo medimos el objetivo? | % de citas no asistidas |
+| Requisito | ¿Qué debe hacer el sistema para aportar? | Enviar recordatorio 24 h antes |
+| Solución | ¿Cómo se implementará? | SMS, email, WhatsApp |
+
+**OKR aplicado a requisitos**
+
+```
+Objetivo: Reducir la inasistencia a citas médicas.
+KR1: Bajar no-shows de 18% a 10% en 3 meses.
+KR2: Confirmar asistencia en al menos 70% de citas.
+KR3: Reasignar el 50% de cupos cancelados con 24 h de anticipación.
+```
+
+Los requisitos derivados deben demostrar cómo mueven esos indicadores.
+
+**Árbol de objetivos**
+
+```
+Reducir inasistencia
+├── Recordar citas a pacientes
+│   ├── Enviar recordatorio 24 h antes
+│   └── Permitir confirmar asistencia
+├── Liberar cupos cancelados
+│   ├── Cancelar cita desde app
+│   └── Notificar cupo disponible a lista de espera
+└── Medir comportamiento
+    ├── Reportar no-shows por especialidad
+    └── Registrar motivo de cancelación
+```
+
+**Conflictos típicos**
+- Rapidez de atención vs. trazabilidad completa.
+- Transparencia de información vs. privacidad.
+- Automatización vs. control humano.
+- Bajo costo vs. alta disponibilidad.
+
+#### Actividad práctica
+
+**Ejercicio de código — validador de trazabilidad objetivo-requisito**
+
+**Problema:** detectar requisitos que no están conectados a ningún objetivo medible.
+
+**Paso 1 — Crea `objetivos_requisitos.py`:**
+
+```python
+from dataclasses import dataclass, field
+
+
+@dataclass
+class Objetivo:
+    id: str
+    descripcion: str
+    kpi: str
+
+
+@dataclass
+class Requisito:
+    id: str
+    descripcion: str
+    objetivos: list[str] = field(default_factory=list)
+
+
+objetivos = [
+    Objetivo("OBJ-01", "Reducir inasistencia a citas", "No-shows < 10%"),
+    Objetivo("OBJ-02", "Mejorar uso de salas", "Ocupación > 75%"),
+]
+
+requisitos = [
+    Requisito("REQ-001", "Enviar recordatorio 24 horas antes", ["OBJ-01"]),
+    Requisito("REQ-002", "Permitir cancelar reserva desde la app", ["OBJ-01", "OBJ-02"]),
+    Requisito("REQ-003", "Cambiar color del botón principal", []),
+]
+
+
+def requisitos_sin_objetivo(requisitos: list[Requisito]) -> list[Requisito]:
+    return [req for req in requisitos if not req.objetivos]
+
+
+def objetivos_sin_requisitos(objetivos: list[Objetivo], requisitos: list[Requisito]) -> list[Objetivo]:
+    usados = {objetivo for req in requisitos for objetivo in req.objetivos}
+    return [objetivo for objetivo in objetivos if objetivo.id not in usados]
+
+
+if __name__ == "__main__":
+    print("=== Requisitos sin objetivo de negocio ===")
+    for req in requisitos_sin_objetivo(requisitos):
+        print(f"- {req.id}: {req.descripcion}")
+
+    print("\n=== Objetivos sin requisitos asociados ===")
+    for objetivo in objetivos_sin_requisitos(objetivos, requisitos):
+        print(f"- {objetivo.id}: {objetivo.descripcion} ({objetivo.kpi})")
+```
+
+**Extensión:** agrega un puntaje de contribución de 1 a 5 por requisito y calcula qué objetivo tiene menor cobertura.
+
+**Preguntas de cierre:**
+- ¿Puede existir un requisito válido sin objetivo de negocio explícito?
+- ¿Qué diferencia hay entre un KPI y un criterio de aceptación?
+- ¿Cómo se resuelve un conflicto entre dos objetivos igualmente importantes?
+
+#### Recursos
+- Van Lamsweerde — *Requirements Engineering: From System Goals to UML Models*
+- ISO/IEC/IEEE 29148:2018 — trazabilidad hacia necesidades de stakeholders
+- Kaplan & Norton — Balanced Scorecard
+
+---
+
+### Clase 17 — Modelado funcional avanzado: casos de uso, UML y reglas de negocio
+
+#### Objetivos
+- Profundizar en casos de uso como especificación funcional completa.
+- Construir diagramas UML útiles para requisitos: casos de uso, actividad y estados.
+- Modelar reglas de negocio como restricciones verificables.
+- Derivar casos de prueba desde flujos y reglas.
+
+#### Contenido teórico
+
+**Casos de uso más allá del resumen**
+
+Un caso de uso completo debe capturar objetivo, actor primario, precondiciones, postcondiciones, flujo principal, alternativos, excepciones y reglas de negocio.
+
+**UML útil en requisitos**
+
+| Diagrama | Pregunta que responde | Cuándo usarlo |
+|---|---|---|
+| Casos de uso | ¿Qué objetivos tienen los actores? | Alcance funcional |
+| Actividad | ¿Cómo fluye el proceso? | Procesos con decisiones |
+| Estados | ¿Cómo cambia la vida de una entidad? | Turno, solicitud, pago, pedido |
+| Secuencia de sistema | ¿Qué eventos cruza el actor con el sistema? | Frontera sistema-actor |
+
+**Reglas de negocio verificables**
+
+Una regla como “se puede cancelar con anticipación” debe transformarse en condiciones comprobables:
+
+```
+RN-03: Un turno solo puede cancelarse si faltan al menos 24 horas para su inicio.
+Caso válido: inicio = mañana 10:00, cancelación = hoy 09:00.
+Caso inválido: inicio = mañana 10:00, cancelación = hoy 12:00.
+```
+
+#### Actividad práctica
+
+**Ejercicio de código — máquina de estados de un requisito**
+
+**Problema:** verificar transiciones permitidas para un turno médico.
+
+**Paso 1 — Crea `estado_turno.py`:**
+
+```python
+from enum import Enum
+
+
+class EstadoTurno(Enum):
+    SOLICITADO = "solicitado"
+    CONFIRMADO = "confirmado"
+    EN_ATENCION = "en_atencion"
+    COMPLETADO = "completado"
+    CANCELADO = "cancelado"
+
+
+TRANSICIONES = {
+    EstadoTurno.SOLICITADO: {EstadoTurno.CONFIRMADO, EstadoTurno.CANCELADO},
+    EstadoTurno.CONFIRMADO: {EstadoTurno.EN_ATENCION, EstadoTurno.CANCELADO},
+    EstadoTurno.EN_ATENCION: {EstadoTurno.COMPLETADO},
+    EstadoTurno.COMPLETADO: set(),
+    EstadoTurno.CANCELADO: set(),
+}
+
+
+def puede_transicionar(origen: EstadoTurno, destino: EstadoTurno) -> bool:
+    return destino in TRANSICIONES[origen]
+
+
+def cambiar_estado(origen: EstadoTurno, destino: EstadoTurno) -> EstadoTurno:
+    if not puede_transicionar(origen, destino):
+        raise ValueError(f"Transición inválida: {origen.value} -> {destino.value}")
+    return destino
+
+
+if __name__ == "__main__":
+    assert cambiar_estado(EstadoTurno.SOLICITADO, EstadoTurno.CONFIRMADO) == EstadoTurno.CONFIRMADO
+    assert puede_transicionar(EstadoTurno.CANCELADO, EstadoTurno.CONFIRMADO) is False
+    print("Reglas de transición verificadas")
+```
+
+**Extensión:** genera automáticamente una tabla Markdown de transiciones permitidas para incluirla en el SRS.
+
+**Preguntas de cierre:**
+- ¿Qué requisitos se entienden mejor como estados que como texto?
+- ¿Qué errores evita una máquina de estados explícita?
+- ¿Cómo se conecta un diagrama de estados con pruebas de aceptación?
+
+#### Recursos
+- UML 2.5.1 Specification — Use Case, Activity and State Machine Diagrams
+- Cockburn — *Writing Effective Use Cases*
+- Ross — *Business Rule Concepts*
+
+---
+
+### Clase 18 — Requisitos de datos, interfaces e integración entre sistemas
+
+#### Objetivos
+- Especificar datos, eventos e interfaces externas como parte de los requisitos.
+- Construir contratos de API y archivos de intercambio.
+- Identificar requisitos de interoperabilidad y compatibilidad.
+- Definir criterios de aceptación para integraciones.
+
+#### Contenido teórico
+
+**Los requisitos no son solo pantallas**
+
+Muchos sistemas fallan porque se especifica lo que ve el usuario, pero no los datos ni las interfaces que sostienen el proceso.
+
+**Requisitos de datos**
+- Entidades principales y atributos obligatorios.
+- Reglas de formato y validación.
+- Retención, clasificación y propiedad del dato.
+- Diccionario de datos.
+
+**Requisitos de interfaz**
+
+| Tipo | Ejemplo | Qué especificar |
+|---|---|---|
+| API REST | Consulta de disponibilidad | Endpoint, método, contrato, errores |
+| Archivo | Importar estudiantes CSV | Columnas, tipos, encoding, frecuencia |
+| Evento | `TurnoCancelado` | Payload, publicador, consumidor, idempotencia |
+| Sistema externo | Pasarela de pagos | SLA, timeouts, errores, conciliación |
+
+#### Actividad práctica
+
+**Ejercicio práctico — contrato OpenAPI desde requisitos**
+
+**Problema:** especificar la consulta de disponibilidad médica como contrato verificable.
+
+**Paso 1 — Crea `openapi-disponibilidad.yml`:**
+
+```yaml
+openapi: 3.0.3
+info:
+  title: API de Disponibilidad Médica
+  version: 1.0.0
+paths:
+  /api/v1/medicos/{medicoId}/disponibilidad:
+    get:
+      summary: Consultar disponibilidad de un médico
+      parameters:
+        - name: medicoId
+          in: path
+          required: true
+          schema: { type: string }
+        - name: fecha
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Franjas disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  medicoId: { type: string }
+                  fecha: { type: string, format: date }
+                  franjas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        inicio: { type: string, format: date-time }
+                        fin: { type: string, format: date-time }
+        '404':
+          description: Médico no encontrado
+```
+
+**Paso 2 — Deriva requisitos:** redacta 3 requisitos funcionales y 2 requisitos de calidad que este contrato debe satisfacer.
+
+**Extensión:** agrega un evento `DisponibilidadActualizada` en AsyncAPI o como tabla de evento con campos obligatorios.
+
+**Preguntas de cierre:**
+- ¿Qué requisito queda incompleto si no define formato de datos?
+- ¿Qué debe decir un requisito sobre errores de integración?
+- ¿Cómo pruebas que un proveedor externo cumple el contrato?
+
+#### Recursos
+- OpenAPI Specification 3.0
+- AsyncAPI Initiative
+- ISO/IEC/IEEE 29148:2018 — interfaces externas
+
+---
+
+### Clase 19 — Requisitos de seguridad, privacidad y cumplimiento regulatorio
+
+#### Objetivos
+- Especificar requisitos de seguridad y privacidad de forma verificable.
+- Clasificar datos por sensibilidad.
+- Relacionar requisitos con controles, riesgos y normas aplicables.
+- Construir criterios de aceptación para cumplimiento.
+
+#### Contenido teórico
+
+**Seguridad como requisito, no como frase genérica**
+
+“El sistema debe ser seguro” no sirve. Un requisito de seguridad debe indicar activo protegido, amenaza, control esperado y verificación.
+
+**Categorías frecuentes**
+
+| Categoría | Ejemplo de requisito |
+|---|---|
+| Autenticación | El sistema debe exigir MFA a administradores |
+| Autorización | Solo el médico asignado puede ver diagnóstico |
+| Confidencialidad | Los datos clínicos deben cifrarse en reposo |
+| Integridad | Toda modificación de nota debe dejar historial |
+| Auditoría | Accesos a datos sensibles deben registrarse |
+| Privacidad | El usuario puede solicitar eliminación de datos no obligatorios |
+
+**Clasificación de datos**
+
+| Clasificación | Ejemplo | Tratamiento |
+|---|---|---|
+| Público | Nombre de sede | Sin restricción especial |
+| Interno | Reporte operativo | Acceso por rol |
+| Confidencial | Documento, teléfono | Cifrado y masking |
+| Sensible | Historia clínica, diagnóstico | Acceso mínimo, auditoría, retención legal |
+
+#### Actividad práctica
+
+**Ejercicio de código — detector de requisitos de privacidad incompletos**
+
+**Problema:** encontrar requisitos que mencionan datos sensibles pero no indican control de protección.
+
+**Paso 1 — Crea `privacidad_requisitos.py`:**
+
+```python
+DATOS_SENSIBLES = {"diagnóstico", "historia clínica", "documento", "teléfono", "correo", "dirección"}
+CONTROLES = {"cifrar", "enmascarar", "auditar", "autorizar", "consentimiento", "retención"}
+
+requisitos = [
+    "REQ-001: El sistema debe mostrar el diagnóstico al médico asignado con autorización por rol.",
+    "REQ-002: El sistema debe guardar el teléfono del paciente.",
+    "REQ-003: El sistema debe auditar todo acceso a historia clínica.",
+]
+
+
+def contiene(texto: str, palabras: set[str]) -> bool:
+    normalizado = texto.lower()
+    return any(palabra in normalizado for palabra in palabras)
+
+
+def requisitos_incompletos(requisitos: list[str]) -> list[str]:
+    problemas = []
+    for requisito in requisitos:
+        menciona_dato_sensible = contiene(requisito, DATOS_SENSIBLES)
+        menciona_control = contiene(requisito, CONTROLES)
+        if menciona_dato_sensible and not menciona_control:
+            problemas.append(requisito)
+    return problemas
+
+
+if __name__ == "__main__":
+    for requisito in requisitos_incompletos(requisitos):
+        print(f"Revisar privacidad: {requisito}")
+```
+
+**Extensión:** agrega severidad `alta/media/baja` según el tipo de dato mencionado.
+
+**Preguntas de cierre:**
+- ¿Qué diferencia hay entre requisito de seguridad y control técnico?
+- ¿Cómo se verifica un requisito de privacidad?
+- ¿Qué requisitos deben aparecer si el sistema maneja datos de salud o financieros?
+
+#### Recursos
+- OWASP ASVS
+- ISO/IEC 27001 — controles de seguridad de la información
+- Ley 1581 de 2012 de Colombia — protección de datos personales
+
+---
+
+### Clase 20 — Automatización y análisis de requisitos con IA y scripts de validación
+
+#### Objetivos
+- Automatizar revisiones básicas de calidad de requisitos.
+- Usar IA para detectar ambigüedades, duplicados y riesgos con revisión humana.
+- Construir reportes de calidad del backlog.
+- Definir límites éticos y prácticos del uso de IA en IR.
+
+#### Contenido teórico
+
+**Automatizar no reemplaza analizar**
+
+Los scripts y la IA ayudan a encontrar señales: palabras vagas, IDs duplicados, requisitos sin fuente, criterios ausentes, inconsistencias de términos. La decisión final sigue siendo del analista.
+
+**Checks automatizables**
+- ID único y formato consistente.
+- Palabras vagas.
+- Presencia de fuente, prioridad y criterio de aceptación.
+- Trazabilidad hacia objetivo o stakeholder.
+- Duplicados semánticos candidatos.
+
+**Uso responsable de IA**
+- No inventar requisitos sin validación.
+- No enviar datos personales o confidenciales a herramientas externas.
+- Pedir explicaciones y supuestos, no solo redacciones finales.
+- Registrar qué fue generado por IA y qué fue validado por humanos.
+
+#### Actividad práctica
+
+**Ejercicio de código — reporte de calidad del backlog**
+
+**Problema:** generar un reporte simple de requisitos con posibles problemas.
+
+**Paso 1 — Crea `auditar_backlog.py`:**
+
+```python
+import csv
+from io import StringIO
+
+CSV = """id,descripcion,fuente,prioridad,criterio
+REQ-001,El sistema debe permitir reservar sala,Estudiante,Must,Reserva creada exitosamente
+REQ-002,El sistema debe ser rápido,Coordinador,Should,
+REQ-001,El sistema debe enviar correo de confirmación,,Could,Correo enviado en menos de 5 minutos
+"""
+
+PALABRAS_VAGAS = {"rápido", "fácil", "amigable", "seguro", "robusto", "eficiente"}
+
+
+def auditar(filas: list[dict[str, str]]) -> list[str]:
+    problemas = []
+    ids = set()
+    for fila in filas:
+        req_id = fila["id"]
+        descripcion = fila["descripcion"].lower()
+        if req_id in ids:
+            problemas.append(f"{req_id}: ID duplicado")
+        ids.add(req_id)
+        if any(palabra in descripcion for palabra in PALABRAS_VAGAS):
+            problemas.append(f"{req_id}: contiene palabra vaga")
+        if not fila["fuente"]:
+            problemas.append(f"{req_id}: no tiene fuente")
+        if not fila["criterio"]:
+            problemas.append(f"{req_id}: no tiene criterio de aceptación")
+    return problemas
+
+
+if __name__ == "__main__":
+    filas = list(csv.DictReader(StringIO(CSV)))
+    for problema in auditar(filas):
+        print("-", problema)
+```
+
+**Extensión:** leer desde un archivo `backlog.csv` real y exportar `reporte_calidad.md`.
+
+**Preguntas de cierre:**
+- ¿Qué defectos de requisitos sí puede detectar un script?
+- ¿Qué defectos requieren conversación con stakeholders?
+- ¿Cómo documentarías que una historia fue redactada inicialmente por IA?
+
+#### Recursos
+- IREB CPRE — Requirements Management and Tool Support
+- IEEE 29148 — atributos y trazabilidad
+- Guías internas de uso responsable de IA generativa
+
+---
+
+### Clase 21 — Requisitos para sistemas con IA: riesgo, explicabilidad y monitoreo
+
+#### Objetivos
+- Identificar requisitos específicos de sistemas que usan IA o modelos predictivos.
+- Definir criterios de aceptación para precisión, sesgo, explicabilidad y fallback.
+- Especificar human-in-the-loop en decisiones de alto impacto.
+- Diseñar requisitos de monitoreo posterior al despliegue.
+
+#### Contenido teórico
+
+**Los sistemas con IA requieren requisitos adicionales**
+
+Un modelo puede cambiar su comportamiento por nuevos datos, degradarse con el tiempo o producir respuestas no determinísticas. Por eso los requisitos deben cubrir más que la función visible.
+
+**Categorías de requisitos para IA**
+
+| Categoría | Pregunta | Ejemplo |
+|---|---|---|
+| Precisión | ¿Qué tan correcto debe ser? | F1-score mínimo de 0.85 en validación |
+| Sesgo | ¿A quién puede afectar injustamente? | Diferencia de falsos negativos entre grupos < 5% |
+| Explicabilidad | ¿Debe justificar decisiones? | Mostrar factores principales del rechazo |
+| Supervisión humana | ¿Cuándo decide un humano? | Casos de confianza < 0.7 van a revisión |
+| Fallback | ¿Qué pasa si el modelo falla? | Usar reglas manuales documentadas |
+| Monitoreo | ¿Cómo detectamos degradación? | Alertar si precisión estimada baja 10% |
+
+**Human-in-the-loop**
+
+La automatización no debe tomar decisiones de alto impacto sin límites claros. En salud, crédito, educación o justicia, el requisito debe decir cuándo interviene una persona y qué evidencia revisa.
+
+#### Actividad práctica
+
+**Ejercicio de código — política de decisión con umbral de confianza**
+
+**Problema:** especificar y simular una política de IA para priorizar solicitudes.
+
+**Paso 1 — Crea `politica_ia.py`:**
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Prediccion:
+    solicitud_id: str
+    resultado: str
+    confianza: float
+    impacto: str
+
+
+def decidir(prediccion: Prediccion) -> str:
+    if prediccion.impacto == "alto":
+        return "revision_humana"
+    if prediccion.confianza < 0.70:
+        return "revision_humana"
+    if prediccion.resultado == "rechazar":
+        return "revision_humana"
+    return "aprobacion_automatica"
+
+
+if __name__ == "__main__":
+    casos = [
+        Prediccion("SOL-1", "aprobar", 0.91, "bajo"),
+        Prediccion("SOL-2", "aprobar", 0.62, "bajo"),
+        Prediccion("SOL-3", "rechazar", 0.88, "bajo"),
+        Prediccion("SOL-4", "aprobar", 0.95, "alto"),
+    ]
+    for caso in casos:
+        print(caso.solicitud_id, decidir(caso))
+```
+
+**Paso 2 — Redacta requisitos:** convierte la política en 4 requisitos verificables con criterios de aceptación.
+
+**Extensión:** agrega una prueba con `assert` para cada decisión esperada y una métrica de cuántos casos van a revisión humana.
+
+**Preguntas de cierre:**
+- ¿Qué requisito evita que la IA tome decisiones de alto impacto sin supervisión?
+- ¿Cómo se mide el sesgo de un modelo en producción?
+- ¿Qué información necesita un usuario para apelar una decisión automatizada?
+
+#### Recursos
+- NIST AI Risk Management Framework
+- ISO/IEC 42001 — Artificial Intelligence Management System
+- OECD AI Principles
+
+---
+
+## Unidad 5. Proyecto integrador: factoría de requisitos
+
+---
+
+### Clase 22 — Arranque del proyecto integrador
 
 #### Objetivos
 - Entender el alcance y la estructura del proyecto integrador.
@@ -2348,17 +2966,17 @@ El proyecto integrador simula el trabajo real de un equipo de ingeniería de req
 
 | Artefacto | Clase | Descripción |
 |---|---|---|
-| Diagrama de contexto | 16 | Límites y actores externos |
-| Glosario del dominio | 16 | Términos clave y reglas de negocio |
-| Proceso TO-BE (BPMN) | 16–17 | Flujo futuro del negocio |
-| Matriz de stakeholders | 16 | Influencia, interés, estrategia |
-| SRS (secciones 1–3) | 17 | Especificación completa |
-| Backlog con historias | 17 | Épicas e historias con criterios INVEST |
-| Escenarios Gherkin | 17 | Feature files del flujo crítico |
-| Requisitos de calidad | 17 | Escenarios con métricas y umbrales |
-| Prototipo navegable | 18 | Wireframes del flujo crítico |
-| RTM completa | 18 | Trazabilidad requisitos ↔ pruebas |
-| RFC + análisis de impacto | 19 | Respuesta a cambio solicitado |
+| Diagrama de contexto | 22 | Límites y actores externos |
+| Glosario del dominio | 22 | Términos clave y reglas de negocio |
+| Proceso TO-BE (BPMN) | 22–23 | Flujo futuro del negocio |
+| Matriz de stakeholders | 22 | Influencia, interés, estrategia |
+| SRS (secciones 1–3) | 23 | Especificación completa |
+| Backlog con historias | 23 | Épicas e historias con criterios INVEST |
+| Escenarios Gherkin | 23 | Feature files del flujo crítico |
+| Requisitos de calidad | 23 | Escenarios con métricas y umbrales |
+| Prototipo navegable | 24 | Wireframes del flujo crítico |
+| RTM completa | 24 | Trazabilidad requisitos ↔ pruebas |
+| RFC + análisis de impacto | 25 | Respuesta a cambio solicitado |
 
 **Proceso de validación del TO-BE**  
 Antes de especificar requisitos, el equipo debe validar que el proceso TO-BE diseñado es:
@@ -2373,7 +2991,7 @@ Técnica: **Walkthrough del proceso** con al menos un representante de cada áre
 2. Mapa de stakeholders preliminar (15 min)
 3. Validación del proceso TO-BE (20 min)
 4. Identificación de riesgos de IR del proyecto (10 min)
-5. Plan de trabajo detallado para las clases 16–19 (10 min)
+5. Plan de trabajo detallado para las clases 22–25 (10 min)
 
 **Riesgos típicos en proyectos de IR**
 - Stakeholder no disponible para validaciones.
@@ -2401,7 +3019,7 @@ Técnica: **Walkthrough del proceso** con al menos un representante de cada áre
 
 ---
 
-### Clase 17 — Especificación integrada: SRS, historias y calidad
+### Clase 23 — Especificación integrada: SRS, historias y calidad
 
 #### Objetivos
 - Integrar todos los artefactos de especificación en un documento cohesivo.
@@ -2477,7 +3095,7 @@ Cada grupo recibe el SRS de otro grupo y aplica la checklist de consistencia. Pr
 
 ---
 
-### Clase 18 — Prototipo navegable y matriz de trazabilidad completa
+### Clase 24 — Prototipo navegable y matriz de trazabilidad completa
 
 #### Objetivos
 - Producir un prototipo navegable del flujo crítico del sistema.
@@ -2543,7 +3161,7 @@ Cada grupo completa en Figma (o herramienta equivalente):
 
 ---
 
-### Clase 19 — Análisis de impacto de cambio y actualización de artefactos
+### Clase 25 — Análisis de impacto de cambio y actualización de artefactos
 
 #### Objetivos
 - Gestionar formalmente una solicitud de cambio sobre la baseline.
@@ -2618,7 +3236,7 @@ El docente entrega a cada grupo una RFC específica para su sistema (diseñada p
 
 ---
 
-### Clase 20 — Defensa técnica individual y autorreferencia final
+### Clase 26 — Defensa técnica individual y autorreferencia final
 
 #### Objetivos
 - Demostrar dominio individual de los artefactos del proyecto integrador.
@@ -2749,6 +3367,49 @@ Recomendación:
 Decisión CCB:        Aprobado / Rechazado / Diferido
 ```
 
+### Plantilla de requisito de interfaz
+
+```
+ID:                  REQ-INT-[NNN]
+Sistema externo:     [Nombre]
+Propósito:           [Qué intercambio soporta]
+Dirección:           Entrada / Salida / Bidireccional
+Formato:             REST / Evento / CSV / XML / Otro
+Contrato:            [OpenAPI, AsyncAPI, esquema de archivo]
+Frecuencia:          Tiempo real / Batch / Bajo demanda
+Errores esperados:   [Timeout, dato inválido, servicio no disponible]
+SLA esperado:        [Latencia, disponibilidad, ventana de procesamiento]
+Criterio aceptación: [Cómo se verifica]
+```
+
+### Plantilla de requisito de privacidad y seguridad
+
+```
+ID:                  REQ-SEC-[NNN]
+Activo protegido:    [Dato, función, operación]
+Amenaza/riesgo:      [Acceso no autorizado, fuga, manipulación]
+Control requerido:   [Autorización, cifrado, auditoría, masking]
+Roles afectados:     [Paciente, médico, administrador]
+Datos sensibles:     [Sí/No; cuáles]
+Norma relacionada:   [Ley 1581, ISO 27001, política institucional]
+Criterio aceptación: [Prueba o evidencia verificable]
+```
+
+### Plantilla de requisito para sistemas con IA
+
+```
+ID:                  REQ-IA-[NNN]
+Función asistida:    [Clasificación, recomendación, generación]
+Impacto de decisión: Bajo / Medio / Alto
+Métrica del modelo:  [Precisión, recall, F1, confianza mínima]
+Umbral:              [Valor mínimo aceptado]
+Explicabilidad:      [Qué explicación debe mostrarse]
+Supervisión humana:  [Cuándo escala a revisión humana]
+Fallback:            [Qué ocurre si el modelo falla]
+Monitoreo:           [Qué métrica se observa en producción]
+Criterio aceptación: [Cómo se valida antes de liberar]
+```
+
 ### Glosario de términos del curso
 
 | Término | Definición |
@@ -2763,7 +3424,10 @@ Decisión CCB:        Aprobado / Rechazado / Diferido
 | **Épica** | Historia de usuario demasiado grande para un sprint; agrupa historias |
 | **Gherkin** | Lenguaje DSL para escribir escenarios BDD legibles por humanos |
 | **INVEST** | Criterios de calidad de una historia de usuario (Independent, Negotiable, Valuable, Estimable, Small, Testable) |
+| **KPI** | Indicador clave que mide avance hacia un objetivo de negocio |
 | **MoSCoW** | Técnica de priorización (Must, Should, Could, Won't) |
+| **OKR** | Objectives and Key Results; técnica para conectar objetivos con resultados medibles |
+| **OpenAPI** | Especificación estándar para describir contratos de APIs REST |
 | **RFC** | Request for Change; solicitud formal de modificación a la baseline |
 | **RTM** | Requirements Traceability Matrix; tabla que vincula requisitos con otros artefactos |
 | **SRS** | Software Requirements Specification; especificación de requisitos del software |
@@ -2785,7 +3449,11 @@ Decisión CCB:        Aprobado / Rechazado / Diferido
 - ISO/IEC/IEEE 29148:2018 — Requirements Engineering
 - ISO/IEC 25010:2023 — SQuaRE Quality Model
 - ISO/IEC/IEEE 12207:2017 — Software Life Cycle Processes
+- ISO/IEC 27001 — Information Security Management Systems
+- ISO/IEC 42001 — Artificial Intelligence Management System
 - W3C WCAG 2.2 — Web Content Accessibility Guidelines
+- NIST AI Risk Management Framework
+- OWASP Application Security Verification Standard (ASVS)
 
 **Artículos y recursos online:**
 - North, D. — *Introducing BDD*: dannorth.net
@@ -2793,3 +3461,5 @@ Decisión CCB:        Aprobado / Rechazado / Diferido
 - IREB CPRE Syllabus: ireb.org
 - Cucumber / Gherkin docs: cucumber.io
 - bpmn.io — Editor BPMN gratuito
+- OpenAPI Specification: spec.openapis.org
+- AsyncAPI Initiative: asyncapi.com

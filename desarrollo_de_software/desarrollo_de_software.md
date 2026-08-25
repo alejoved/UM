@@ -1,4 +1,4 @@
-# Desarrollo de Software — Planificación de 20 Clases (2 horas c/u)
+# Desarrollo de Software — Planificación ampliada de 26 clases (2 horas c/u)
 
 ---
 
@@ -36,8 +36,42 @@ Profesional con experiencia en diseño, desarrollo y operación de sistemas de s
 | Unidad 1: Análisis y diseño orientado a objetos | Clases 1–6 | 12 h |
 | Unidad 2: Construcción, persistencia e integración | Clases 7–11 | 10 h |
 | Unidad 3: Pruebas, calidad y desarrollo con IA | Clases 12–17 | 12 h |
-| Unidad 4: Proyecto integrador | Clases 18–20 | 6 h |
-| **Total** | **20 clases** | **40 h** |
+| Unidad 4: Seguridad, concurrencia, DevOps y despliegue | Clases 18–23 | 12 h |
+| Unidad 5: Proyecto integrador | Clases 24–26 | 6 h |
+| **Total** | **26 clases** | **52 h** |
+
+## Mapa de clases recomendado
+
+La secuencia está pensada para que los estudiantes pasen de comprender el problema y modelar el dominio, a construir código mantenible, probarlo, asegurarlo, automatizar su entrega y finalmente integrarlo en un proyecto completo.
+
+| Clase | Título | Unidad |
+|---|---|---|
+| 01 | Introducción al curso y fundamentos del desarrollo iterativo | 1 |
+| 02 | Casos de uso: estructura, flujos y escenarios | 1 |
+| 03 | Historias de usuario, criterios de aceptación y trazabilidad | 1 |
+| 04 | Modelo del dominio: entidades, objetos de valor e invariantes | 1 |
+| 05 | Patrones GRASP: asignación de responsabilidades | 1 |
+| 06 | SOLID, diagramas de secuencia e inyección de dependencias | 1 |
+| 07 | Construcción limpia: funciones, abstracciones y nombres | 2 |
+| 08 | Validaciones, excepciones, logging y principios YAGNI/KISS/DRY | 2 |
+| 09 | Persistencia: patrón Repository y ORM | 2 |
+| 10 | Transacciones e integración con servicios externos | 2 |
+| 11 | DTOs, contratos y uso de IA para código repetitivo | 2 |
+| 12 | Pruebas unitarias: fundamentos y estructura | 3 |
+| 13 | Dobles de prueba: stubs, mocks y fakes | 3 |
+| 14 | TDD: ciclo rojo-verde-refactor | 3 |
+| 15 | Pruebas de integración y de aceptación | 3 |
+| 16 | Automatización de pruebas E2E con Playwright | 3 |
+| 17 | Calidad interna: análisis estático, deuda técnica y SDD con IA | 3 |
+| 18 | Seguridad en el desarrollo: OWASP, autenticación y autorización | 4 |
+| 19 | Diseño de APIs REST, versionado y contratos OpenAPI | 4 |
+| 20 | Concurrencia, asincronía y procesamiento en segundo plano | 4 |
+| 21 | CI/CD, automatización de calidad y GitHub Actions | 4 |
+| 22 | Contenedores, Docker Compose y configuración por ambiente | 4 |
+| 23 | Observabilidad, monitoreo y diagnóstico en producción | 4 |
+| 24 | Sprints, pull requests y trazabilidad | 5 |
+| 25 | Gestión del cambio y refactorización | 5 |
+| 26 | Demostración funcional, defensa técnica y cierre | 5 |
 
 ---
 
@@ -3788,12 +3822,521 @@ Usar el flujo SDD:
 
 ---
 
-# UNIDAD 4. Proyecto integrador: célula de desarrollo
+# UNIDAD 4. Seguridad, concurrencia, DevOps y despliegue
 
 ---
 
-## CLASE 18 — Sprints, pull requests y trazabilidad
-**Duración:** 2 horas | **Unidad:** 4 — Proyecto integrador
+## CLASE 18 — Seguridad en el desarrollo: OWASP, autenticación y autorización
+**Duración:** 2 horas | **Unidad:** 4 — Seguridad aplicada
+
+### Objetivos
+- Reconocer vulnerabilidades comunes según OWASP Top 10.
+- Diferenciar autenticación, autorización y auditoría.
+- Aplicar validación de entrada, hashing de contraseñas y control de acceso por roles.
+- Implementar pruebas básicas para verificar reglas de seguridad.
+
+---
+
+### Bloque 1 (50 min) — Fundamentos de seguridad para desarrolladores
+
+#### Seguridad como parte del desarrollo
+
+La seguridad no es una fase posterior ni un trabajo exclusivo de infraestructura. Cada decisión de código puede abrir o cerrar riesgos: consultas SQL, validación de entrada, exposición de DTOs, logs con datos sensibles, permisos y manejo de errores.
+
+**Riesgos OWASP frecuentes en aplicaciones web:**
+
+| Riesgo | Ejemplo | Mitigación |
+|---|---|---|
+| Broken Access Control | Un paciente ve turnos de otro paciente | Validar permisos en cada caso de uso |
+| Cryptographic Failures | Guardar contraseñas en texto plano | Hash con bcrypt/Argon2 |
+| Injection | SQL construido con concatenación | Consultas parametrizadas |
+| Insecure Design | No hay regla para acciones críticas | Modelar amenazas y reglas explícitas |
+| Security Misconfiguration | Endpoint admin abierto | Configuración por ambiente y mínimos privilegios |
+
+#### Autenticación vs autorización
+
+- **Autenticación:** comprobar quién es el usuario.
+- **Autorización:** comprobar qué puede hacer.
+- **Auditoría:** registrar qué hizo, cuándo y con qué resultado.
+
+```text
+Login correcto -> Usuario autenticado
+Usuario autenticado -> intenta cancelar turno
+Autorización -> ¿ese turno pertenece al usuario o tiene rol ADMIN?
+Auditoría -> registrar intento exitoso o rechazado
+```
+
+#### Reglas prácticas
+
+- Nunca confiar en datos del cliente.
+- Nunca guardar contraseñas reversibles.
+- No filtrar información sensible en errores ni logs.
+- Validar permisos en el caso de uso, no solo en la interfaz.
+- Escribir pruebas para los rechazos de seguridad.
+
+---
+
+### Bloque 2 (50 min) — Actividad práctica
+
+#### Ejercicio de código: autorización por rol y propiedad del recurso
+
+**Problema:** en el sistema de turnos médicos, un paciente solo puede consultar sus propios turnos. Un administrador puede consultar cualquier turno.
+
+**Paso 1 — Crea `AutorizacionTurnos.java`:**
+
+```java
+import java.util.Objects;
+
+enum Rol { PACIENTE, MEDICO, ADMIN }
+
+record Usuario(String id, Rol rol) {}
+record Turno(String id, String pacienteId, String medicoId) {}
+
+class AccesoDenegadoException extends RuntimeException {
+        AccesoDenegadoException(String mensaje) { super(mensaje); }
+}
+
+class PoliticaAutorizacionTurnos {
+        boolean puedeVerTurno(Usuario usuario, Turno turno) {
+                Objects.requireNonNull(usuario);
+                Objects.requireNonNull(turno);
+                return usuario.rol() == Rol.ADMIN
+                        || usuario.id().equals(turno.pacienteId())
+                        || usuario.id().equals(turno.medicoId());
+        }
+
+        void exigirPermisoLectura(Usuario usuario, Turno turno) {
+                if (!puedeVerTurno(usuario, turno)) {
+                        throw new AccesoDenegadoException("El usuario no puede consultar este turno");
+                }
+        }
+}
+
+public class AutorizacionTurnos {
+        static void assertTrue(boolean condicion, String mensaje) {
+                if (!condicion) throw new AssertionError(mensaje);
+                System.out.println("PASA: " + mensaje);
+        }
+
+        public static void main(String[] args) {
+                PoliticaAutorizacionTurnos politica = new PoliticaAutorizacionTurnos();
+                Turno turno = new Turno("T-1", "PAC-1", "MED-1");
+
+                assertTrue(politica.puedeVerTurno(new Usuario("PAC-1", Rol.PACIENTE), turno), "Paciente dueño puede ver");
+                assertTrue(politica.puedeVerTurno(new Usuario("MED-1", Rol.MEDICO), turno), "Médico asignado puede ver");
+                assertTrue(politica.puedeVerTurno(new Usuario("ADM-1", Rol.ADMIN), turno), "Admin puede ver");
+                assertTrue(!politica.puedeVerTurno(new Usuario("PAC-2", Rol.PACIENTE), turno), "Paciente ajeno no puede ver");
+        }
+}
+```
+
+**Paso 2 — Ejecuta:**
+
+```bash
+javac AutorizacionTurnos.java
+java AutorizacionTurnos
+```
+
+**Extensión:** agrega una política para cancelar turnos: el paciente puede cancelar solo con 24 horas de anticipación, el administrador puede cancelar siempre dejando motivo de auditoría.
+
+---
+
+## CLASE 19 — Diseño de APIs REST, versionado y contratos OpenAPI
+**Duración:** 2 horas | **Unidad:** 4 — APIs y contratos
+
+### Objetivos
+- Diseñar recursos REST usando nombres, códigos HTTP y verbos adecuados.
+- Separar entidades de dominio de contratos públicos de API.
+- Documentar endpoints con OpenAPI.
+- Escribir pruebas de contrato básicas.
+
+---
+
+### Bloque 1 (50 min) — Diseño de APIs mantenibles
+
+#### Recursos y operaciones
+
+Una API REST debe modelar recursos del negocio, no acciones técnicas.
+
+| Necesidad | Diseño recomendado | Evitar |
+|---|---|---|
+| Crear turno | `POST /api/v1/turnos` | `POST /crearTurno` |
+| Consultar turno | `GET /api/v1/turnos/{id}` | `GET /getTurno?id=...` |
+| Cancelar turno | `POST /api/v1/turnos/{id}/cancelaciones` | `GET /cancelarTurno` |
+| Listar agenda médica | `GET /api/v1/medicos/{id}/turnos` | `POST /buscarAgenda` |
+
+#### Códigos HTTP
+
+| Código | Uso |
+|---|---|
+| 200 | Consulta exitosa |
+| 201 | Recurso creado |
+| 204 | Operación exitosa sin cuerpo |
+| 400 | Solicitud mal formada |
+| 401 | No autenticado |
+| 403 | No autorizado |
+| 404 | Recurso no encontrado |
+| 409 | Conflicto de regla de negocio |
+
+#### Versionado y compatibilidad
+
+Usar `/api/v1` cuando hay clientes externos o móviles que no se actualizan al mismo tiempo que el backend. Una versión nueva se justifica cuando se rompe compatibilidad.
+
+---
+
+### Bloque 2 (50 min) — Actividad práctica
+
+#### Ejercicio práctico: contrato OpenAPI mínimo
+
+**Problema:** documentar el endpoint para reservar un turno.
+
+**Paso 1 — Crea `openapi-turnos.yml`:**
+
+```yaml
+openapi: 3.0.3
+info:
+    title: API de Turnos Médicos
+    version: 1.0.0
+paths:
+    /api/v1/turnos:
+        post:
+            summary: Reservar un turno médico
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            required: [pacienteId, medicoId, fechaHora, motivo]
+                            properties:
+                                pacienteId: { type: string }
+                                medicoId: { type: string }
+                                fechaHora: { type: string, format: date-time }
+                                motivo: { type: string, minLength: 5, maxLength: 200 }
+            responses:
+                '201':
+                    description: Turno reservado
+                '400':
+                    description: Datos inválidos
+                '409':
+                    description: El médico no tiene disponibilidad en ese horario
+```
+
+**Paso 2 — Discute:** qué campos pertenecen al DTO y cuáles no deberían exponerse aunque existan en la entidad `Turno`.
+
+**Extensión:** agrega `GET /api/v1/pacientes/{id}/turnos` con paginación y define el formato de error estándar.
+
+---
+
+## CLASE 20 — Concurrencia, asincronía y procesamiento en segundo plano
+**Duración:** 2 horas | **Unidad:** 4 — Concurrencia y asincronía
+
+### Objetivos
+- Reconocer problemas de concurrencia: race conditions, bloqueos y operaciones duplicadas.
+- Implementar tareas en segundo plano para operaciones no críticas.
+- Aplicar idempotencia en procesamiento asíncrono.
+- Separar trabajo síncrono de trabajo diferido.
+
+---
+
+### Bloque 1 (50 min) — Concurrencia aplicada
+
+#### Problema típico: doble reserva
+
+Dos usuarios intentan reservar el mismo horario al mismo tiempo. Si el sistema solo consulta disponibilidad y luego guarda, ambos podrían pasar la validación antes de que alguno guarde.
+
+**Estrategias:**
+- Restricción única en base de datos.
+- Transacción con bloqueo optimista o pesimista.
+- Reintentos controlados.
+- Idempotency keys en operaciones críticas.
+
+#### Trabajo asíncrono
+
+No todo debe ocurrir durante la petición HTTP.
+
+| Operación | Síncrona | Asíncrona |
+|---|---|---|
+| Validar disponibilidad | Sí | No |
+| Guardar turno | Sí | No |
+| Enviar email | No obligatorio | Sí |
+| Generar reporte mensual | No | Sí |
+
+---
+
+### Bloque 2 (50 min) — Actividad práctica
+
+#### Ejercicio de código: cola en memoria para notificaciones
+
+**Problema:** al reservar un turno, el sistema debe responder rápido y enviar la notificación en segundo plano.
+
+**Paso 1 — Crea `ColaNotificaciones.java`:**
+
+```java
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+
+record Notificacion(String idEvento, String destinatario, String mensaje) {}
+
+class ProcesadorNotificaciones implements Runnable {
+        private final BlockingQueue<Notificacion> cola;
+        private final Set<String> procesadas = ConcurrentHashMap.newKeySet();
+
+        ProcesadorNotificaciones(BlockingQueue<Notificacion> cola) {
+                this.cola = cola;
+        }
+
+        @Override
+        public void run() {
+                while (!Thread.currentThread().isInterrupted()) {
+                        try {
+                                Notificacion notificacion = cola.take();
+                                if (procesadas.add(notificacion.idEvento())) {
+                                        System.out.println("Enviando a " + notificacion.destinatario() + ": " + notificacion.mensaje());
+                                } else {
+                                        System.out.println("Ignorada por idempotencia: " + notificacion.idEvento());
+                                }
+                        } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                        }
+                }
+        }
+}
+
+public class ColaNotificaciones {
+        public static void main(String[] args) throws InterruptedException {
+                BlockingQueue<Notificacion> cola = new LinkedBlockingQueue<>();
+                Thread worker = new Thread(new ProcesadorNotificaciones(cola));
+                worker.start();
+
+                cola.put(new Notificacion("evt-1", "ana@mail.com", "Turno confirmado"));
+                cola.put(new Notificacion("evt-1", "ana@mail.com", "Turno confirmado"));
+                cola.put(new Notificacion("evt-2", "luis@mail.com", "Turno cancelado"));
+
+                Thread.sleep(500);
+                worker.interrupt();
+        }
+}
+```
+
+**Extensión:** agrega reintentos con contador de fallos y una lista de mensajes no procesables.
+
+---
+
+## CLASE 21 — CI/CD, automatización de calidad y GitHub Actions
+**Duración:** 2 horas | **Unidad:** 4 — Integración y entrega continua
+
+### Objetivos
+- Diseñar un pipeline básico de integración continua.
+- Automatizar compilación, pruebas y análisis estático.
+- Definir gates de calidad antes de integrar código.
+- Comprender cómo CI/CD reduce riesgo en equipos.
+
+---
+
+### Bloque 1 (50 min) — Pipeline como red de seguridad
+
+Un pipeline ejecuta de forma repetible lo que el equipo necesita verificar antes de aceptar cambios.
+
+```text
+Commit -> Build -> Tests -> Análisis estático -> Empaquetado -> Reporte
+```
+
+**Quality gates mínimos:**
+- El proyecto compila.
+- Todas las pruebas pasan.
+- No hay vulnerabilidades críticas conocidas.
+- No baja la cobertura mínima acordada.
+- El PR tiene revisión de otro estudiante.
+
+---
+
+### Bloque 2 (50 min) — Actividad práctica
+
+#### Ejercicio práctico: pipeline para proyecto Java
+
+**Paso 1 — Crea `.github/workflows/ci.yml`:**
+
+```yaml
+name: CI
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+
+jobs:
+    build-test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-java@v4
+                with:
+                    distribution: temurin
+                    java-version: '21'
+            - name: Compilar y probar
+                run: ./gradlew clean test
+            - name: Verificar estilo y análisis estático
+                run: ./gradlew check
+```
+
+**Paso 2 — Discute:** qué debe pasar si una prueba falla en el PR y qué evidencia debe incluir el autor antes de pedir revisión.
+
+**Extensión:** agregar publicación de reporte de cobertura y bloqueo si la cobertura del dominio baja de 80%.
+
+---
+
+## CLASE 22 — Contenedores, Docker Compose y configuración por ambiente
+**Duración:** 2 horas | **Unidad:** 4 — Empaquetado y despliegue local
+
+### Objetivos
+- Empaquetar una aplicación como imagen Docker.
+- Levantar aplicación y base de datos con Docker Compose.
+- Manejar variables de entorno sin exponer secretos en el código.
+- Diferenciar configuración de desarrollo, pruebas y producción.
+
+---
+
+### Bloque 1 (50 min) — Aplicaciones reproducibles
+
+Un contenedor permite ejecutar la aplicación de forma consistente en cualquier máquina. Docker Compose permite levantar dependencias locales como PostgreSQL, Redis o servicios simulados.
+
+**Buenas prácticas:**
+- No usar `latest` en imágenes base.
+- No copiar secretos dentro de la imagen.
+- Exponer el puerto por variable de entorno.
+- Mantener `.env` fuera del repositorio.
+- Separar build y runtime cuando sea necesario.
+
+---
+
+### Bloque 2 (50 min) — Actividad práctica
+
+#### Ejercicio práctico: Docker Compose para turnos médicos
+
+**Paso 1 — Crea `docker-compose.yml`:**
+
+```yaml
+services:
+    app:
+        build: .
+        ports:
+            - "8080:8080"
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/turnos
+            SPRING_DATASOURCE_USERNAME: turnos
+            SPRING_DATASOURCE_PASSWORD: turnos_dev
+        depends_on:
+            db:
+                condition: service_healthy
+
+    db:
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_DB: turnos
+            POSTGRES_USER: turnos
+            POSTGRES_PASSWORD: turnos_dev
+        ports:
+            - "5432:5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U turnos"]
+            interval: 5s
+            timeout: 3s
+            retries: 5
+```
+
+**Paso 2 — Ejecuta:**
+
+```bash
+docker compose up --build
+```
+
+**Extensión:** agregar perfil `test` con base de datos separada y variables específicas para pruebas de integración.
+
+---
+
+## CLASE 23 — Observabilidad, monitoreo y diagnóstico en producción
+**Duración:** 2 horas | **Unidad:** 4 — Operación básica
+
+### Objetivos
+- Implementar logs útiles para diagnosticar errores.
+- Exponer health checks y métricas básicas.
+- Entender los tres pilares de observabilidad: logs, métricas y trazas.
+- Analizar un incidente usando evidencia técnica.
+
+---
+
+### Bloque 1 (50 min) — De "funciona en mi máquina" a operar software
+
+Un sistema profesional debe explicar qué le pasa cuando falla. Para eso necesita:
+- **Logs:** eventos relevantes con contexto.
+- **Métricas:** números agregados para ver salud y tendencias.
+- **Trazas:** recorrido de una petición entre componentes.
+
+**Eventos mínimos a registrar:**
+- Inicio de caso de uso importante.
+- Éxito con identificador de operación.
+- Rechazo por regla de negocio.
+- Error técnico con causa.
+
+#### Health checks
+
+Un endpoint `/health` permite saber si la aplicación está viva y lista para recibir tráfico. En frameworks como Spring Boot suele implementarse con Actuator.
+
+---
+
+### Bloque 2 (50 min) — Actividad práctica
+
+#### Ejercicio de código: logger de auditoría simple
+
+**Problema:** registrar eventos de negocio con estructura consistente.
+
+**Paso 1 — Crea `Auditoria.java`:**
+
+```java
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+class Auditoria {
+        void registrar(String evento, String resultado, Map<String, String> datos) {
+                Map<String, String> log = new LinkedHashMap<>();
+                log.put("timestamp", Instant.now().toString());
+                log.put("evento", evento);
+                log.put("resultado", resultado);
+                log.putAll(datos);
+                System.out.println(log);
+        }
+}
+
+public class AuditoriaDemo {
+        public static void main(String[] args) {
+                Auditoria auditoria = new Auditoria();
+                auditoria.registrar("turno_reservado", "exitoso", Map.of(
+                        "turnoId", "T-100",
+                        "pacienteId", "PAC-1",
+                        "medicoId", "MED-1"
+                ));
+                auditoria.registrar("turno_cancelado", "rechazado", Map.of(
+                        "turnoId", "T-101",
+                        "razon", "fuera_de_ventana_24h"
+                ));
+        }
+}
+```
+
+**Extensión:** evitar registrar datos sensibles como diagnóstico, documento de identidad completo o tokens de autenticación.
+
+---
+
+# UNIDAD 5. Proyecto integrador: célula de desarrollo
+
+---
+
+## CLASE 24 — Sprints, pull requests y trazabilidad
+**Duración:** 2 horas | **Unidad:** 5 — Proyecto integrador
 
 ### Objetivos
 - Organizar el trabajo del proyecto en sprints con Definition of Done.
@@ -3910,8 +4453,8 @@ Implementa el caso de uso de reserva de libros completo, incluyendo:
 
 ---
 
-## CLASE 19 — Gestión del cambio y refactorización
-**Duración:** 2 horas | **Unidad:** 4 — Proyecto integrador
+## CLASE 25 — Gestión del cambio y refactorización
+**Duración:** 2 horas | **Unidad:** 5 — Proyecto integrador
 
 ### Objetivos
 - Analizar el impacto de un cambio no planificado en el sistema.
@@ -4001,8 +4544,8 @@ El docente anuncia el siguiente cambio no planificado para todos los proyectos:
 
 ---
 
-## CLASE 20 — Demostración funcional, defensa técnica y cierre
-**Duración:** 2 horas | **Unidad:** 4 — Cierre del curso
+## CLASE 26 — Demostración funcional, defensa técnica y cierre
+**Duración:** 2 horas | **Unidad:** 5 — Cierre del curso
 
 ### Objetivos
 - Realizar una demostración funcional del proyecto integrador.
@@ -4019,7 +4562,7 @@ El docente anuncia el siguiente cambio no planificado para todos los proyectos:
 - Mostrar el sistema **en funcionamiento**, no slides.
 - Flujo completo: UI (o Postman/curl) → API → lógica → BD.
 - Demostrar al menos: flujo principal, un flujo alternativo y el manejo de un error.
-- El cambio no planificado de la clase 19 debe estar integrado.
+- El cambio no planificado de la clase 25 debe estar integrado.
 
 **Segunda parte — Defensa técnica individual (5 min por integrante, en paralelo con preguntas del docente durante el día):**
 
@@ -4229,7 +4772,16 @@ src/
 - [ ] Sin issues de severidad BLOCKER o CRITICAL en SonarLint.
 - [ ] Deuda técnica documentada en el `AGENTS.md`.
 
-### Unidad 4 — Proceso y entrega
+### Unidad 4 — Seguridad, operación y entrega técnica
+
+- [ ] Al menos **3 controles de seguridad** implementados y probados: autorización, validación de entrada y manejo seguro de errores.
+- [ ] Contrato OpenAPI documentado para los endpoints principales.
+- [ ] Al menos **1 proceso asíncrono** implementado para notificaciones, reportes o auditoría.
+- [ ] Pipeline CI configurado para compilar, ejecutar pruebas y análisis estático.
+- [ ] Aplicación levantada localmente con Docker Compose y base de datos configurada por variables de entorno.
+- [ ] Logs de auditoría o eventos de negocio en los casos de uso principales.
+
+### Unidad 5 — Proceso y entrega
 
 - [ ] Desarrollo organizado en **al menos 3 sprints** documentados.
 - [ ] **Tablero Kanban** actualizado (GitHub Projects o Trello) con las historias por estado.
@@ -4244,11 +4796,11 @@ src/
 
 | Entregable | Descripción | Fecha |
 |---|---|---|
-| **Sprint 1** | HU-01, HU-02 implementadas con pruebas. PR mergeado. | Semana 14 |
-| **Sprint 2** | HU-03, HU-05, HU-06 implementadas con pruebas. PR mergeado. | Semana 16 |
-| **Sprint 3** | HU-08, HU-09 + cambio no planificado (clase 19) integrado. | Semana 18 |
-| **Demo final** | Sistema funcional demostrado en vivo (Clase 20). | Clase 20 |
-| **Repositorio** | Código en GitHub con historial de commits, PRs y tablero visible. | Clase 20 |
+| **Sprint 1** | HU-01, HU-02 implementadas con pruebas. PR mergeado. | Semana 12 |
+| **Sprint 2** | HU-03, HU-05, HU-06 implementadas con pruebas. PR mergeado. | Semana 13 |
+| **Sprint 3** | HU-08, HU-09 + cambio no planificado (clase 25) integrado. | Semana 13 |
+| **Demo final** | Sistema funcional demostrado en vivo (Clase 26). | Clase 26 |
+| **Repositorio** | Código en GitHub con historial de commits, PRs y tablero visible. | Clase 26 |
 
 ---
 
@@ -4295,8 +4847,9 @@ src/
 Clases 1–6   → Diseño: casos de uso, modelo del dominio, arquitectura base, GRASP/SOLID
 Clases 7–11  → Construcción: casos de uso implementados, repositorios, servicio externo, DTOs
 Clases 12–17 → Pruebas: suite unitaria, TDD en nuevas features, integración, análisis estático
-Clases 18–19 → Integración final: sprints, PRs, cambio no planificado, retrospectiva
-Clase 20     → Demo y defensa técnica individual
+Clases 18–23 → Seguridad, APIs, asincronía, CI/CD, contenedores y observabilidad
+Clases 24–25 → Integración final: sprints, PRs, cambio no planificado, retrospectiva
+Clase 26     → Demo y defensa técnica individual
 ```
 
 ---
@@ -4330,5 +4883,6 @@ Clase 20     → Demo y defensa técnica individual
 - **Unidad 1:** Kata "Bowling Game" — diseño emergente con TDD.
 - **Unidad 2:** Kata "Bank Account" — clean code y excepciones de dominio.
 - **Unidad 3:** Kata "Roman Numerals" — ciclo TDD clásico.
-- **Unidad 4:** Kata "Tennis Game" — refactorización y patrones.
+- **Unidad 4:** Kata "Tennis Game" — refactorización, seguridad básica y pipelines.
+- **Unidad 5:** Proyecto integrador — entrega funcional con defensa técnica.
 
