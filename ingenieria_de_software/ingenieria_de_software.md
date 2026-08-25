@@ -1375,59 +1375,14 @@ El modelo debe bajar a código con invariantes claras. Si una regla vive solo en
 
 **Actividad 1: Modelo de dominio**
 
-Para un sistema de turnos médicos, identificar 5 entidades, 3 objetos de valor y 6 reglas de negocio.
+Para un sistema de pagos de servicios publicos, en donde existen entidades como cuenta, cuenta de ahorros, cuenta corriente, factura, cliente y pago, identificar 6 funcionalidades de negocio.
 
 **Actividad 2: Diagrama UML mínimo**
 
-Dibujar un diagrama de clases con `Paciente`, `Doctor`, `Cita`, `Especialidad` y `RangoHorario`. Marcar multiplicidades.
-
-#### Ejercicio de código — Clase 03: objeto de valor e invariante
-
-**Problema:** evitar que un email inválido circule como `String` por todo el sistema.
-
-**Paso 1 — Crea `email_vo.py`:**
-
-```python
-import re
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
-class Email:
-    valor: str
-
-    def __post_init__(self):
-        normalizado = self.valor.strip().lower()
-        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", normalizado):
-            raise ValueError(f"Email inválido: {self.valor}")
-        object.__setattr__(self, "valor", normalizado)
-
-
-@dataclass
-class Paciente:
-    nombre: str
-    email: Email
-
-
-if __name__ == "__main__":
-    paciente = Paciente("Ana", Email("ANA@correo.com"))
-    print(paciente)
-    try:
-        Email("correo-invalido")
-    except ValueError as error:
-        print(error)
-```
-
-**Extensión:** crea `RangoHorario` con inicio, fin y validación `fin > inicio`.
-
----
-
-### Preguntas de cierre
-
-1. ¿Por qué `Email` es objeto de valor y `Paciente` es entidad?
-2. ¿Qué regla de negocio se entiende mejor con un diagrama de estados?
-3. ¿Qué problemas aparecen si el código no usa el lenguaje del dominio?
-
+- Dibujar un diagrama de clases con `Cuenta`, `Cuenta Corriente`, `Cuenta de Ahorros`, `Factura` y `Cliente`, `Pago`. con un minimo de 5 atributos por clase y un minimo de 5 funcionalidades por modelo de dominio
+- Elaborar la fase de Requerimientos.
+- Elaborar la fase de Diseño
+- Elaborar la fase de implemenrtación
 ---
 
 ## Clase 04: Planificación orientada a valor
