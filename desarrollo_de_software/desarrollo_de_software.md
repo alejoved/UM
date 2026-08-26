@@ -946,13 +946,11 @@ Reglas de negocio referenciadas:
 
 ### Bloque 2 (50 min) — Actividad práctica
 
-#### Ejercicio 1: Redactar casos de uso completos (25 min)
+#### Ejercicio 1: Redactar casos de uso completos
 
-El docente entrega el siguiente enunciado:
+> **Sistema de pagos de servicios publicos:** Las entidades que intervienen son: Cuenta, Cuenta de Ahorros, Cuenta Corriente, Factura, Cliente y Pago. Construir el CRUD para cada entidad y las funcionalidades de procesarPago, obtenerSaldoCuenta, obtenerPagosPorCliente, ObtenerFacturasPorCliente.
 
-> **Sistema de biblioteca universitaria:** Los estudiantes pueden buscar libros por título o autor, reservar un libro disponible, y renovar el préstamo de un libro que tienen. Los bibliotecarios pueden registrar devoluciones, agregar nuevos libros al catálogo y ver el historial de un estudiante. Los préstamos tienen un plazo de 14 días y se pueden renovar una sola vez.
-
-En grupos de 3, redactar **dos casos de uso completos** (a elección) con:
+Redactar **los casos de uso completos** de las funcionalidades:
 - Actores primarios y secundarios.
 - Precondiciones y postcondiciones.
 - Flujo principal paso a paso.
@@ -962,25 +960,18 @@ En grupos de 3, redactar **dos casos de uso completos** (a elección) con:
 
 #### Ejercicio 2: Desarrollo en código aplicando pilares POO (20 min)
 
-Tomando **uno** de los casos de uso redactados en el ejercicio anterior (por ejemplo: reservar libro o renovar préstamo), cada grupo debe implementar un prototipo en Java que use explícitamente los 4 pilares:
+Tomando los casos de uso redactados en el ejercicio anterior, se debe implementar un prototipo en Java que use explícitamente los 4 pilares:
 
-1. **Abstracción:** modelar solo lo relevante del caso (`Libro`, `Estudiante`, `Prestamo`).
-2. **Encapsulamiento:** atributos privados + métodos de negocio (`reservar()`, `renovar()`, `devolver()`) con validaciones.
-3. **Herencia:** crear una jerarquía simple (`UsuarioBiblioteca` como base, `Estudiante` y `Bibliotecario` como especializaciones).
-4. **Polimorfismo:** definir una interfaz para notificaciones (`Notificador`) y al menos dos implementaciones (`NotificadorEmail`, `NotificadorSMS`) usadas desde un servicio sin `if` por tipo.
+1. **Abstracción** 
+2. **Encapsulamiento** 
+3. **Herencia**
+4. **Polimorfismo**
 
 **Entregable mínimo del ejercicio:**
-- 1 diagrama rápido de clases (papel o pizarra).
-- Código compilable con al menos 4 clases + 1 interfaz.
-- Un `main()` que ejecute un flujo completo del caso de uso elegido.
-
-#### Revisión cruzada (5 min)
-Cada grupo intercambia sus casos de uso y su diseño de código con otro grupo para revisión. ¿El código refleja claramente cada pilar? ¿Falta alguna validación de negocio importante?
-
----
-
-### Tarea para la próxima clase
-Del mismo sistema de biblioteca, redactar 3 historias de usuario para las mismas funcionalidades descritas en los casos de uso. Traer escrito el formato "Como... quiero... para..." con criterios de aceptación.
+- Diagrama de Clases
+- Casos de uso.
+- Historias de Usuario
+- Código compilable y funcionando
 
 ---
 
@@ -1089,21 +1080,8 @@ La **trazabilidad** permite responder: *"¿Qué código implementa este requisit
 
 Retomar los casos de uso redactados en la clase anterior. Para **cada caso de uso**, reformularlo como:
 1. Historia de usuario (formato Como/Quiero/Para).
-2. Al menos 3 criterios de aceptación en formato Given/When/Then.
+2. Los criterios de aceptación en formato Given/When/Then.
 3. Identificar las reglas de negocio que aplican y registrarlas con un ID.
-
-#### Ejercicio 2: Matriz de trazabilidad (20 min)
-
-Con las historias y reglas identificadas, construir la matriz de trazabilidad para el sistema de biblioteca. Dejar las columnas de "Clase/Método" y "Prueba" vacías por ahora (se irán completando a lo largo del curso).
-
-#### Debate: ¿Casos de uso o historias de usuario? (10 min)
-
-El docente propone el debate: dado un contrato de desarrollo fijo con un cliente que no participará del día a día, ¿qué técnica conviene más? ¿Y en un proyecto ágil con el cliente disponible semana a semana?
-
----
-
-### Tarea para la próxima clase
-Investigar qué es el Lenguaje Ubicuo (Ubiquitous Language) en Domain-Driven Design. Traer un glosario de 10 términos del dominio del sistema de biblioteca, definidos desde la perspectiva del negocio (no técnicamente).
 
 ---
 
