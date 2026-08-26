@@ -1373,16 +1373,28 @@ El modelo debe bajar a código con invariantes claras. Si una regla vive solo en
 
 ### Actividades prácticas
 
-**Actividad 1: Modelo de dominio**
+**Actividad: Modelo de dominio**
 
 Para un sistema de pagos de servicios publicos, en donde existen entidades como cuenta, cuenta de ahorros, cuenta corriente, factura, cliente y pago, identificar 6 funcionalidades de negocio.
 
-**Actividad 2: Diagrama UML mínimo**
+**Tareas:**
+**Fase 1 Requisitos**
+- Construir las historias de usuario en jira asociadas a las funcionalidades del sistema de pagos de servicios publicos.
+- Construir los casos de uso de las funcionalidades del sistema de pagos de servicios publicos.
 
-- Dibujar un diagrama de clases con `Cuenta`, `Cuenta Corriente`, `Cuenta de Ahorros`, `Factura` y `Cliente`, `Pago`. con un minimo de 5 atributos por clase y un minimo de 5 funcionalidades por modelo de dominio
-- Elaborar la fase de Requerimientos.
-- Elaborar la fase de Diseño
-- Elaborar la fase de implemenrtación
+**Tareas:**
+**Fase 2 Diseño**
+- Construir el diagrama de arquitectura.
+- Construir el diagrama C4
+- Construir el diagrama de clases
+- Construir el diagrama entidad relacion
+- Construir los diagramas de secuencia
+
+**Fase 3 Implementacion**
+- Construccion del diagrama de arquitectura de software (Arquitectura cliente servidor, por capas, hexagonal, limpia, etc)
+- Entrega del repositorio con el codigo fuente
+- Entrega de los archivos SQL
+
 ---
 
 ## Clase 04: Planificación orientada a valor
