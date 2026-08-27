@@ -924,24 +924,6 @@ Reglas de negocio referenciadas:
   - RN-12: No se permiten transferencias a cuentas bloqueadas
 ```
 
-#### Escenarios, flujos alternativos y excepciones
-
-**Definiciones precisas:**
-
-- **Escenario:** Una traza específica a través del caso de uso, con datos concretos. Es la base para las pruebas.
-  - Ejemplo: "Cliente Juan con saldo $5.000 transfiere $1.000 a cuenta 12345 exitosamente."
-
-- **Flujo alternativo:** Camino diferente al principal pero igualmente válido; el actor alcanza su objetivo por otro medio.
-  - Ejemplo: Pago en cuotas en lugar de pago único.
-
-- **Excepción:** Situación que impide alcanzar el objetivo; requiere manejo de error.
-  - Ejemplo: Servicio externo caído, datos inválidos, restricción de negocio.
-
-**Regla práctica:** Para cada caso de uso, identificar al menos:
-- 1 escenario del flujo principal (camino feliz).
-- 2 flujos alternativos relevantes.
-- 3 excepciones posibles.
-
 ---
 
 ### Bloque 2 (50 min) — Actividad práctica
@@ -956,11 +938,10 @@ Redactar **los casos de uso completos** de las funcionalidades:
 - Flujo principal paso a paso.
 - Al menos 2 flujos alternativos.
 - Al menos 2 excepciones.
-- Reglas de negocio que apliquen.
 
 #### Ejercicio 2: Desarrollo en código aplicando pilares POO (20 min)
 
-Tomando los casos de uso redactados en el ejercicio anterior, se debe implementar un prototipo en Java que use explícitamente los 4 pilares:
+Tomando los casos de uso redactados en el ejercicio anterior, se debe implementar un prototipo en cualquier lenguaje de programacion que use explícitamente los 4 pilares:
 
 1. **Abstracción** 
 2. **Encapsulamiento** 
@@ -968,10 +949,10 @@ Tomando los casos de uso redactados en el ejercicio anterior, se debe implementa
 4. **Polimorfismo**
 
 **Entregable mínimo del ejercicio:**
-- Diagrama de Clases
+- Diagrama de Clases.
 - Casos de uso.
-- Historias de Usuario
-- Código compilable y funcionando
+- Historias de Usuario en Jira.
+- Código compilable y funcionando en el repositorio de talleres.
 
 ---
 
@@ -1012,7 +993,7 @@ Las historias de usuario describen el **valor** que un tipo de usuario obtiene a
 Problemas: El actor es el sistema (no un usuario), no expresa valor, es técnica.
 
 ✅ Historia bien escrita:
-> Como estudiante, quiero buscar libros por título o autor, para encontrar rápidamente el material que necesito para mis cursadas.
+> Como estudiante, quiero buscar libros por título o autor, para encontrar rápidamente el material que necesito para mis cursos.
 
 #### Criterios de aceptación (CA)
 
@@ -1043,7 +1024,7 @@ Scenario: Búsqueda con término vacío
 **Buenas prácticas para CA:**
 - Escribirlos **antes** de programar (guía la implementación y las pruebas).
 - Ser específicos y medibles, no subjetivos ("rápido" es subjetivo; "en menos de 2 segundos" es medible).
-- Cubrir: camino feliz, flujos alternativos y casos de borde.
+- Cubrir: camino feliz, flujos alternativos y excepciones.
 - Un CA = un escenario = una prueba de aceptación.
 
 #### Reglas de negocio
@@ -1051,26 +1032,9 @@ Scenario: Búsqueda con término vacío
 Las **reglas de negocio** son restricciones o políticas del dominio que el sistema debe respetar, independientemente de cómo se implemente.
 
 Ejemplos:
-- RN-01: Un estudiante puede tener como máximo 3 préstamos activos simultáneamente.
+- RN-01: Un estudiante puede tener como máximo 3 préstamos de libros activos simultáneamente.
 - RN-02: Un libro solo puede renovarse una vez por préstamo.
 - RN-03: La renovación solo es posible si no hay otro estudiante con reserva activa del mismo libro.
-
-**Dónde van las reglas de negocio:**
-- En el **dominio** (entidades o servicios de dominio), no en la UI ni en la base de datos.
-- Si la misma regla aparece en múltiples lugares → violación de DRY y fuente de inconsistencias.
-
-#### Trazabilidad
-
-La **trazabilidad** permite responder: *"¿Qué código implementa este requisito y cómo sé que funciona?"*
-
-**Matriz de trazabilidad simplificada:**
-
-| Historia | Regla de negocio | Clase/Método | Prueba |
-|---|---|---|---|
-| HU-01: Buscar libros | — | `CatalogoService.buscar()` | `BusquedaTest#exitosa` |
-| HU-01: Buscar libros | — | `CatalogoService.buscar()` | `BusquedaTest#sinResultados` |
-| HU-02: Reservar libro | RN-01: máx 3 préstamos | `PrestamoService.reservar()` | `ReservaTest#limiteAlcanzado` |
-| HU-03: Renovar préstamo | RN-02, RN-03 | `PrestamoService.renovar()` | `RenovacionTest#conReservaActiva` |
 
 ---
 
