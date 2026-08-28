@@ -1,8 +1,8 @@
-# Arquitectura de Software — Curso Completo Ampliado (2 horas × 26 clases)
+# Arquitectura de Software — Curso Completo Ampliado (2 horas × 30 clases)
 
 > Material de referencia — Universidad de Manizales  
 > Última actualización: agosto 2026 | Versión: 1.0  
-> **Duración total: 52 horas** | 26 clases × 2 horas
+> **Duración total: 60 horas** | 30 clases × 2 horas
 
 ---
 
@@ -55,6 +55,10 @@ La secuencia está organizada para que los estudiantes avancen desde fundamentos
 | 02 | Requisitos arquitectónicamente significativos y drivers | 1 |
 | 03 | Atributos de calidad y escenarios (ISO/IEC 25010) | 1 |
 | 04 | Estilos, patrones y tácticas arquitectónicas | 1 |
+| 05A | Principios SOLID aplicados a pagos de servicios públicos | 1 |
+| 06A | Patrones de diseño GoF en Java | 1 |
+| 07A | Patrones GRASP para asignar responsabilidades | 1 |
+| 08A | DRY, KISS y YAGNI aplicados a pagos | 1 |
 | 05 | Domain-Driven Design, bounded contexts y monolito modular | 2 |
 | 06 | Documentación arquitectónica — ISO 42010, 4+1 y C4 | 2 |
 | 07 | ADR, arquitectura como código e IA como revisora | 2 |
@@ -839,6 +843,1009 @@ Decisión: Modular monolito con 2-3 servicios críticos (checkout independiente,
 Columnas: 6 atributos de calidad. Filas: 5 estilos. Para cada celda: (+), (-) o (=). Luego: ¿Cuál estilo tiene mejor perfil de calidad global?
 
 ---
+
+---
+
+## Clase 05A: Principios SOLID aplicados a pagos de servicios públicos
+
+**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 3
+
+### Objetivos de aprendizaje
+
+- Explicar los cinco principios SOLID y reconocer sus señales de incumplimiento.
+- Aplicar SOLID a un dominio con `Cliente`, `Cuenta`, `CuentaAhorros`, `CuentaCorriente`, `Factura` y `Pago`.
+- Separar reglas de negocio, persistencia, notificaciones y medios de pago mediante interfaces.
+
+### Contenido teórico
+
+SOLID es un conjunto de cinco principios para diseñar clases con responsabilidades claras, extensibles y fáciles de probar.
+
+| Principio | Idea central | Señal de incumplimiento |
+|---|---|---|
+| **S — Single Responsibility** | Una clase debe tener un motivo principal para cambiar. | Una clase calcula, guarda, imprime y notifica. |
+| **O — Open/Closed** | Extensible sin modificar código estable. | Cada nuevo tipo exige editar un `switch` central. |
+| **L — Liskov Substitution** | Un subtipo debe poder reemplazar a su tipo base. | Un subtipo lanza `UnsupportedOperationException` para una operación prometida. |
+| **I — Interface Segregation** | Interfaces pequeñas y enfocadas. | Clientes dependen de métodos que no usan. |
+| **D — Dependency Inversion** | El dominio depende de abstracciones, no de detalles. | Una regla de pago crea directamente un cliente SQL o HTTP. |
+
+#### S — Single Responsibility Principle
+
+Una responsabilidad es una razón de cambio. `Factura` puede conocer su total; no debería enviar correos ni guardar datos. La separación permite probar cada decisión aisladamente.
+
+**Tres ejemplos Java:**
+
+```java
+final class CalculadorFactura {
+  double total(Factura factura) { return factura.base() + factura.impuesto(); }
+}
+final class FacturaRepository { void guardar(Factura factura) { /* SQL */ } }
+```
+
+```java
+final class PagoService {
+  private final MedioPago medio;
+  PagoService(MedioPago medio) { this.medio = medio; }
+  void pagar(Factura factura) { medio.cobrar(factura.total()); }
+}
+final class Notificador { void confirmar(Pago pago) { /* correo o SMS */ } }
+```
+
+```java
+record Cliente(String id, String nombre) {}
+final class EstadoCuentaReport { String generar(Cliente cliente, Cuenta cuenta) {
+  return cliente.nombre() + ": " + cuenta.saldo();
+} }
+```
+
+#### O — Open/Closed Principle
+
+El sistema debe permitir agregar una variante mediante una nueva implementación, sin reabrir y modificar la regla que ya funciona.
+
+**Tres ejemplos Java:**
+
+```java
+interface ReglaInteres { double calcular(double saldo); }
+final class InteresAhorros implements ReglaInteres {
+  public double calcular(double saldo) { return saldo * .04; }
+}
+final class InteresCorriente implements ReglaInteres {
+  public double calcular(double saldo) { return 0; }
+}
+```
+
+```java
+interface MedioPago { void cobrar(double valor); }
+final class PagoPSE implements MedioPago { public void cobrar(double v) { /* PSE */ } }
+final class PagoTarjeta implements MedioPago { public void cobrar(double v) { /* tarjeta */ } }
+final class Procesador { void ejecutar(MedioPago m, double v) { m.cobrar(v); } }
+```
+
+```java
+interface Descuento { double aplicar(double total); }
+final class DescuentoAdultoMayor implements Descuento {
+  public double aplicar(double total) { return total * .9; }
+}
+final class Totalizador { double total(double base, Descuento d) { return d.aplicar(base); } }
+```
+
+#### L — Liskov Substitution Principle
+
+La herencia conserva el contrato: precondiciones no más estrictas, resultados válidos y excepciones compatibles. Si `Cuenta` permite retirar dentro del saldo, una subclase no debe romper esa expectativa.
+
+**Tres ejemplos Java:**
+
+```java
+abstract class Cuenta { protected double saldo; double saldo() { return saldo; } }
+final class CuentaAhorros extends Cuenta { }
+final class CuentaCorriente extends Cuenta { }
+double consultar(Cuenta cuenta) { return cuenta.saldo(); }
+```
+
+```java
+interface Retirable { boolean retirar(double valor); }
+final class CuentaConSaldo implements Retirable {
+  private double saldo = 100;
+  public boolean retirar(double valor) { if (valor > saldo) return false; saldo -= valor; return true; }
+}
+```
+
+```java
+interface CuentaPagadora { boolean puedePagar(double valor); }
+final class Ahorros implements CuentaPagadora {
+  public boolean puedePagar(double valor) { return valor >= 0; }
+}
+final class Corriente implements CuentaPagadora {
+  public boolean puedePagar(double valor) { return valor >= 0; }
+}
+```
+
+#### I — Interface Segregation Principle
+
+Una interfaz debe representar un rol pequeño. Consultar una factura no debería obligar a implementar conciliación, auditoría y notificaciones.
+
+**Tres ejemplos Java:**
+
+```java
+interface FacturaReader { Factura buscar(String id); }
+interface FacturaWriter { void guardar(Factura factura); }
+final class FacturaConsulta implements FacturaReader {
+  public Factura buscar(String id) { return null; }
+}
+```
+
+```java
+interface NotificadorEmail { void enviar(String destino, String mensaje); }
+interface NotificadorSms { void enviarSms(String telefono, String mensaje); }
+final class ClienteEmail implements NotificadorEmail {
+  public void enviar(String d, String m) { /* SMTP */ }
+}
+```
+
+```java
+interface PuedeAhorrar { void depositar(double valor); }
+interface PuedeSobregirar { double cupoDisponible(); }
+final class CuentaCorrienteService implements PuedeAhorrar, PuedeSobregirar {
+  public void depositar(double v) { }
+  public double cupoDisponible() { return 500000; }
+}
+```
+
+#### D — Dependency Inversion Principle
+
+Las reglas de pago pertenecen al dominio; PostgreSQL, PSE o correo son detalles reemplazables. La inversión se logra definiendo puertos y pasando implementaciones por constructor.
+
+**Tres ejemplos Java:**
+
+```java
+interface PagoRepository { void guardar(Pago pago); }
+final class PagoService {
+  private final PagoRepository pagos;
+  PagoService(PagoRepository pagos) { this.pagos = pagos; }
+  void registrar(Pago pago) { pagos.guardar(pago); }
+}
+```
+
+```java
+interface Pasarela { String autorizar(double valor); }
+final class PagarFactura {
+  private final Pasarela pasarela;
+  PagarFactura(Pasarela pasarela) { this.pasarela = pasarela; }
+  String ejecutar(Factura f) { return pasarela.autorizar(f.total()); }
+}
+```
+
+```java
+final class PagoRepositoryMemoria implements PagoRepository {
+  public void guardar(Pago pago) { /* lista en memoria */ }
+}
+record Pago(String id, double valor) {}
+```
+
+### Actividad: SOLID en el sistema de pagos de servicios públicos
+
+Diseñe una solución para que un `Cliente` consulte sus `Factura`, elija una `Cuenta` de ahorros o corriente, registre un `Pago` y reciba confirmación.
+
+1. Dibuje el modelo con `Cuenta` como abstracción y sus dos variantes.
+2. Extraiga interfaces para `FacturaRepository`, `PagoRepository`, `Pasarela` y `Notificador`.
+3. Implemente `PagarFactura` con inyección por constructor y sin dependencias de SQL, HTTP o consola.
+4. Agregue una nueva pasarela sin modificar el caso de uso.
+5. Señale qué clase cambia ante cada cambio: impuesto, base de datos, notificación, tipo de cuenta y medio de pago.
+6. Escriba pruebas para pago aprobado, factura ya pagada, saldo insuficiente y pasarela no disponible.
+
+---
+
+## Clase 06A: Patrones de diseño GoF en Java
+
+**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 3
+
+### Objetivos de aprendizaje
+
+- Reconocer los 23 patrones del catálogo Gang of Four (GoF).
+- Distinguir patrones creacionales, estructurales y de comportamiento.
+- Seleccionar un patrón según el problema y sus consecuencias.
+
+### Teoría
+
+Los patrones GoF son soluciones de diseño nombradas para problemas recurrentes. No son bibliotecas ni recetas obligatorias: describen participantes, colaboraciones y consecuencias.
+
+| Familia | Patrones |
+|---|---|
+| Creacionales | Abstract Factory, Builder, Factory Method, Prototype, Singleton |
+| Estructurales | Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy |
+| Comportamiento | Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor |
+
+#### Abstract Factory
+
+Provee familias de objetos relacionados sin acoplar el cliente a clases concretas.
+
+```java
+interface WidgetFactory { Boton boton(); Campo campo(); }
+record Boton(String estilo) {} record Campo(String estilo) {}
+final class WebFactory implements WidgetFactory { public Boton boton(){return new Boton("web");} public Campo campo(){return new Campo("web");} }
+final class MovilFactory implements WidgetFactory { public Boton boton(){return new Boton("movil");} public Campo campo(){return new Campo("movil");} }
+// Tres usos: WebFactory, MovilFactory y una factory de facturacion empresarial.
+```
+
+#### Builder
+
+Construye objetos complejos paso a paso y evita constructores con muchos parámetros.
+
+```java
+final class SolicitudPago { final String factura; final String cuenta; final boolean notificar;
+  private SolicitudPago(Builder b){factura=b.factura; cuenta=b.cuenta; notificar=b.notificar;}
+  static class Builder { String factura, cuenta; boolean notificar;
+    Builder factura(String v){factura=v;return this;} Builder cuenta(String v){cuenta=v;return this;}
+    Builder notificar(){notificar=true;return this;} SolicitudPago build(){return new SolicitudPago(this);} }
+}
+// Tres usos: construir solo factura, factura+cuenta y una solicitud con notificacion.
+```
+
+#### Factory Method
+
+Delega a subclases la creación del producto que el flujo necesita.
+
+```java
+interface Validador { boolean valida(String dato); }
+abstract class Servicio { abstract Validador crearValidador(); boolean ejecutar(String d){return crearValidador().valida(d);} }
+final class ServicioFactura extends Servicio { Validador crearValidador(){return d -> d.startsWith("FAC-");} }
+final class ServicioPago extends Servicio { Validador crearValidador(){return d -> d.startsWith("PAG-");} }
+// Tres usos: ServicioFactura, ServicioPago y una futura subclase ServicioCliente.
+```
+
+#### Prototype
+
+Crea objetos nuevos copiando una instancia configurada.
+
+```java
+record PlantillaFactura(String empresa, double impuesto) {
+  PlantillaFactura copia(){return new PlantillaFactura(empresa, impuesto);}
+}
+// Tres usos: copia de plantilla de agua, energia y gas con configuraciones distintas.
+```
+
+#### Singleton
+
+Garantiza una única instancia controlada. Debe reservarse para un recurso realmente único y no para esconder dependencias globales.
+
+```java
+enum RelojSistema { INSTANCIA; long ahora(){return System.currentTimeMillis();} }
+// Tres usos controlados: reloj, configuracion inmutable y registro de metricas.
+```
+
+#### Adapter
+
+Convierte la interfaz de un proveedor en la interfaz que espera el dominio.
+
+```java
+interface Pasarela { void cobrar(double valor); }
+final class ProveedorPse { void debitarEnPesos(double v){ } }
+final class PseAdapter implements Pasarela { private final ProveedorPse p=new ProveedorPse(); public void cobrar(double v){p.debitarEnPesos(v);} }
+// Tres usos: adaptar PSE, tarjeta legacy y billetera digital a Pasarela.
+```
+
+#### Bridge
+
+Separa una abstracción de su implementación para que ambas evolucionen de forma independiente.
+
+```java
+interface Canal { void enviar(String mensaje); }
+abstract class Aviso { protected final Canal canal; Aviso(Canal c){canal=c;} abstract void enviar(); }
+final class AvisoPago extends Aviso { AvisoPago(Canal c){super(c);} void enviar(){canal.enviar("Pago recibido");} }
+// Tres combinaciones: AvisoPago-Email, AvisoPago-SMS y AvisoFactura-Email.
+```
+
+#### Composite
+
+Trata objetos individuales y composiciones de forma uniforme.
+
+```java
+interface Cargo { double total(); }
+record ServicioCargo(double valor) implements Cargo { public double total(){return valor;} }
+final class GrupoCargos implements Cargo { private final java.util.List<Cargo> items=new java.util.ArrayList<>(); void agregar(Cargo c){items.add(c);} public double total(){return items.stream().mapToDouble(Cargo::total).sum();} }
+// Tres usos: cargo individual, factura agrupada y cliente con varias facturas.
+```
+
+#### Decorator
+
+Añade responsabilidades envolviendo un objeto, sin modificar su clase.
+
+```java
+interface Cobro { double ejecutar(double v); }
+record CobroBase() implements Cobro { public double ejecutar(double v){return v;} }
+record CobroConAuditoria(Cobro interno) implements Cobro { public double ejecutar(double v){System.out.println("auditado");return interno.ejecutar(v);} }
+// Tres usos: cobro base, base+auditoria y base+auditoria+comision.
+```
+
+#### Facade
+
+Ofrece una entrada simple a un subsistema complejo.
+
+```java
+final class PagoFacade { private final Pasarela p; PagoFacade(Pasarela p){this.p=p;}
+  void pagar(Factura f, Cuenta c){ if(f.total()>0 && c.saldo()>=f.total()) p.cobrar(f.total()); }
+}
+interface Factura { double total(); } interface Cuenta { double saldo(); }
+// Tres usos: fachada para pagar, consultar estado y cancelar un pago.
+```
+
+#### Flyweight
+
+Comparte estado intrínseco para reducir memoria cuando hay muchos objetos similares.
+
+```java
+record Icono(String nombre) {}
+final class Iconos { private static final java.util.Map<String,Icono> cache=new java.util.HashMap<>();
+  static Icono obtener(String n){return cache.computeIfAbsent(n, Icono::new);} }
+// Tres usos: icono agua, icono energia e icono gas comparten instancias repetidas.
+```
+
+#### Proxy
+
+Controla el acceso a otro objeto, por ejemplo con seguridad, cache o carga diferida.
+
+```java
+interface Facturas { Factura buscar(String id); }
+final class FacturaProxy implements Facturas { private final Facturas real; FacturaProxy(Facturas r){real=r;}
+  public Factura buscar(String id){if(id==null||id.isBlank()) throw new IllegalArgumentException(); return real.buscar(id);} }
+// Tres usos: proxy de autorizacion, proxy de cache y proxy remoto.
+```
+
+#### Chain of Responsibility
+
+Pasa una solicitud por una cadena de manejadores hasta que uno la procesa.
+
+```java
+abstract class Regla { Regla siguiente; Regla sigue(Regla r){siguiente=r;return r;} abstract boolean acepta(Pago p); }
+record Pago(double valor) {}
+final class ReglaMonto extends Regla { boolean acepta(Pago p){return p.valor()>0 || (siguiente!=null&&siguiente.acepta(p));} }
+// Tres usos: cadena de monto, saldo y fraude.
+```
+
+#### Command
+
+Encapsula una acción como objeto para ejecutar, registrar, encolar o deshacer.
+
+```java
+interface Comando { void ejecutar(); }
+final class PagarCommand implements Comando { private final Runnable accion; PagarCommand(Runnable a){accion=a;} public void ejecutar(){accion.run();} }
+// Tres usos: boton de pagar, cola de pagos e historial de comandos.
+```
+
+#### Interpreter
+
+Representa una gramática pequeña y evalúa expresiones de ese lenguaje.
+
+```java
+interface Expresion { boolean evaluar(Cliente c); }
+record Cliente(String tipo) {}
+record EsTipo(String tipo) implements Expresion { public boolean evaluar(Cliente c){return c.tipo().equals(tipo);} }
+// Tres usos: regla hogar, regla empresarial y composicion AND de reglas.
+```
+
+#### Iterator
+
+Recorre una colección sin exponer su representación interna.
+
+```java
+final class FacturaCollection implements Iterable<Factura> { private final java.util.List<Factura> datos=new java.util.ArrayList<>();
+  void agregar(Factura f){datos.add(f);} public java.util.Iterator<Factura> iterator(){return datos.iterator();} }
+// Tres usos: recorrer facturas, pagos pendientes y clientes pagadores.
+```
+
+#### Mediator
+
+Centraliza la comunicación entre objetos para reducir referencias directas entre colegas.
+
+```java
+final class PagoMediator { void pagoRegistrado(Pago p, Notificador n, Auditor auditor){auditor.registrar(p);n.notificar(p);} }
+interface Notificador { void notificar(Pago p); } interface Auditor { void registrar(Pago p); }
+// Tres usos: coordinar pago-factura, pago-notificador y pago-auditoria.
+```
+
+#### Memento
+
+Guarda el estado de un objeto sin exponer sus detalles para poder restaurarlo.
+
+```java
+final class EstadoPago { private String estado="PENDIENTE"; String estado(){return estado;} void estado(String e){estado=e;}
+  record Memento(String valor) {} Memento guardar(){return new Memento(estado);} void restaurar(Memento m){estado=m.valor();} }
+// Tres usos: guardar antes de autorizar, conciliar y reintentar.
+```
+
+#### Observer
+
+Notifica automáticamente a suscriptores cuando cambia un sujeto.
+
+```java
+interface Observador { void actualizar(Pago p); }
+final class Pagos { private final java.util.List<Observador> os=new java.util.ArrayList<>(); void suscribir(Observador o){os.add(o);}
+  void publicar(Pago p){os.forEach(o->o.actualizar(p));} }
+// Tres usos: observadores de correo, auditoria y analitica.
+```
+
+#### State
+
+Permite que un objeto cambie su comportamiento al cambiar de estado interno.
+
+```java
+interface Estado { String siguiente(); }
+record Pendiente() implements Estado { public String siguiente(){return "AUTORIZADO";} }
+record Autorizado() implements Estado { public String siguiente(){return "APLICADO";} }
+// Tres usos: estados pendiente, autorizado y rechazado.
+```
+
+#### Strategy
+
+Encapsula algoritmos intercambiables bajo una misma interfaz.
+
+```java
+interface CalculoComision { double calcular(double valor); }
+record SinComision() implements CalculoComision { public double calcular(double v){return 0;} }
+record ComisionFija() implements CalculoComision { public double calcular(double v){return 1500;} }
+// Tres usos: sin comision, fija y porcentual seleccionadas por configuracion.
+```
+
+#### Template Method
+
+Define el esqueleto de un algoritmo y deja pasos variables a las subclases.
+
+```java
+abstract class ProcesarPago { final void procesar(Pago p){validar(p); autorizar(p); registrar(p);} abstract void autorizar(Pago p);
+  void validar(Pago p){} void registrar(Pago p){} }
+final class ProcesarPse extends ProcesarPago { void autorizar(Pago p){/* PSE */} }
+// Tres usos: flujo PSE, tarjeta y billetera.
+```
+
+#### Visitor
+
+Permite agregar operaciones a una estructura de objetos sin modificar sus clases.
+
+```java
+interface ElementoFactura { void aceptar(Visitante v); }
+interface Visitante { void visitar(ServicioCargo cargo); }
+final class VisitanteImpuesto implements Visitante { public void visitar(ServicioCargo c){/* calcular impuesto */} }
+// Tres usos: visitante de impuesto, reporte y exportacion.
+```
+
+### Ejemplos 2 y 3 de cada patrón GoF
+
+El bloque de cada patrón contiene el ejemplo 1. Los siguientes dos ejemplos son alternativas distintas, no simples repeticiones de instancias.
+
+#### Abstract Factory
+```java
+interface ReporteFactory { Encabezado encabezado(); Pie pie(); }
+record Encabezado(String texto) {} record Pie(String texto) {}
+final class ReporteResidencial implements ReporteFactory { public Encabezado encabezado(){return new Encabezado("Hogar");} public Pie pie(){return new Pie("Total residencial");} }
+final class ReporteEmpresarial implements ReporteFactory { public Encabezado encabezado(){return new Encabezado("Empresa");} public Pie pie(){return new Pie("Total empresarial");} }
+```
+```java
+WidgetFactory factory = tipoCliente.equals("empresa") ? new WebFactory() : new MovilFactory();
+Boton boton = factory.boton();
+Campo campo = factory.campo();
+```
+
+#### Builder
+```java
+record FiltroFacturas(String cliente, String estado, Integer limite) {
+  static class Builder { String cliente, estado; Integer limite;
+    Builder cliente(String v){cliente=v;return this;} Builder estado(String v){estado=v;return this;}
+    Builder limite(int v){limite=v;return this;} FiltroFacturas build(){return new FiltroFacturas(cliente,estado,limite);} }
+}
+```
+```java
+FiltroFacturas filtro = new FiltroFacturas.Builder().cliente("C1").estado("PENDIENTE").limite(20).build();
+```
+
+#### Factory Method
+```java
+interface Documento { String formato(); }
+abstract class Exportador { abstract Documento crearDocumento(); Documento exportar(){return crearDocumento();} }
+final class ExportadorPdf extends Exportador { Documento crearDocumento(){return () -> "PDF";} }
+final class ExportadorCsv extends Exportador { Documento crearDocumento(){return () -> "CSV";} }
+```
+```java
+Exportador exportador = formato.equals("pdf") ? new ExportadorPdf() : new ExportadorCsv();
+Documento documento = exportador.exportar();
+```
+
+#### Prototype
+```java
+record ReglaMora(double porcentaje, String servicio) { ReglaMora copia(){return new ReglaMora(porcentaje, servicio);} }
+ReglaMora agua = new ReglaMora(.02, "agua");
+ReglaMora energia = agua.copia();
+```
+```java
+ReglaMora gas = new ReglaMora(.03, "gas").copia();
+```
+
+#### Singleton
+```java
+final class Configuracion { private Configuracion() {} private static final Configuracion I=new Configuracion();
+  static Configuracion instancia(){return I;} String ambiente(){return "produccion";} }
+Configuracion configuracion = Configuracion.instancia();
+```
+```java
+final class Metricas { private Metricas() {} static final Metricas INSTANCIA=new Metricas(); void contar(String evento){} }
+Metricas.INSTANCIA.contar("pago");
+```
+
+#### Adapter
+```java
+final class TarjetaLegacy { void chargeInCents(long cents){} }
+final class TarjetaAdapter implements Pasarela { private final TarjetaLegacy tarjeta; TarjetaAdapter(TarjetaLegacy t){tarjeta=t;} public void cobrar(double v){tarjeta.chargeInCents(Math.round(v*100));} }
+```
+```java
+final class BilleteraDigital { void pagarPesos(String valor){} }
+final class BilleteraAdapter implements Pasarela { private final BilleteraDigital billetera; BilleteraAdapter(BilleteraDigital b){billetera=b;} public void cobrar(double v){billetera.pagarPesos(String.valueOf(v));} }
+```
+
+#### Bridge
+```java
+final class EmailCanal implements Canal { public void enviar(String m){/* email */} }
+final class SmsCanal implements Canal { public void enviar(String m){/* SMS */} }
+final class AvisoFactura extends Aviso { AvisoFactura(Canal c){super(c);} void enviar(){canal.enviar("Factura disponible");} }
+```
+```java
+new AvisoFactura(new SmsCanal()).enviar();
+```
+
+#### Composite
+```java
+final class FacturaCompuesta implements Cargo { private final java.util.List<Cargo> cargos; FacturaCompuesta(java.util.List<Cargo> c){cargos=c;} public double total(){return cargos.stream().mapToDouble(Cargo::total).sum();} }
+```
+```java
+final class ClienteCargos implements Cargo { private final Cargo cargo; ClienteCargos(Cargo c){cargo=c;} public double total(){return cargo.total();} }
+```
+
+#### Decorator
+```java
+record CobroConComision(Cobro interno, double comision) implements Cobro { public double ejecutar(double v){return interno.ejecutar(v)+comision;} }
+```
+```java
+Cobro cobroSeguro = new CobroConAuditoria(new CobroConComision(new CobroBase(), 1500));
+```
+
+#### Facade
+```java
+final class ConsultaFacade { String estado(Factura f){return f.total()>0 ? "PENDIENTE" : "INVALIDA";} }
+```
+```java
+final class ReversoFacade { void cancelar(Pago p){/* valida y revierte */} }
+```
+
+#### Flyweight
+```java
+Icono agua1 = Iconos.obtener("agua");
+Icono agua2 = Iconos.obtener("agua");
+```
+```java
+Icono gas1 = Iconos.obtener("gas");
+Icono gas2 = Iconos.obtener("gas");
+```
+
+#### Proxy
+```java
+final class AutorizacionProxy implements Facturas { private final Facturas real; private final String usuario; AutorizacionProxy(Facturas r,String u){real=r;usuario=u;}
+  public Factura buscar(String id){if(usuario==null)throw new SecurityException();return real.buscar(id);} }
+```
+```java
+final class CacheProxy implements Facturas { private final Facturas real; private final java.util.Map<String,Factura> cache=new java.util.HashMap<>(); CacheProxy(Facturas r){real=r;}
+  public Factura buscar(String id){return cache.computeIfAbsent(id,real::buscar);} }
+```
+
+#### Chain of Responsibility
+```java
+final class ReglaSaldo extends Regla { boolean acepta(Pago p){return p.valor()<=1000000 || (siguiente!=null&&siguiente.acepta(p));} }
+```
+```java
+final class ReglaFraude extends Regla { boolean acepta(Pago p){return p.valor()<5000000 || (siguiente!=null&&siguiente.acepta(p));} }
+```
+
+#### Command
+```java
+final class ReversarCommand implements Comando { private final Runnable accion; ReversarCommand(Runnable a){accion=a;} public void ejecutar(){accion.run();} }
+```
+```java
+final class ReintentarCommand implements Comando { private final Runnable accion; ReintentarCommand(Runnable a){accion=a;} public void ejecutar(){accion.run();} }
+```
+
+#### Interpreter
+```java
+record And(Expresion izquierda, Expresion derecha) implements Expresion { public boolean evaluar(Cliente c){return izquierda.evaluar(c)&&derecha.evaluar(c);} }
+```
+```java
+record TieneDescuento() implements Expresion { public boolean evaluar(Cliente c){return c.tipo().equals("preferencial");} }
+```
+
+#### Iterator
+```java
+final class PagosCollection implements Iterable<Pago> { private final java.util.List<Pago> datos=new java.util.ArrayList<>(); void agregar(Pago p){datos.add(p);} public java.util.Iterator<Pago> iterator(){return datos.iterator();} }
+```
+```java
+for (Pago pago : new PagosCollection()) { System.out.println(pago.valor()); }
+```
+
+#### Mediator
+```java
+final class PagoBus { private final java.util.List<Runnable> acciones=new java.util.ArrayList<>(); void agregar(Runnable a){acciones.add(a);} void publicar(){acciones.forEach(Runnable::run);} }
+```
+```java
+final class FacturaColleague { private final PagoBus bus; FacturaColleague(PagoBus b){bus=b;} void actualizar(){bus.publicar();} }
+```
+
+#### Memento
+```java
+EstadoPago estado = new EstadoPago();
+EstadoPago.Memento antesDeAutorizar = estado.guardar();
+estado.estado("AUTORIZADO");
+```
+```java
+EstadoPago.Memento antesDeAplicar = estado.guardar();
+estado.estado("APLICADO");
+estado.restaurar(antesDeAplicar);
+```
+
+#### Observer
+```java
+final class ClienteNotificador implements Observador { public void actualizar(Pago p){/* envia correo */} }
+final class AuditorObservador implements Observador { public void actualizar(Pago p){/* guarda auditoria */} }
+```
+```java
+final class AnaliticaObservador implements Observador { public void actualizar(Pago p){/* actualiza metricas */} }
+```
+
+#### State
+```java
+record Rechazado() implements Estado { public String siguiente(){return "RECHAZADO";} }
+```
+```java
+final class PagoContext { private Estado estado=new Pendiente(); void avanzar(){estado=new Autorizado();} String estado(){return estado.siguiente();} }
+```
+
+#### Strategy
+```java
+record ComisionPorcentual(double tasa) implements CalculoComision { public double calcular(double v){return v*tasa;} }
+```
+```java
+final class Calculador { double total(double valor, CalculoComision estrategia){return valor+estrategia.calcular(valor);} }
+```
+
+#### Template Method
+```java
+final class ProcesarTarjeta extends ProcesarPago { void autorizar(Pago p){/* tarjeta */} }
+```
+```java
+final class ProcesarBilletera extends ProcesarPago { void autorizar(Pago p){/* billetera */} }
+```
+
+#### Visitor
+```java
+final class VisitanteReporte implements Visitante { public void visitar(ServicioCargo c){/* agrega al reporte */} }
+```
+```java
+final class VisitanteExportacion implements Visitante { public void visitar(ServicioCargo c){/* exporta CSV */} }
+```
+
+### Actividad: GoF en el sistema de pagos
+
+1. Cree familias de facturas residenciales y empresariales con `Abstract Factory`.
+2. Integre PSE, tarjeta y billetera con `Adapter` y justifique la decisión.
+3. Calcule comisiones por tipo de cuenta con `Strategy`.
+4. Ejecute validación de saldo, límite y fraude con `Chain of Responsibility`.
+5. Notifique un pago aplicado a cliente, auditoría y analítica con `Observer` o `Mediator`.
+6. Encapsule pagar, reversar y reintentar mediante `Command`.
+7. Implemente al menos tres patrones, escriba una prueba por patrón y documente una consecuencia negativa de cada elección.
+
+---
+
+## Clase 07A: Patrones GRASP para asignar responsabilidades
+
+**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 4
+
+### Objetivos de aprendizaje
+
+- Usar GRASP para decidir qué objeto conoce, crea, coordina o delega una operación.
+- Aplicar los nueve patrones al sistema de pagos de servicios públicos.
+- Justificar responsabilidades con cohesión, acoplamiento y polimorfismo.
+
+### Teoría y ejemplos Java
+
+GRASP significa *General Responsibility Assignment Software Patterns*. Es una guía para asignar responsabilidades, no un catálogo de clases prefabricadas.
+
+#### Experto en información
+
+Asigna una responsabilidad a la clase que posee la información necesaria.
+
+```java
+record Factura(double consumo, double tarifa) { double total(){return consumo*tarifa;} }
+// Tres ejemplos: Factura calcula total; Cuenta calcula saldo; Cliente obtiene sus facturas.
+```
+
+#### Creador
+
+Una clase crea objetos que contiene, agrega o usa estrechamente.
+
+```java
+final class Cuenta { Pago crearPago(Factura f){return new Pago(f.total());} }
+record Pago(double valor) {}
+// Tres ejemplos: Cliente crea Cuenta; Cuenta crea Pago; SistemaPagos crea Factura.
+```
+
+#### Controlador
+
+Un objeto de aplicación recibe eventos del sistema y coordina el caso de uso.
+
+```java
+final class PagoController { private final PagarFactura caso; PagoController(PagarFactura c){caso=c;} void pagar(String id){caso.ejecutar(id);} }
+interface PagarFactura { void ejecutar(String facturaId); }
+// Tres ejemplos: PagoController, ConsultaFacturaController y RegistroClienteController.
+```
+
+#### Bajo acoplamiento
+
+Minimiza dependencias entre clases para que los cambios se propaguen menos.
+
+```java
+interface PagoStore { void guardar(Pago p); }
+final class RegistroPago { private final PagoStore store; RegistroPago(PagoStore s){store=s;} void registrar(Pago p){store.guardar(p);} }
+// Tres ejemplos: puerto de persistencia, puerto de notificacion y puerto de pasarela.
+```
+
+#### Alta cohesión
+
+Mantiene juntas responsabilidades relacionadas y evita clases “dios”.
+
+```java
+final class ValidadorFactura { boolean valida(Factura f){return f.total()>0;} }
+// Tres ejemplos: ValidadorFactura valida; CalculadorTarifa calcula; ConciliadorPago concilia.
+```
+
+#### Polimorfismo
+
+Asigna variaciones de comportamiento a tipos polimórficos en lugar de condicionales repetidos.
+
+```java
+interface ReglaCuenta { boolean autoriza(double valor); }
+record ReglaAhorros() implements ReglaCuenta { public boolean autoriza(double v){return v>=0;} }
+// Tres ejemplos: ReglaAhorros, ReglaCorriente y ReglaEmpresarial responden al mismo mensaje.
+```
+
+#### Fabricación pura
+
+Crea una clase artificial, sin representar una entidad del dominio, para proteger cohesión y acoplamiento.
+
+```java
+final class PagoMapper { Pago desdeLinea(String linea){return new Pago(Double.parseDouble(linea));} }
+// Tres ejemplos: PagoMapper, FacturaCsvParser y ResumenMensualService.
+```
+
+#### Indirección
+
+Introduce un intermediario para evitar dependencia directa entre componentes.
+
+```java
+interface NotificacionPort { void enviar(String texto); }
+final class NotificacionService { private final NotificacionPort port; NotificacionService(NotificacionPort p){port=p;} void confirmar(){port.enviar("ok");} }
+// Tres ejemplos: port de pago, repository y adapter de notificacion.
+```
+
+#### Variaciones protegidas
+
+Identifica puntos de cambio y los protege detrás de una interfaz estable.
+
+```java
+interface FuenteTarifa { double tarifa(String servicio); }
+final class FacturaService { private final FuenteTarifa fuente; FacturaService(FuenteTarifa f){fuente=f;} }
+// Tres ejemplos: proteger cambio de tarifa, pasarela y proveedor de identidad.
+```
+
+### Ejemplos 2 y 3 de cada patrón GRASP
+
+El bloque de cada patrón contiene el ejemplo 1. Se agregan dos ejemplos distintos por patrón, con responsabilidades y colaboradores diferentes.
+
+#### Experto en información
+```java
+record Cuenta(double saldo, double limite) { boolean puedePagar(double v){return saldo+limite>=v;} }
+```
+```java
+final class ClientePagos { long pendientes(java.util.List<Factura> fs){return fs.stream().filter(f->!f.pagada()).count();} }
+```
+
+#### Creador
+```java
+final class ClienteCreador { private final java.util.List<Cuenta> cuentas=new java.util.ArrayList<>();
+  Cuenta abrirCuenta(double saldo){Cuenta c=new Cuenta(saldo,0);cuentas.add(c);return c;} }
+```
+```java
+final class SistemaFacturacion { Factura emitir(double consumo,double tarifa){return new Factura(consumo,tarifa);} }
+```
+
+#### Controlador
+```java
+final class ConsultaFacturaController { private final FacturaReader reader; ConsultaFacturaController(FacturaReader r){reader=r;} Factura consultar(String id){return reader.buscar(id);} }
+```
+```java
+final class RegistroClienteController { private final ClienteService servicio; RegistroClienteController(ClienteService s){servicio=s;} void registrar(String nombre){servicio.registrar(nombre);} }
+interface ClienteService { void registrar(String nombre); }
+```
+
+#### Bajo acoplamiento
+```java
+interface NotificacionPort { void enviar(String destino,String texto); }
+final class EnviarAviso { private final NotificacionPort port; EnviarAviso(NotificacionPort p){port=p;} void ejecutar(){port.enviar("cliente","Pago aplicado");} }
+```
+```java
+interface PasarelaPort { void autorizar(double valor); }
+final class AutorizarPago { private final PasarelaPort port; AutorizarPago(PasarelaPort p){port=p;} void ejecutar(double v){port.autorizar(v);} }
+```
+
+#### Alta cohesión
+```java
+final class CalculadorTarifa { double calcular(double consumo,double tarifa){return consumo*tarifa;} }
+```
+```java
+final class ConciliadorPago { boolean conciliar(Pago pago,String referencia){return pago.valor()>0&&referencia!=null;} }
+```
+
+#### Polimorfismo
+```java
+final class ReglaCorriente implements ReglaCuenta { public boolean autoriza(double v){return v<=1000000;} }
+```
+```java
+final class ReglaEmpresarial implements ReglaCuenta { public boolean autoriza(double v){return v<=10000000;} }
+```
+
+#### Fabricación pura
+```java
+final class FacturaCsvParser { Factura parsear(String linea){String[] p=linea.split(",");return new Factura(Double.parseDouble(p[0]),Double.parseDouble(p[1]));} }
+```
+```java
+final class ResumenMensualService { double generar(java.util.List<Pago> pagos){return pagos.stream().mapToDouble(Pago::valor).sum();} }
+```
+
+#### Indirección
+```java
+interface AuditoriaPort { void registrar(String evento); }
+final class PagoAuditable { private final AuditoriaPort auditoria; PagoAuditable(AuditoriaPort a){auditoria=a;} void registrar(Pago p){auditoria.registrar("pago:"+p.valor());} }
+```
+```java
+interface FacturaPort { Factura consultar(String id); }
+final class ConsultaFactura { private final FacturaPort port; ConsultaFactura(FacturaPort p){port=p;} Factura ejecutar(String id){return port.consultar(id);} }
+```
+
+#### Variaciones protegidas
+```java
+interface FuenteIdentidad { boolean validar(String token); }
+final class SeguridadService { private final FuenteIdentidad identidad; SeguridadService(FuenteIdentidad i){identidad=i;} boolean autorizar(String token){return identidad.validar(token);} }
+```
+```java
+interface Impuesto { double calcular(double base); }
+final class TotalFactura { private final Impuesto impuesto; TotalFactura(Impuesto i){impuesto=i;} double total(double base){return base+impuesto.calcular(base);} }
+
+### Actividad: GRASP en el sistema de pagos
+
+1. Asigne a `Factura` el cálculo de su total y a `Cuenta` la validación del saldo; justifique cada decisión con **Experto**.
+2. Diseñe `PagarFacturaController` como **Controlador** y mantenga el flujo fuera de las entidades.
+3. Use **Creador** para decidir quién construye `Pago` y `Factura`.
+4. Encapsule base de datos, tarifas, pasarelas y notificaciones usando **Indirección** y **Variaciones protegidas**.
+5. Sustituya un `switch` de tipos de cuenta por **Polimorfismo**.
+6. Separe un servicio con demasiadas responsabilidades en clases de **Alta cohesión** y use **Fabricación pura** para mapeos.
+7. Entregue diagrama de clases, tres pruebas unitarias y una tabla de acoplamientos antes y después.
+
+---
+
+## Clase 08A: DRY, KISS y YAGNI aplicados a pagos
+
+**Duración:** 2 horas | **Unidad:** 1 | **Semana:** 4
+
+### Objetivos de aprendizaje
+
+- Reducir duplicación real sin crear abstracciones prematuras.
+- Mantener soluciones simples y proporcionales al problema.
+- Implementar solo necesidades actuales y registrar extensiones futuras como decisiones pendientes.
+
+### Teoría y ejemplos Java
+
+#### DRY — Don't Repeat Yourself
+
+Cada conocimiento de negocio debe tener una representación autoritativa. DRY no significa eliminar toda repetición textual: dos fragmentos iguales pueden representar reglas distintas.
+
+```java
+final class Validaciones { static void requerido(String v){if(v==null||v.isBlank())throw new IllegalArgumentException();} }
+// Tres usos: validar Cliente, Cuenta y Factura con la misma regla.
+```
+
+```java
+interface Tarifario { double obtener(String servicio); }
+final class FacturaService { private final Tarifario tarifas; FacturaService(Tarifario t){tarifas=t;} }
+// Tres usos: tarifa de agua, energia y gas desde una fuente única.
+```
+
+```java
+interface Factura { double base(); double impuesto(); }
+final class Totales { static double total(Factura f){return f.base()+f.impuesto();} }
+// Tres usos: cobro, recibo y reporte usan el mismo total.
+```
+
+#### KISS — Keep It Simple
+
+Prefiere el diseño más simple que cumpla las reglas actuales y pueda explicarse. La simplicidad no elimina validaciones necesarias ni controles de seguridad.
+
+```java
+final class EstadoFactura { static String estado(boolean pagada){return pagada ? "PAGADA" : "PENDIENTE";} }
+// Tres usos: estado de factura, recibo y consulta con una decision directa.
+```
+
+```java
+final class PagoSimple { boolean aprobado(double saldo, double valor){return valor>0 && saldo>=valor;} }
+// Tres usos: pago de agua, energia y gas sin jerarquias innecesarias.
+```
+
+```java
+record Pago(double valor) {}
+final class Pendientes { private final java.util.List<Pago> datos=new java.util.ArrayList<>(); void agregar(Pago p){datos.add(p);} }
+// Tres usos: lista de pagos pendientes, aplicados y rechazados con colecciones estándar.
+```
+
+#### YAGNI — You Aren't Gonna Need It
+
+No implementes funcionalidades especulativas antes de tener una necesidad comprobada. Se diseña un punto de extensión razonable, pero no se construyen módulos sin requisito.
+
+```java
+interface Pasarela { void cobrar(double valor); }
+final class PagoActual { private final Pasarela pasarela; PagoActual(Pasarela p){pasarela=p;} }
+// Tres usos actuales: PSE, tarjeta y una billetera requerida por el negocio.
+```
+
+```java
+record FacturaActual(String id, double total, boolean pagada) {}
+// Tres usos: guardar datos actuales de agua, energia y gas sin campos hipoteticos.
+```
+
+```java
+final class ReportePagos { long aprobados(java.util.List<Pago> pagos){return pagos.stream().filter(p->p.valor()>0).count();} }
+// Tres usos: contar pagos, sumar valores y filtrar pendientes; sin un motor BI prematuro.
+```
+
+### Tres ejemplos Java por principio
+
+```java
+// DRY: un mismo conocimiento, una sola implementación.
+Validaciones.requerido(cliente.nombre());
+Validaciones.requerido(cuenta.id());
+Validaciones.requerido(factura.id());
+```
+
+```java
+// KISS: decisiones directas para tres operaciones del dominio.
+estadoFactura.estado(factura.pagada());
+pagoSimple.aprobado(cuenta.saldo(), factura.total());
+pendientes.agregar(pago);
+```
+
+```java
+// YAGNI: solo se implementan necesidades confirmadas.
+new PagoActual(pse);
+new PagoActual(tarjeta);
+new PagoActual(billeteraRequerida);
+```
+
+### Actividad: DRY, KISS y YAGNI en el sistema de pagos
+
+1. Reciba un código con tres validaciones repetidas de `Cliente`, `Cuenta` y `Factura`. Extraiga solo las reglas idénticas aplicando **DRY**.
+2. Simplifique un método con cinco niveles de `if` para decidir si se puede pagar; mantenga explícitas las reglas de saldo, estado y valor.
+3. El negocio pide PSE hoy y “tal vez” cripto, cuotas y pagos recurrentes después. Implemente PSE mediante una interfaz y documente las otras solicitudes sin construirlas: aplique **YAGNI**.
+4. Compare complejidad ciclomática, número de clases y líneas antes y después.
+5. Escriba pruebas para factura pendiente, factura pagada, saldo insuficiente y cliente inexistente.
+
+### Proyecto integrador de cierre de la unidad
+
+Construya un diseño Java del sistema de pagos con `Cliente`, `Cuenta`, `CuentaAhorros`, `CuentaCorriente`, `Factura` y `Pago`. Incluya:
+
+- Diagrama de clases y diagrama de secuencia para “pagar factura”.
+- Una aplicación de SOLID, tres decisiones GRASP, dos patrones GoF y una mejora DRY/KISS/YAGNI.
+- Repositorios y pasarelas como interfaces, implementaciones en memoria para pruebas y validación de errores.
+- Una tabla de trazabilidad: requisito, patrón o principio aplicado, clase afectada y prueba que lo verifica.
 
 ---
 
@@ -3998,5 +5005,5 @@ Táctica arquitectónica que lo satisface:
 **Fin del curso — Arquitectura de Software**
 
 *Última actualización: agosto 2026*  
-*Versión: 1.0 (Completo ampliado: 26 clases, 52 horas)*  
+*Versión: 1.0 (Completo ampliado: 30 clases, 60 horas)*
 *Público: Ingenieros de software, arquitectos de soluciones*
