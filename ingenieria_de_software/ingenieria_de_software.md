@@ -1083,6 +1083,212 @@ test('paciente puede agendar y recibir confirmación', async ({ page }) => {
 
 ---
 
+#### Fase 4.5 — Calculadora en Java con pruebas unitarias JUnit
+
+Antes de la fase de despliegue, es recomendable validar la lógica de negocio con pruebas unitarias. A continuación se presenta un ejemplo completo para crear una calculadora en Java y probar sus operaciones con JUnit 5.
+
+**Objetivo:**
+- Crear una calculadora con operaciones básicas: suma, resta, multiplicación y división
+- Validar resultados con números positivos y negativos
+- Manejar correctamente la división entre cero
+- Ejecutar pruebas unitarias automatizadas con JUnit
+
+**Estructura del proyecto recomendado:**
+
+```text
+calculator-app/
+├── pom.xml
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       └── com/
+│   │           └── example/
+│   │               └── Calculator.java
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── example/
+│                   └── CalculatorTest.java
+└── target/
+```
+
+**Paso 1: Crear el proyecto Maven**
+
+En el archivo `pom.xml` se deben incluir las dependencias necesarias para JUnit 5:
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>calculator-app</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+**Paso 2: Crear la calculadora**
+
+Archivo: `src/main/java/com/example/Calculator.java`
+
+```java
+package com.example;
+
+public class Calculator {
+
+    public double sum(double a, double b) {
+        return a + b;
+    }
+
+    public double subtract(double a, double b) {
+        return a - b;
+    }
+
+    public double multiply(double a, double b) {
+        return a * b;
+    }
+
+    public double divide(double a, double b) {
+        if (b == 0) {
+            throw new IllegalArgumentException("No se puede dividir entre cero");
+        }
+        return a / b;
+    }
+}
+```
+
+**Paso 3: Crear las pruebas unitarias con JUnit**
+
+Archivo: `src/test/java/com/example/CalculatorTest.java`
+
+```java
+package com.example;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class CalculatorTest {
+
+    private Calculator calculator;
+
+    @BeforeEach
+    void setUp() {
+        calculator = new Calculator();
+    }
+
+    @Test
+    void test_sum_positive_numbers() {
+        double result = calculator.sum(5, 3);
+        assertEquals(8.0, result);
+    }
+
+    @Test
+    void test_sum_negative_numbers() {
+        double result = calculator.sum(-5, -3);
+        assertEquals(-8.0, result);
+    }
+
+    @Test
+    void test_subtract_positive_numbers() {
+        double result = calculator.subtract(10, 4);
+        assertEquals(6.0, result);
+    }
+
+    @Test
+    void test_subtract_negative_numbers() {
+        double result = calculator.subtract(-10, -4);
+        assertEquals(-6.0, result);
+    }
+
+    @Test
+    void test_multiply_positive_numbers() {
+        double result = calculator.multiply(6, 7);
+        assertEquals(42.0, result);
+    }
+
+    @Test
+    void test_multiply_negative_numbers() {
+        double result = calculator.multiply(-6, -7);
+        assertEquals(42.0, result);
+    }
+
+    @Test
+    void test_divide_positive_numbers() {
+        double result = calculator.divide(20, 5);
+        assertEquals(4.0, result);
+    }
+
+    @Test
+    void test_divide_negative_numbers() {
+        double result = calculator.divide(-20, -5);
+        assertEquals(4.0, result);
+    }
+
+    @Test
+    void test_divide_by_zero() {
+        IllegalArgumentException exception = assertThrows(
+            IllegalArgumentException.class,
+            () -> calculator.divide(10, 0)
+        );
+        assertEquals("No se puede dividir entre cero", exception.getMessage());
+    }
+}
+```
+
+**Paso 4: Ejecutar las pruebas**
+
+Desde la raíz del proyecto, se ejecutan con Maven:
+
+```bash
+mvn test
+```
+
+Si todo funciona correctamente, Maven mostrará que todas las pruebas han pasado y se generará el reporte en `target/surefire-reports`.
+
+**Explicación breve del objetivo de estas pruebas:**
+- `test_sum_positive_numbers()` valida la suma con valores positivos
+- `test_sum_negative_numbers()` valida la suma con valores negativos
+- `test_subtract_positive_numbers()` valida la resta con números positivos
+- `test_subtract_negative_numbers()` valida la resta con números negativos
+- `test_multiply_positive_numbers()` valida la multiplicación con valores positivos
+- `test_multiply_negative_numbers()` valida la multiplicación con números negativos
+- `test_divide_positive_numbers()` valida la división con valores positivos
+- `test_divide_negative_numbers()` valida la división con números negativos
+- `test_divide_by_zero()` valida la regla de negocio para evitar la división entre cero
+
+Este tipo de pruebas unitarias permite verificar la lógica de negocio antes de continuar con fases posteriores como la integración, la validación del sistema y finalmente el despliegue.
+
+---
+
 #### Fase 5 — Despliegue
 
 **Dockerfile multi-stage:**
