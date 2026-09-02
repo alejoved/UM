@@ -1356,6 +1356,1405 @@ Leer sobre los patrones GRASP: Experto en Información, Creador y Controlador. T
 
 ---
 
+## CLASE 4.1 — Principios SOLID: Fundamentos y Aplicación Práctica
+**Duración:** 2 horas | **Unidad:** 1 — Diseño orientado a objetos avanzado
+
+### Objetivos
+- Comprender profundamente los 5 principios SOLID.
+- Aplicar cada principio en código Java con ejemplos reales del dominio de biblioteca.
+- Identificar violaciones de SOLID y refactorizar código legado.
+
+---
+
+### Bloque 1 (50 min) — Teoría de los 5 principios SOLID
+
+#### ¿Qué es SOLID?
+
+**SOLID** es un acrónimo que representa 5 principios de diseño orientado a objetos creados por Robert C. Martin (Uncle Bob). Estos principios ayudan a escribir código que es:
+- **Mantenible:** fácil de entender y modificar.
+- **Escalable:** fácil de agregar nuevas funcionalidades.
+- **Testeable:** fácil de probar.
+- **Flexible:** fácil de cambiar de tecnología sin afectar la lógica de negocio.
+
+---
+
+### Principio 1: S — Single Responsibility Principle (SRP)
+
+#### Concepto
+
+**Una clase debe tener una única razón para cambiar** — es decir, una sola responsabilidad.
+
+Una responsabilidad es una razón para cambiar. Si una clase tiene dos responsabilidades y una de ellas cambia, la clase se debe modificar, afectando potencialmente a la otra responsabilidad.
+
+#### ¿Por qué importa?
+
+| Problema | Impacto | Solución |
+|---|---|---|
+| Baja cohesión | Es difícil de entender qué hace la clase | Separar responsabilidades |
+| Alto acoplamiento | Un cambio en un aspecto rompe otro | Aislar cada responsabilidad |
+| Difícil de probar | Pruebas complejas y frágiles | Clases simples, fáciles de mockear |
+| Reutilización limitada | No puedes usar parte de la clase | Clases pequeñas y reutilizables |
+
+#### Ejemplo del dominio
+
+En una biblioteca, considera la clase `PrestamoService`:
+
+```java
+// ❌ VIOLACIÓN DE SRP: Dos responsabilidades distintas
+public class PrestamoService {
+    
+    // Responsabilidad 1: Gestión de préstamos (lógica de negocio)
+    public void crearPrestamo(Estudiante e, Libro l) {
+        if (e.getPrestamosActivos().size() >= 3) {
+            throw new LimitePrestamosException("El estudiante ya tiene 3 préstamos activos");
+        }
+        Prestamo p = new Prestamo(e, l, LocalDate.now(), LocalDate.now().plusDays(14));
+        repository.save(p);
+    }
+    
+    // Responsabilidad 2: Persistencia (guardar en BD) - PERO AQUÍ GENERA PDF
+    public String generarReportePDF(UUID prestamoId) {
+        Prestamo p = repository.findById(prestamoId);
+        StringBuilder pdf = new StringBuilder();
+        pdf.append("%PDF-1.4\n");
+        pdf.append("1 0 obj<</Type/Catalog>>\nendobj\n");
+        // ... lógica compleja de generación de PDF
+        Files.write(Paths.get("reporte_" + prestamoId + ".pdf"), pdf.toString().getBytes());
+        return "reporte_" + prestamoId + ".pdf";
+    }
+    
+    // Responsabilidad 3: Notificaciones
+    public void notificarVencimiento(UUID prestamoId) {
+        Prestamo p = repository.findById(prestamoId);
+        if (ChronoUnit.DAYS.between(LocalDate.now(), p.getFechaVencimiento()) == 2) {
+            String email = p.getEstudiante().getEmail();
+            String mensaje = "Tu préstamo vence en 2 días";
+            // Enviar email...
+        }
+    }
+}
+```
+
+**Problemas:**
+- Si cambia cómo se genera un PDF, modificamos `PrestamoService`.
+- Si cambia cómo se envían notificaciones, modificamos `PrestamoService`.
+- Si cambia la lógica de crear préstamos, modificamos `PrestamoService`.
+- Probar `crearPrestamo()` requiere mockear BD, PDF y email.
+
+```java
+// ✅ APLICANDO SRP: Cada clase con una única responsabilidad
+
+// Responsabilidad 1: Lógica de préstamos
+public class PrestamoService {
+    private final PrestamoRepository repository;
+    
+    public Prestamo crearPrestamo(Estudiante estudiante, Libro libro) {
+        if (estudiante.getPrestamosActivos().size() >= 3) {
+            throw new LimitePrestamosException("Límite de préstamos alcanzado");
+        }
+        Prestamo prestamo = new Prestamo(estudiante, libro, LocalDate.now(), 
+                                         LocalDate.now().plusDays(14));
+        return repository.save(prestamo);
+    }
+    
+    public Prestamo buscarPrestamo(UUID id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new PrestamoNotFoundException("Préstamo no encontrado"));
+    }
+}
+
+// Responsabilidad 2: Generación de reportes
+public class GeneradorReportes {
+    public String generarReportePDF(Prestamo prestamo) {
+        // Lógica específica de PDF
+        String contenido = "REPORTE DE PRÉSTAMO\n";
+        contenido += "Estudiante: " + prestamo.getEstudiante().getNombre() + "\n";
+        contenido += "Libro: " + prestamo.getLibro().getTitulo() + "\n";
+        // ... convertir a PDF
+        return guardarPDF(contenido);
+    }
+    
+    private String guardarPDF(String contenido) {
+        // Guardar en archivos...
+        return "ruta/del/archivo.pdf";
+    }
+}
+
+// Responsabilidad 3: Notificaciones
+public class NotificadorPrestamos {
+    private final EmailService emailService;
+    
+    public void notificarVencimientoProximo(Prestamo prestamo) {
+        long diasAlVencimiento = ChronoUnit.DAYS.between(
+            LocalDate.now(), 
+            prestamo.getFechaVencimiento()
+        );
+        
+        if (diasAlVencimiento == 2) {
+            String mensaje = String.format(
+                "Tu préstamo de '%s' vence en 2 días",
+                prestamo.getLibro().getTitulo()
+            );
+            emailService.enviar(prestamo.getEstudiante().getEmail(), 
+                              "Recordatorio de vencimiento", 
+                              mensaje);
+        }
+    }
+}
+```
+
+**Beneficios:**
+- Cada clase tiene una razón para cambiar.
+- Fácil de entender qué hace cada clase.
+- Fácil de probar — `PrestamoService` no depende de PDF ni email.
+- Reutilización — `NotificadorPrestamos` puede usarse para otros contextos.
+
+---
+
+### Principio 2: O — Open/Closed Principle (OCP)
+
+#### Concepto
+
+**Las clases deben estar abiertas para extensión pero cerradas para modificación.**
+
+Significa que deberías poder agregar nuevas funcionalidades sin modificar el código existente. Se logra mediante:
+- Interfaces y clases abstractas.
+- Polimorfismo.
+- Inyección de dependencias.
+
+#### ¿Por qué importa?
+
+| Problema | Impacto | Solución |
+|---|---|---|
+| Cada cambio toca código viejo | Riesgo de romper lo existente | Diseñar para extensión |
+| Acumulación de `if/switch` | Código ilegible y frágil | Polimorfismo |
+| Refactorización constante | Deuda técnica | Abstracciones bien diseñadas |
+
+#### Ejemplo del dominio
+
+```java
+// ❌ VIOLACIÓN DE OCP: Cada nuevo canal de notificación requiere modificar esta clase
+
+public class NotificadorPrestamos {
+    
+    public void notificar(Prestamo prestamo, String canal) {
+        if (canal.equals("email")) {
+            String email = prestamo.getEstudiante().getEmail();
+            // Enviar por email
+            System.out.println("[EMAIL] " + email + " - Recordatorio de vencimiento");
+        } 
+        else if (canal.equals("sms")) {
+            String telefono = prestamo.getEstudiante().getTelefono();
+            // Enviar por SMS
+            System.out.println("[SMS] " + telefono + " - Recordatorio de vencimiento");
+        }
+        else if (canal.equals("whatsapp")) {
+            String telefono = prestamo.getEstudiante().getTelefono();
+            // Enviar por WhatsApp
+            System.out.println("[WHATSAPP] " + telefono + " - Recordatorio de vencimiento");
+        }
+        // Mañana: agregar Telegram, Push, etc. REQUIERE MODIFICAR ESTA CLASE
+    }
+}
+```
+
+**Problemas:**
+- Si agregas un nuevo canal (Telegram, Push), debes modificar `NotificadorPrestamos`.
+- El método crece sin control.
+- Difícil de probar cada rama del `if/else`.
+
+```java
+// ✅ APLICANDO OCP: Abierto para extensión, cerrado para modificación
+
+// Interfaz: Define el contrato que todos los canales deben cumplir
+public interface CanalNotificacion {
+    void enviar(String destinatario, String mensaje);
+    String getNombre();
+}
+
+// Implementaciones concretas: Pueden agregarse sin modificar nada existente
+public class EmailNotificacion implements CanalNotificacion {
+    @Override
+    public void enviar(String destinatario, String mensaje) {
+        System.out.println("[EMAIL] " + destinatario + " - " + mensaje);
+    }
+    
+    @Override
+    public String getNombre() {
+        return "email";
+    }
+}
+
+public class SMSNotificacion implements CanalNotificacion {
+    @Override
+    public void enviar(String destinatario, String mensaje) {
+        System.out.println("[SMS] " + destinatario + " - " + mensaje);
+    }
+    
+    @Override
+    public String getNombre() {
+        return "sms";
+    }
+}
+
+public class WhatsAppNotificacion implements CanalNotificacion {
+    @Override
+    public void enviar(String destinatario, String mensaje) {
+        System.out.println("[WHATSAPP] " + destinatario + " - " + mensaje);
+    }
+    
+    @Override
+    public String getNombre() {
+        return "whatsapp";
+    }
+}
+
+// Nuevo canal: Se agrega SIN modificar nada existente
+public class TelegramNotificacion implements CanalNotificacion {
+    @Override
+    public void enviar(String destinatario, String mensaje) {
+        System.out.println("[TELEGRAM] " + destinatario + " - " + mensaje);
+    }
+    
+    @Override
+    public String getNombre() {
+        return "telegram";
+    }
+}
+
+// Servicio: No cambia cuando se agregan nuevos canales
+public class NotificadorPrestamos {
+    private final CanalNotificacion canal;
+    
+    public NotificadorPrestamos(CanalNotificacion canal) {
+        this.canal = canal;
+    }
+    
+    public void notificarVencimiento(Prestamo prestamo) {
+        String destinatario = obtenerDestinatario(prestamo);
+        String mensaje = "Tu préstamo de '" + prestamo.getLibro().getTitulo() + 
+                        "' vence el " + prestamo.getFechaVencimiento();
+        canal.enviar(destinatario, mensaje);
+    }
+    
+    private String obtenerDestinatario(Prestamo prestamo) {
+        // La lógica es simple — el servicio es agnóstico al canal
+        return prestamo.getEstudiante().getContacto();
+    }
+}
+```
+
+**Beneficios:**
+- Agregar un nuevo canal es solo crear una clase nueva que implemente `CanalNotificacion`.
+- `NotificadorPrestamos` nunca cambia.
+- Fácil de probar — inyectamos un mock del canal.
+- Código limpio y mantenible.
+
+---
+
+### Principio 3: L — Liskov Substitution Principle (LSP)
+
+#### Concepto
+
+**Si S es un subtipo de T, entonces los objetos de tipo S pueden reemplazar a los objetos de tipo T sin alterar las propiedades deseables del programa.**
+
+En otras palabras: las subclases deben ser reemplazables por sus clases padre sin romper el código.
+
+#### ¿Por qué importa?
+
+| Problema | Impacto | Solución |
+|---|---|---|
+| Comportamiento inesperado | Código rompe cuando usas un subtipo | Respetar el contrato del tipo padre |
+| Necesidad de `instanceof` | Código frágil y acoplado a tipos | Usar polimorfismo correctamente |
+| Pruebas frágiles | Fallan cuando reemplazas implementaciones | Garantizar sustitución segura |
+
+#### Ejemplo del dominio
+
+```java
+// ❌ VIOLACIÓN DE LSP: Cuadrado viola el contrato de Rectángulo
+
+public class Rectangulo {
+    protected int ancho;
+    protected int alto;
+    
+    public void setAncho(int a) { this.ancho = a; }
+    public void setAlto(int a) { this.alto = a; }
+    public int area() { return ancho * alto; }
+}
+
+public class Cuadrado extends Rectangulo {
+    @Override
+    public void setAncho(int a) {
+        // Viola el contrato: En un rectángulo, ancho y alto son independientes
+        this.ancho = a;
+        this.alto = a;  // ← SORPRESA: también cambió el alto
+    }
+    
+    @Override
+    public void setAlto(int a) {
+        this.ancho = a;  // ← SORPRESA: también cambió el ancho
+        this.alto = a;
+    }
+}
+
+// Código cliente que espera que Rectángulo funcione correctamente
+public class CalculadorArea {
+    public int calcular(Rectangulo figura) {
+        figura.setAncho(5);
+        figura.setAlto(10);
+        return figura.area();  // Espera 50
+    }
+}
+
+// Prueba:
+Rectangulo rect = new Rectangulo();
+System.out.println(new CalculadorArea().calcular(rect));  // Imprime 50 ✓
+
+Rectangulo cuad = new Cuadrado();  // Es un Rectangulo, ¿no?
+System.out.println(new CalculadorArea().calcular(cuad));  // Imprime 100 ✗ ¡ROTO!
+```
+
+**Problemas:**
+- El código que usa `Rectangulo` espera cierto comportamiento.
+- Si reemplazas con `Cuadrado`, el comportamiento cambia.
+- La jerarquía está mal: un cuadrado no es un tipo especial de rectángulo en este contexto.
+
+```java
+// ✅ APLICANDO LSP: Usar una jerarquía correcta
+
+// Interfaz común para todas las figuras
+public interface Figura {
+    int area();
+    String getDescripcion();
+}
+
+// Implementación: Rectángulo respeta el contrato
+public class Rectangulo implements Figura {
+    private final int ancho;
+    private final int alto;
+    
+    public Rectangulo(int ancho, int alto) {
+        this.ancho = ancho;
+        this.alto = alto;
+    }
+    
+    @Override
+    public int area() {
+        return ancho * alto;
+    }
+    
+    @Override
+    public String getDescripcion() {
+        return "Rectángulo de " + ancho + "x" + alto;
+    }
+}
+
+// Implementación: Cuadrado es una figura, no un rectángulo
+public class Cuadrado implements Figura {
+    private final int lado;
+    
+    public Cuadrado(int lado) {
+        this.lado = lado;
+    }
+    
+    @Override
+    public int area() {
+        return lado * lado;
+    }
+    
+    @Override
+    public String getDescripcion() {
+        return "Cuadrado de lado " + lado;
+    }
+}
+
+// Código cliente que confía en el contrato de Figura
+public class CalculadorArea {
+    public int calcular(Figura figura) {
+        return figura.area();
+    }
+}
+
+// Prueba: Ambas figuras funcionan como se espera
+CalculadorArea calc = new CalculadorArea();
+Figura rect = new Rectangulo(5, 10);
+Figura cuad = new Cuadrado(5);
+
+System.out.println(calc.calcular(rect));  // 50 ✓
+System.out.println(calc.calcular(cuad));  // 25 ✓
+```
+
+**Beneficios:**
+- Cada implementación respeta el contrato de la interfaz.
+- El código cliente no necesita `instanceof` ni casting.
+- Fácil de reemplazar una implementación por otra.
+- Las pruebas no se rompen cuando cambias la implementación.
+
+---
+
+### Principio 4: I — Interface Segregation Principle (ISP)
+
+#### Concepto
+
+**Los clientes no deberían depender de interfaces que no usan.**
+
+Diseña interfaces pequeñas, específicas y focalizadas. Un cliente que solo necesita un método no debería verse obligado a implementar 20.
+
+#### ¿Por qué importa?
+
+| Problema | Impacto | Solución |
+|---|---|---|
+| Interfaces gigantes | Implementaciones forzadas y complejas | Segregar en interfaces pequeñas |
+| Acoplamiento innecesario | Cambios afectan a quienes no los necesitan | Interfaces por rol o caso de uso |
+| Difícil de testear | Mockear todo es engorroso | Interfaces minimalistas |
+
+#### Ejemplo del dominio
+
+```java
+// ❌ VIOLACIÓN DE ISP: Interfaz gigante
+
+public interface GestorBibliotecaCompleto {
+    // Operaciones de préstamos
+    void crearPrestamo(Estudiante e, Libro l);
+    List<Prestamo> listarPrestamosPorEstudiante(String estudianteId);
+    void devolverLibro(UUID prestamoId);
+    
+    // Operaciones de reportes
+    void generarReporteMensual();
+    void exportarEstadisticas();
+    
+    // Operaciones administrativas
+    void bloquearEstudiante(String estudianteId);
+    void desbloquearEstudiante(String estudianteId);
+    
+    // Operaciones de multas
+    BigDecimal calcularMulta(UUID prestamoId);
+    void pagarMulta(UUID prestamoId, BigDecimal monto);
+    
+    // Operaciones de notificaciones
+    void enviarNotificacion(String estudianteId, String mensaje);
+}
+
+// Un repositorio de préstamos no necesita conocer sobre notificaciones
+public class PrestamoRepository implements GestorBibliotecaCompleto {
+    @Override
+    public void crearPrestamo(Estudiante e, Libro l) { /* ... */ }
+    
+    @Override
+    public List<Prestamo> listarPrestamosPorEstudiante(String estudianteId) { /* ... */ }
+    
+    // ¿Qué es esto? ¡El repositorio no debe generar reportes!
+    @Override
+    public void generarReporteMensual() { 
+        throw new UnsupportedOperationException("No implementado"); 
+    }
+    
+    // Ni bloquear estudiantes
+    @Override
+    public void bloquearEstudiante(String estudianteId) { 
+        throw new UnsupportedOperationException("No implementado"); 
+    }
+    
+    // Ni enviar notificaciones
+    @Override
+    public void enviarNotificacion(String estudianteId, String mensaje) { 
+        throw new UnsupportedOperationException("No implementado"); 
+    }
+    
+    // ... más métodos que no pertenecen aquí
+}
+```
+
+**Problemas:**
+- El repositorio es forzado a implementar métodos que no le pertenecen.
+- El código está lleno de `UnsupportedOperationException`.
+- Cualquier cambio en la interfaz gigante afecta a todas las implementaciones.
+
+```java
+// ✅ APLICANDO ISP: Interfaces pequeñas y focalizadas
+
+// Interfaz 1: Persistencia de préstamos
+public interface PrestamoRepository {
+    void save(Prestamo prestamo);
+    Optional<Prestamo> findById(UUID id);
+    List<Prestamo> findByEstudiante(String estudianteId);
+    void delete(UUID id);
+}
+
+// Interfaz 2: Cálculo de multas
+public interface CalculadorMultas {
+    BigDecimal calcular(Prestamo prestamo);
+}
+
+// Interfaz 3: Generación de reportes
+public interface GeneradorReportes {
+    String generarReporteMensual();
+    byte[] exportarEstadisticas();
+}
+
+// Interfaz 4: Notificaciones
+public interface CanalNotificacion {
+    void enviar(String destinatario, String mensaje);
+}
+
+// Interfaz 5: Gestión de estudiantes
+public interface GestorEstudiantes {
+    void bloquear(String estudianteId);
+    void desbloquear(String estudianteId);
+}
+
+// Ahora cada clase implementa solo lo que necesita
+public class PrestamoRepository implements PrestamoRepository {
+    // Solo los métodos de persistencia de préstamos
+    @Override
+    public void save(Prestamo prestamo) { /* ... */ }
+    @Override
+    public Optional<Prestamo> findById(UUID id) { /* ... */ }
+    @Override
+    public List<Prestamo> findByEstudiante(String estudianteId) { /* ... */ }
+    @Override
+    public void delete(UUID id) { /* ... */ }
+}
+
+public class CalculadorMultasStandard implements CalculadorMultas {
+    // Solo el cálculo de multas
+    @Override
+    public BigDecimal calcular(Prestamo prestamo) {
+        // Tarifa: $100 por día de atraso, máximo $2000
+        long diasRetraso = ChronoUnit.DAYS.between(
+            prestamo.getFechaVencimiento(), 
+            LocalDate.now()
+        );
+        BigDecimal tarifa = BigDecimal.valueOf(100 * diasRetraso);
+        return tarifa.min(BigDecimal.valueOf(2000));
+    }
+}
+
+public class GeneradorReportesExcel implements GeneradorReportes {
+    // Solo reportes en Excel
+    @Override
+    public String generarReporteMensual() { /* ... */ }
+    @Override
+    public byte[] exportarEstadisticas() { /* ... */ }
+}
+```
+
+**Beneficios:**
+- Cada interfaz es pequeña y enfocada.
+- Las clases implementan solo lo que necesitan.
+- Cambios en una interfaz no afectan a las otras.
+- Fácil de entender qué responsabilidad tiene cada interfaz.
+
+---
+
+### Principio 5: D — Dependency Inversion Principle (DIP)
+
+#### Concepto
+
+**Depende de abstracciones, no de concreciones.**
+
+Las clases de alto nivel (lógica de negocio) no deberían depender de clases de bajo nivel (detalles técnicos como BD, APIs, archivos). Ambas deberían depender de abstracciones.
+
+#### ¿Por qué importa?
+
+| Problema | Impacto | Solución |
+|---|---|---|
+| Acoplamiento a tecnología | Cambiar de BD es un infierno | Depender de interfaces |
+| Difícil de testear | No puedes mockear fácilmente | Inyectar dependencias |
+| Código frágil | Cambios en infraestructura rompen el dominio | Invertir la dependencia |
+
+#### Ejemplo del dominio
+
+```java
+// ❌ VIOLACIÓN DE DIP: Dependencia de implementación concreta
+
+public class PrestamoService {
+    // ← Acoplado a MySQLPrestamoRepository directamente
+    private MySQLPrestamoRepository repository = new MySQLPrestamoRepository();
+    
+    public Prestamo crearPrestamo(Estudiante estudiante, Libro libro) {
+        // Lógica de negocio mezclada con detalles de BD
+        if (estudiante.getPrestamosActivos().size() >= 3) {
+            throw new LimitePrestamosException("Límite alcanzado");
+        }
+        Prestamo prestamo = new Prestamo(estudiante, libro, 
+                                        LocalDate.now(), 
+                                        LocalDate.now().plusDays(14));
+        repository.save(prestamo);  // Tightly coupled a MySQL
+        return prestamo;
+    }
+    
+    public Prestamo buscarPrestamo(UUID id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new PrestamoNotFoundException("No encontrado"));
+    }
+}
+
+// Problemas:
+// 1. Si cambias de MySQL a PostgreSQL, debes cambiar PrestamoService
+// 2. No puedes testear sin una BD real
+// 3. No puedes reutilizar la lógica en otro contexto (CLI, batch, etc.)
+```
+
+```java
+// ✅ APLICANDO DIP: Depender de abstracciones
+
+// Interfaz en el dominio (no depende de BD)
+public interface PrestamoRepository {
+    void save(Prestamo prestamo);
+    Optional<Prestamo> findById(UUID id);
+    List<Prestamo> findByEstudiante(String estudianteId);
+}
+
+// Implementación MySQL
+public class MySQLPrestamoRepository implements PrestamoRepository {
+    @Override
+    public void save(Prestamo prestamo) {
+        // SQL específico de MySQL
+        String sql = "INSERT INTO prestamos (id, estudiante_id, libro_id) VALUES (?, ?, ?)";
+        // ... ejecutar SQL
+    }
+    
+    @Override
+    public Optional<Prestamo> findById(UUID id) {
+        // SQL específico de MySQL
+        return Optional.empty();
+    }
+    
+    @Override
+    public List<Prestamo> findByEstudiante(String estudianteId) {
+        return Collections.emptyList();
+    }
+}
+
+// Implementación PostgreSQL (agregada sin cambiar PrestamoService)
+public class PostgreSQLPrestamoRepository implements PrestamoRepository {
+    @Override
+    public void save(Prestamo prestamo) {
+        // SQL específico de PostgreSQL
+        String sql = "INSERT INTO prestamos (id, estudiante_id, libro_id) VALUES ($1, $2, $3)";
+        // ... ejecutar SQL
+    }
+    
+    @Override
+    public Optional<Prestamo> findById(UUID id) {
+        return Optional.empty();
+    }
+    
+    @Override
+    public List<Prestamo> findByEstudiante(String estudianteId) {
+        return Collections.emptyList();
+    }
+}
+
+// Implementación en memoria (para pruebas)
+public class InMemoryPrestamoRepository implements PrestamoRepository {
+    private final Map<UUID, Prestamo> almacen = new HashMap<>();
+    
+    @Override
+    public void save(Prestamo prestamo) {
+        almacen.put(prestamo.getId(), prestamo);
+    }
+    
+    @Override
+    public Optional<Prestamo> findById(UUID id) {
+        return Optional.ofNullable(almacen.get(id));
+    }
+    
+    @Override
+    public List<Prestamo> findByEstudiante(String estudianteId) {
+        return almacen.values().stream()
+            .filter(p -> p.getEstudiante().getId().equals(estudianteId))
+            .toList();
+    }
+}
+
+// Servicio: Depende de la abstracción, NO de la implementación
+public class PrestamoService {
+    private final PrestamoRepository repository;
+    
+    // Inyección por constructor
+    public PrestamoService(PrestamoRepository repository) {
+        this.repository = repository;
+    }
+    
+    public Prestamo crearPrestamo(Estudiante estudiante, Libro libro) {
+        if (estudiante.getPrestamosActivos().size() >= 3) {
+            throw new LimitePrestamosException("Límite alcanzado");
+        }
+        Prestamo prestamo = new Prestamo(estudiante, libro, 
+                                        LocalDate.now(), 
+                                        LocalDate.now().plusDays(14));
+        repository.save(prestamo);  // Polimórfico — funciona con cualquier implementación
+        return prestamo;
+    }
+    
+    public Prestamo buscarPrestamo(UUID id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new PrestamoNotFoundException("No encontrado"));
+    }
+}
+
+// Uso:
+// En producción: usa MySQL
+PrestamoService service = new PrestamoService(new MySQLPrestamoRepository());
+
+// En desarrollo: usa PostgreSQL
+PrestamoService service = new PrestamoService(new PostgreSQLPrestamoRepository());
+
+// En pruebas: usa en memoria
+PrestamoService service = new PrestamoService(new InMemoryPrestamoRepository());
+```
+
+**Beneficios:**
+- La lógica de negocio no depende de tecnología.
+- Fácil cambiar de BD sin tocar el servicio.
+- Fácil testear con implementaciones falsas.
+- Código reutilizable en distintos contextos.
+
+---
+
+### Bloque 2 (70 min) — Ejercicios prácticos de SOLID en Java
+
+---
+
+## Ejercicios del Principio S — Single Responsibility Principle
+
+### Ejercicio S1: Refactorizar una clase con múltiples responsabilidades
+
+**Problema:** La siguiente clase `BibliotecaManager` tiene 3 responsabilidades distintas mezcladas:
+
+```java
+public class BibliotecaManager {
+    
+    public void registrarPrestamo(String estudianteId, String libroId) {
+        // Validar estudiante
+        if (estudianteId == null || estudianteId.isEmpty()) {
+            throw new IllegalArgumentException("Estudiante inválido");
+        }
+        
+        // Validar libro
+        if (libroId == null || libroId.isEmpty()) {
+            throw new IllegalArgumentException("Libro inválido");
+        }
+        
+        // Crear prestamo en BD
+        String sql = "INSERT INTO prestamos (estudiante_id, libro_id, fecha_prestamo) " +
+                    "VALUES ('" + estudianteId + "', '" + libroId + "', NOW())";
+        executeSql(sql);
+        
+        // Enviar notificación por email
+        String email = getEmailEstudiante(estudianteId);
+        System.out.println("[EMAIL] Enviando a: " + email);
+        System.out.println("Asunto: Préstamo registrado");
+        System.out.println("Cuerpo: Tu préstamo ha sido registrado exitosamente.");
+    }
+    
+    private void executeSql(String sql) {
+        // Implementación de BD
+    }
+    
+    private String getEmailEstudiante(String estudianteId) {
+        // Consulta a BD
+        return "estudiante@mail.com";
+    }
+}
+```
+
+**Tareas:**
+1. Identificar las 3 responsabilidades distintas.
+2. Crear 3 clases, una por responsabilidad.
+3. Refactorizar `BibliotecaManager` para que coordine las 3 clases.
+
+**Solución esperada:**
+```java
+// Responsabilidad 1: Validaciones
+public class ValidadorPrestamo {
+    public void validar(String estudianteId, String libroId) {
+        if (estudianteId == null || estudianteId.isEmpty()) {
+            throw new IllegalArgumentException("Estudiante inválido");
+        }
+        if (libroId == null || libroId.isEmpty()) {
+            throw new IllegalArgumentException("Libro inválido");
+        }
+    }
+}
+
+// Responsabilidad 2: Persistencia
+public class PrestamoRepository {
+    public void guardar(String estudianteId, String libroId) {
+        String sql = "INSERT INTO prestamos (estudiante_id, libro_id, fecha_prestamo) " +
+                    "VALUES (?, ?, NOW())";
+        // Usar PreparedStatement para evitar SQL injection
+    }
+}
+
+// Responsabilidad 3: Notificaciones
+public class NotificadorEmail {
+    public void notificarPrestamo(String estudianteId) {
+        String email = getEmailEstudiante(estudianteId);
+        System.out.println("[EMAIL] Enviando a: " + email);
+        System.out.println("Asunto: Préstamo registrado");
+    }
+    
+    private String getEmailEstudiante(String estudianteId) {
+        return "estudiante@mail.com";
+    }
+}
+
+// Coordinador: Solo orquesta
+public class BibliotecaManager {
+    private final ValidadorPrestamo validador;
+    private final PrestamoRepository repository;
+    private final NotificadorEmail notificador;
+    
+    public BibliotecaManager(ValidadorPrestamo validador, 
+                            PrestamoRepository repository,
+                            NotificadorEmail notificador) {
+        this.validador = validador;
+        this.repository = repository;
+        this.notificador = notificador;
+    }
+    
+    public void registrarPrestamo(String estudianteId, String libroId) {
+        validador.validar(estudianteId, libroId);
+        repository.guardar(estudianteId, libroId);
+        notificador.notificarPrestamo(estudianteId);
+    }
+}
+```
+
+---
+
+### Ejercicio S2: Identificar violaciones de SRP en un sistema real
+
+**Problema:** Analiza la siguiente clase y responde:
+```java
+public class LibroService {
+    
+    public void buscarLibros(String titulo) {
+        // 1. Consultar BD
+        String sql = "SELECT * FROM libros WHERE titulo LIKE ?";
+        List<Libro> libros = executeSql(sql, titulo);
+        
+        // 2. Filtrar por disponibilidad
+        List<Libro> disponibles = libros.stream()
+            .filter(Libro::estaDisponible)
+            .collect(Collectors.toList());
+        
+        // 3. Ordenar por rating
+        disponibles.sort((a, b) -> b.getRating() - a.getRating());
+        
+        // 4. Serializar a JSON
+        String json = convertToJson(disponibles);
+        
+        // 5. Guardar en caché
+        cache.put("busqueda_" + titulo, json);
+        
+        // 6. Registrar en log
+        logger.info("Búsqueda realizada: " + titulo + " encontrados: " + disponibles.size());
+    }
+}
+```
+
+**Tareas:**
+1. ¿Cuántas responsabilidades diferentes tiene `LibroService`?
+2. Crea una clase por responsabilidad.
+3. Escribe el código refactorizado.
+
+---
+
+### Ejercicio S3: Proyecto integrador — Sistema de gestión de multas
+
+**Problema:** Construir un sistema que calcule, registre y notifique multas de préstamos vencidos.
+
+**Requisitos:**
+- Las multas se calculan automáticamente cuando un préstamo se devuelve después de la fecha de vencimiento.
+- La tarifa es de $100 por día de atraso.
+- Las multas no pueden superar $2000 (máximo por políticas de la biblioteca).
+- El estudiante debe ser notificado cuando se genera una multa.
+- Las multas se registran en BD.
+
+**Tareas:**
+1. Crea una clase `Multa` (entidad del dominio).
+2. Crea una clase `CalculadorMultas` (responsable del cálculo).
+3. Crea una clase `RepositorioMultas` (persistencia).
+4. Crea una clase `NotificadorMultas` (notificaciones).
+5. Crea una clase `ServicioMultas` (orquestador).
+
+**Código base:**
+```java
+public class Multa {
+    private final UUID id;
+    private final UUID prestamoId;
+    private final BigDecimal monto;
+    private final LocalDateTime fechaGeneracion;
+    
+    public Multa(UUID prestamoId, BigDecimal monto) {
+        this.id = UUID.randomUUID();
+        this.prestamoId = prestamoId;
+        this.monto = monto;
+        this.fechaGeneracion = LocalDateTime.now();
+    }
+    
+    // getters...
+}
+
+// Tu tarea: Completar con las otras clases
+```
+
+---
+
+## Ejercicios del Principio O — Open/Closed Principle
+
+### Ejercicio O1: Pasar de `if/else` a polimorfismo
+
+**Problema:** La siguiente clase procesa distintos tipos de reportes:
+
+```java
+public class GeneradorReportes {
+    
+    public byte[] generar(String tipo) {
+        if (tipo.equals("pdf")) {
+            // Generar PDF: 50 líneas de código
+            return generarPDF();
+        } 
+        else if (tipo.equals("excel")) {
+            // Generar Excel: 40 líneas de código
+            return generarExcel();
+        }
+        else if (tipo.equals("csv")) {
+            // Generar CSV: 30 líneas de código
+            return generarCSV();
+        }
+        else {
+            throw new IllegalArgumentException("Tipo no soportado: " + tipo);
+        }
+    }
+    
+    private byte[] generarPDF() { /* ... */ }
+    private byte[] generarExcel() { /* ... */ }
+    private byte[] generarCSV() { /* ... */ }
+}
+```
+
+**Problemas:**
+- Cada nuevo formato requiere modificar esta clase.
+- El método `generar()` crece sin control.
+
+**Tareas:**
+1. Crea una interfaz `FormatoReporte`.
+2. Crea implementaciones para PDF, Excel y CSV.
+3. Refactoriza `GeneradorReportes` para usar polimorfismo.
+4. Demuestra que agregar un nuevo formato (JSON) requiere 0 cambios en `GeneradorReportes`.
+
+**Solución parcial:**
+```java
+public interface FormatoReporte {
+    byte[] generar(List<Prestamo> prestamos);
+    String getNombre();
+}
+
+public class ReportePDF implements FormatoReporte {
+    @Override
+    public byte[] generar(List<Prestamo> prestamos) {
+        // Implementar generación de PDF
+        return new byte[0];
+    }
+    
+    @Override
+    public String getNombre() { return "pdf"; }
+}
+
+public class GeneradorReportes {
+    private final Map<String, FormatoReporte> formatos = new HashMap<>();
+    
+    public GeneradorReportes() {
+        formatos.put("pdf", new ReportePDF());
+        formatos.put("excel", new ReporteExcel());
+        formatos.put("csv", new ReporteCSV());
+    }
+    
+    public byte[] generar(String tipo, List<Prestamo> prestamos) {
+        FormatoReporte formato = formatos.get(tipo);
+        if (formato == null) {
+            throw new IllegalArgumentException("Tipo no soportado: " + tipo);
+        }
+        return formato.generar(prestamos);
+    }
+}
+```
+
+---
+
+### Ejercicio O2: Extensión sin modificación — Sistema de descuentos
+
+**Problema:** La biblioteca quiere ofrecer distintos tipos de descuentos:
+- Por estudiante VIP: 10% de descuento en multas.
+- Por donación de libros: 5% de descuento.
+- Por primeros 10 préstamos: 15% de descuento.
+
+**Tarea:** Diseña un sistema que permita agregar nuevos descuentos SIN modificar el código existente.
+
+**Requisitos:**
+1. Crea una interfaz `EstrategiaDescuento`.
+2. Implementa los 3 descuentos mencionados.
+3. Crea un `CalculadorDescuentos` que aplique todos los descuentos registrados.
+4. Demuestra que agregar un nuevo descuento es solo crear una clase nueva.
+
+---
+
+### Ejercicio O3: Proyecto integrador — Sistema de notificaciones extensible
+
+**Problema:** La biblioteca necesita notificar a los estudiantes a través de múltiples canales. Actualmente:
+- Email
+- SMS
+- WhatsApp
+
+En el futuro pueden agregar más. El sistema debe estar preparado para extensión sin modificación.
+
+**Tareas:**
+1. Crea una interfaz `CanalNotificacion`.
+2. Implementa Email, SMS y WhatsApp.
+3. Crea un `ServicioNotificaciones` que coordine todos los canales.
+4. Demuestra que agregar Telegram requiere 0 cambios en el código existente.
+
+---
+
+## Ejercicios del Principio L — Liskov Substitution Principle
+
+### Ejercicio L1: Identificar violaciones de LSP
+
+**Problema:** Analiza el siguiente código:
+
+```java
+public class Estudiante {
+    protected String nombre;
+    protected int prestamosActivos;
+    
+    public void agregarPrestamo() {
+        prestamosActivos++;
+    }
+    
+    public int getPrestamosActivos() {
+        return prestamosActivos;
+    }
+}
+
+public class EstudianteVIP extends Estudiante {
+    @Override
+    public void agregarPrestamo() {
+        // El VIP puede tener hasta 10 préstamos, no 3
+        if (prestamosActivos >= 10) {
+            throw new LimitePrestamosException("VIP limitado a 10");
+        }
+        prestamosActivos++;
+    }
+}
+
+// Código cliente
+public void procesarPrestamo(Estudiante estudiante) {
+    if (estudiante.getPrestamosActivos() >= 3) {
+        throw new LimitePrestamosException("Límite de 3 préstamos");
+    }
+    estudiante.agregarPrestamo();  // ¿Qué sucede si es VIP?
+}
+```
+
+**Preguntas:**
+1. ¿Viola el principio de Liskov?
+2. ¿Por qué el cliente no puede confiar en el comportamiento de `Estudiante`?
+3. ¿Cómo refactorizar correctamente?
+
+---
+
+### Ejercicio L2: Garantizar sustitución segura
+
+**Problema:** Rediseña la jerarquía de empleados de una biblioteca:
+- `Empleado` (base): sueldo básico.
+- `BibliotecarioJunior` (hereda de `Empleado`): sueldo + bonificación si atiende más de 100 usuarios al mes.
+- `BibliotecarioSenior` (hereda de `Empleado`): sueldo + bonificación + comisión por libros vendidos.
+
+El siguiente código debe funcionar correctamente sin importar el tipo de empleado:
+
+```java
+public class GestorNomina {
+    public BigDecimal calcularSueldo(Empleado empleado, int usuariosAtendidos, int ventasLibros) {
+        return empleado.calcularSueldo(usuariosAtendidos, ventasLibros);
+    }
+}
+```
+
+**Tareas:**
+1. Diseña la jerarquía respetando LSP.
+2. Asegúrate de que cada subclase pueda reemplazar a `Empleado` sin sorpresas.
+3. Escribe pruebas que demuestren sustitución segura.
+
+---
+
+### Ejercicio L3: Proyecto integrador — Jerarquía de pagos
+
+**Problema:** El sistema de biblioteca permite pagar multas de distintas formas:
+- En efectivo.
+- Con tarjeta de crédito.
+- Con transferencia bancaria.
+- Con bonificación interna (puntos).
+
+Cada forma de pago tiene su propia lógica, pero todas deben cumplir el contrato de `FormaPago`:
+
+```java
+public interface FormaPago {
+    void procesar(BigDecimal monto);
+    boolean puedeRevertirse();
+    void revertir();
+    String getDescripcion();
+}
+```
+
+**Tareas:**
+1. Implementa todas las formas de pago respetando LSP.
+2. Crea un `ProcesadorPagos` que funcione con cualquier forma de pago.
+3. Asegúrate de que reemplazar una forma por otra no rompe el código cliente.
+
+---
+
+## Ejercicios del Principio I — Interface Segregation Principle
+
+### Ejercicio I1: Segregar interfaces gigantes
+
+**Problema:** La siguiente interfaz es demasiado grande:
+
+```java
+public interface RepositorioBiblioteca {
+    // Operaciones de libros
+    void guardarLibro(Libro l);
+    Libro buscarLibroPorId(UUID id);
+    List<Libro> listarTodosLosLibros();
+    
+    // Operaciones de estudiantes
+    void guardarEstudiante(Estudiante e);
+    Estudiante buscarEstudiantePorId(String id);
+    
+    // Operaciones de préstamos
+    void guardarPrestamo(Prestamo p);
+    Prestamo buscarPrestamoPorId(UUID id);
+    List<Prestamo> listarPrestamosActivos();
+    
+    // Operaciones de multas
+    void guardarMulta(Multa m);
+    List<Multa> listarMultasPorEstudiante(String estudianteId);
+    
+    // Operaciones administrativas
+    void backupBD();
+    void optimizarBD();
+}
+```
+
+**Tareas:**
+1. Segregar en 5 interfaces pequeñas y focalizadas.
+2. Crear implementaciones para cada una.
+3. Demostrar que una clase que solo necesita `RepositorioLibros` no es forzada a implementar el resto.
+
+---
+
+### Ejercicio I2: Interfaces por rol o caso de uso
+
+**Problema:** Diseña interfaces para un sistema de biblioteca desde la perspectiva de distintos roles:
+- **Estudiante:** puede buscar libros, hacer reservas.
+- **Bibliotecario:** puede prestar, devolver, registrar multas.
+- **Administrador:** puede hacer backups, ajustar configuración.
+
+**Tareas:**
+1. Crea una interfaz `ServiciosBibliotecaParaEstudiante`.
+2. Crea una interfaz `ServiciosBibliotecaParaBibliotecario`.
+3. Crea una interfaz `ServiciosBibliotecaParaAdministrador`.
+4. Asegúrate de que cada interfaz solo tiene los métodos que el rol necesita.
+
+---
+
+### Ejercicio I3: Proyecto integrador — Notificador segmentado
+
+**Problema:** El sistema de notificaciones tiene múltiples clientes con necesidades distintas:
+- El **módulo de préstamos** necesita notificar vencimientos.
+- El **módulo de multas** necesita notificar pagos.
+- El **módulo de reservas** necesita notificar disponibilidad.
+
+No todos necesitan la misma interfaz de notificación.
+
+**Tareas:**
+1. Crea interfaces segregadas para cada tipo de notificación:
+   - `NotificadorPrestamos`
+   - `NotificadorMultas`
+   - `NotificadorReservas`
+2. Crea una implementación que combine todos los canales.
+3. Demuestra que agregar un cliente nuevo no requiere cambios en las interfaces.
+
+---
+
+## Ejercicios del Principio D — Dependency Inversion Principle
+
+### Ejercicio D1: De acoplamiento a inyección de dependencias
+
+**Problema:** La siguiente clase está acoplada a una implementación concreta:
+
+```java
+public class PrestamoService {
+    // Acoplado a MySQLPrestamoRepository
+    private MySQLPrestamoRepository repository = new MySQLPrestamoRepository();
+    
+    public void registrarPrestamo(Estudiante e, Libro l) {
+        Prestamo p = new Prestamo(e, l);
+        repository.save(p);  // Solo funciona con MySQL
+    }
+    
+    public Prestamo buscarPrestamo(UUID id) {
+        return repository.findById(id);
+    }
+}
+```
+
+**Problemas:**
+- Acoplado a MySQL.
+- No se puede testear sin una BD real.
+- Cambiar a PostgreSQL requiere cambiar el código.
+
+**Tareas:**
+1. Crear interfaz `PrestamoRepository`.
+2. Implementarla para MySQL, PostgreSQL e InMemory.
+3. Refactorizar `PrestamoService` para recibir la interfaz por constructor.
+4. Demostrar que cambiando el repository no afecta `PrestamoService`.
+
+**Solución esperada:**
+```java
+public interface PrestamoRepository {
+    void save(Prestamo prestamo);
+    Optional<Prestamo> findById(UUID id);
+}
+
+public class PrestamoService {
+    private final PrestamoRepository repository;
+    
+    // Inyección por constructor
+    public PrestamoService(PrestamoRepository repository) {
+        this.repository = repository;
+    }
+    
+    public void registrarPrestamo(Estudiante e, Libro l) {
+        Prestamo p = new Prestamo(e, l);
+        repository.save(p);  // Funciona con cualquier implementación
+    }
+    
+    public Prestamo buscarPrestamo(UUID id) {
+        return repository.findById(id).orElseThrow();
+    }
+}
+
+// Uso:
+PrestamoService service = new PrestamoService(new MySQLPrestamoRepository());
+PrestamoService servicePostgres = new PrestamoService(new PostgreSQLPrestamoRepository());
+PrestamoService serviceTest = new PrestamoService(new InMemoryPrestamoRepository());
+```
+
+---
+
+### Ejercicio D2: Inyección de múltiples dependencias
+
+**Problema:** Un servicio necesita múltiples dependencias:
+
+```java
+public class ServicioCompletoPrestamos {
+    private MySQLPrestamoRepository repository;
+    private SMTPEmailService emailService;
+    private PDFReportGenerator reportGenerator;
+    
+    // Todas son instanciadas aquí — imposible de testear o reutilizar
+}
+```
+
+**Tareas:**
+1. Crear interfaces para cada dependencia.
+2. Refactorizar `ServicioCompletoPrestamos` para recibir todas por constructor.
+3. Crear implementaciones falsas para testing.
+4. Escribir una prueba unitaria que demuestre el testing sin dependencias reales.
+
+---
+
+### Ejercicio D3: Proyecto integrador — Arquitectura en capas con DIP
+
+**Problema:** Construir un sistema completo respetando DIP:
+
+```
+Presentación (Controller)
+        ↓ (depende de)
+Aplicación (UseCase)
+        ↓ (depende de)
+Dominio (Interfaces)
+        ↓ (implementadas por)
+Infraestructura (BD, Email, etc.)
+```
+
+**Tareas:**
+1. Crear el modelo de dominio del caso `RegistrarPrestamoUseCase`.
+2. Definir interfaces en el dominio (no dependencias de BD).
+3. Implementar en infraestructura (MySQL, Email, etc.).
+4. Crear un controller REST que orqueste todo.
+5. Demostrar que cambiar de BD no afecta el dominio.
+
+**Estructura esperada:**
+```java
+// DOMINIO (sin dependencias externas)
+public interface PrestamoRepository {
+    void save(Prestamo p);
+    Optional<Prestamo> findById(UUID id);
+}
+
+public class RegistrarPrestamoUseCase {
+    private final PrestamoRepository repository;
+    
+    public RegistrarPrestamoUseCase(PrestamoRepository repository) {
+        this.repository = repository;
+    }
+    
+    public void ejecutar(Estudiante e, Libro l) {
+        // Lógica de negocio pura
+        Prestamo p = new Prestamo(e, l);
+        repository.save(p);
+    }
+}
+
+// INFRAESTRUCTURA
+public class MySQLPrestamoRepository implements PrestamoRepository {
+    @Override
+    public void save(Prestamo p) { /* SQL */ }
+    
+    @Override
+    public Optional<Prestamo> findById(UUID id) { /* SQL */ }
+}
+
+// PRESENTACIÓN
+@RestController
+public class PrestamoController {
+    private final RegistrarPrestamoUseCase useCase;
+    
+    public PrestamoController(RegistrarPrestamoUseCase useCase) {
+        this.useCase = useCase;
+    }
+    
+    @PostMapping("/prestamos")
+    public ResponseEntity<Void> registrar(@RequestBody PrestamoRequest req) {
+        // Coordinar
+        useCase.ejecutar(req.getEstudiante(), req.getLibro());
+        return ResponseEntity.ok().build();
+    }
+}
+```
+
+---
+
+Ahora compila y ejecuta los ejercicios para verificar que comprendes cada principio.
+
+---
+
 ## CLASE 5 — Patrones GRASP: asignación de responsabilidades
 **Duración:** 2 horas | **Unidad:** 1 — Modelo del dominio y diseño
 

@@ -18,7 +18,7 @@ Para un sistema de pagos de servicios publicos, en donde existen entidades como 
 - Construir los diagramas de secuencia
 
 **Fase 3 Implementacion**
-- Construccion del diagrama de arquitectura de software (Arquitectura cliente servidor, por capas, hexagonal, limpia, etc)
+- Desarrollar el codigo en java
 - Entrega del repositorio con el codigo fuente
 - Entrega de los archivos SQL
 
