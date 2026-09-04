@@ -872,90 +872,413 @@ SOLID es un conjunto de cinco principios para diseñar clases con responsabilida
 
 Una responsabilidad es una razón de cambio. `Factura` puede conocer su total; no debería enviar correos ni guardar datos. La separación permite probar cada decisión aisladamente.
 
-**Tres ejemplos Java:**
+**Ejemplo 1 — Separación de cálculo y persistencia:**
 
 ```java
-final class CalculadorFactura {
-  double total(Factura factura) { return factura.base() + factura.impuesto(); }
+record Factura(double base, double impuesto) {
+  double total() {
+    return base + impuesto;
+  }
 }
-final class FacturaRepository { void guardar(Factura factura) { /* SQL */ } }
+
+final class CalculadorFactura {
+  double total(Factura factura) {
+    return factura.base() + factura.impuesto();
+  }
+}
+
+final class FacturaRepository {
+  void guardar(Factura factura) {
+    // Guardar en base de datos SQL
+    System.out.println("Guardando factura: " + factura.total());
+  }
+}
+
+public class EjemploS1 {
+  public static void main(String[] args) {
+    Factura f = new Factura(1000, 200);
+    CalculadorFactura calc = new CalculadorFactura();
+    FacturaRepository repo = new FacturaRepository();
+    
+    System.out.println("Total: " + calc.total(f));
+    repo.guardar(f);
+  }
+}
 ```
 
+**Ejemplo 2 — Separación de pago y notificación:**
+
 ```java
+interface MedioPago {
+  void cobrar(double valor);
+}
+
 final class PagoService {
   private final MedioPago medio;
-  PagoService(MedioPago medio) { this.medio = medio; }
-  void pagar(Factura factura) { medio.cobrar(factura.total()); }
+  
+  PagoService(MedioPago medio) {
+    this.medio = medio;
+  }
+  
+  void pagar(double cantidad) {
+    this.medio.cobrar(cantidad);
+  }
 }
-final class Notificador { void confirmar(Pago pago) { /* correo o SMS */ } }
+
+final class Notificador {
+  void confirmar(double monto) {
+    System.out.println("Notificando pago por: $" + monto);
+  }
+}
+
+final class PagoPSE implements MedioPago {
+  @Override
+  public void cobrar(double valor) {
+    System.out.println("Cobrando por PSE: $" + valor);
+  }
+}
+
+public class EjemploS2 {
+  public static void main(String[] args) {
+    PagoService pagos = new PagoService(new PagoPSE());
+    Notificador notificador = new Notificador();
+    
+    pagos.pagar(5000);
+    notificador.confirmar(5000);
+  }
+}
 ```
+
+**Ejemplo 3 — Reporte de estado de cuenta:**
 
 ```java
 record Cliente(String id, String nombre) {}
-final class EstadoCuentaReport { String generar(Cliente cliente, Cuenta cuenta) {
-  return cliente.nombre() + ": " + cuenta.saldo();
-} }
+
+record Cuenta(double saldo) {}
+
+final class EstadoCuentaReport {
+  String generar(Cliente cliente, Cuenta cuenta) {
+    return cliente.nombre() + ": $" + cuenta.saldo();
+  }
+}
+
+public class EjemploS3 {
+  public static void main(String[] args) {
+    Cliente client = new Cliente("C001", "Juan Pérez");
+    Cuenta cuenta = new Cuenta(50000);
+    EstadoCuentaReport report = new EstadoCuentaReport();
+    
+    System.out.println(report.generar(client, cuenta));
+  }
+}
 ```
 
 #### O — Open/Closed Principle
 
 El sistema debe permitir agregar una variante mediante una nueva implementación, sin reabrir y modificar la regla que ya funciona.
 
-**Tres ejemplos Java:**
+**Ejemplo 1 — Cálculo de intereses por tipo de cuenta:**
 
 ```java
-interface ReglaInteres { double calcular(double saldo); }
+interface ReglaInteres {
+  double calcular(double saldo);
+}
+
 final class InteresAhorros implements ReglaInteres {
-  public double calcular(double saldo) { return saldo * .04; }
+  @Override
+  public double calcular(double saldo) {
+    return saldo * 0.04; // 4% anual
+  }
 }
+
 final class InteresCorriente implements ReglaInteres {
-  public double calcular(double saldo) { return 0; }
+  @Override
+  public double calcular(double saldo) {
+    return 0; // Sin intereses
+  }
+}
+
+final class InteresEmpresarial implements ReglaInteres {
+  @Override
+  public double calcular(double saldo) {
+    return saldo * 0.02; // 2% anual
+  }
+}
+
+final class CalculadorInteres {
+  double calcularMesActual(ReglaInteres regla, double saldo) {
+    return regla.calcular(saldo) / 12;
+  }
+}
+
+public class EjemploO1 {
+  public static void main(String[] args) {
+    CalculadorInteres calc = new CalculadorInteres();
+    
+    ReglaInteres ahorros = new InteresAhorros();
+    ReglaInteres corriente = new InteresCorriente();
+    ReglaInteres empresarial = new InteresEmpresarial();
+    
+    System.out.println("Interés ahorros: $" + calc.calcularMesActual(ahorros, 10000));
+    System.out.println("Interés corriente: $" + calc.calcularMesActual(corriente, 10000));
+    System.out.println("Interés empresarial: $" + calc.calcularMesActual(empresarial, 10000));
+  }
 }
 ```
 
-```java
-interface MedioPago { void cobrar(double valor); }
-final class PagoPSE implements MedioPago { public void cobrar(double v) { /* PSE */ } }
-final class PagoTarjeta implements MedioPago { public void cobrar(double v) { /* tarjeta */ } }
-final class Procesador { void ejecutar(MedioPago m, double v) { m.cobrar(v); } }
-```
+**Ejemplo 2 — Medios de pago extensibles:**
 
 ```java
-interface Descuento { double aplicar(double total); }
+interface MedioPago {
+  void cobrar(double valor);
+}
+
+final class PagoPSE implements MedioPago {
+  @Override
+  public void cobrar(double valor) {
+    System.out.println("Procesando PSE: $" + valor);
+  }
+}
+
+final class PagoTarjeta implements MedioPago {
+  @Override
+  public void cobrar(double valor) {
+    System.out.println("Procesando Tarjeta: $" + valor);
+  }
+}
+
+final class PagoBilletera implements MedioPago {
+  @Override
+  public void cobrar(double valor) {
+    System.out.println("Procesando Billetera Digital: $" + valor);
+  }
+}
+
+final class Procesador {
+  void ejecutar(MedioPago medio, double valor) {
+    medio.cobrar(valor);
+  }
+}
+
+public class EjemploO2 {
+  public static void main(String[] args) {
+    Procesador proc = new Procesador();
+    
+    proc.ejecutar(new PagoPSE(), 5000);
+    proc.ejecutar(new PagoTarjeta(), 3000);
+    proc.ejecutar(new PagoBilletera(), 2000);
+  }
+}
+```
+
+**Ejemplo 3 — Sistema de descuentos:**
+
+```java
+interface Descuento {
+  double aplicar(double total);
+}
+
 final class DescuentoAdultoMayor implements Descuento {
-  public double aplicar(double total) { return total * .9; }
+  @Override
+  public double aplicar(double total) {
+    return total * 0.9; // 10% descuento
+  }
 }
-final class Totalizador { double total(double base, Descuento d) { return d.aplicar(base); } }
+
+final class DescuentoClienteFrecuente implements Descuento {
+  @Override
+  public double aplicar(double total) {
+    return total * 0.95; // 5% descuento
+  }
+}
+
+final class DescuentoEstudiantil implements Descuento {
+  @Override
+  public double aplicar(double total) {
+    return total * 0.85; // 15% descuento
+  }
+}
+
+final class Totalizador {
+  double total(double base, Descuento descuento) {
+    return descuento.aplicar(base);
+  }
+}
+
+public class EjemploO3 {
+  public static void main(String[] args) {
+    Totalizador totalizador = new Totalizador();
+    
+    System.out.println("Total AdultoMayor: $" + totalizador.total(10000, new DescuentoAdultoMayor()));
+    System.out.println("Total Cliente Frecuente: $" + totalizador.total(10000, new DescuentoClienteFrecuente()));
+    System.out.println("Total Estudiante: $" + totalizador.total(10000, new DescuentoEstudiantil()));
+  }
+}
 ```
 
 #### L — Liskov Substitution Principle
 
 La herencia conserva el contrato: precondiciones no más estrictas, resultados válidos y excepciones compatibles. Si `Cuenta` permite retirar dentro del saldo, una subclase no debe romper esa expectativa.
 
-**Tres ejemplos Java:**
+**Ejemplo 1 — Tipos de cuenta intercambiables:**
 
 ```java
-abstract class Cuenta { protected double saldo; double saldo() { return saldo; } }
-final class CuentaAhorros extends Cuenta { }
-final class CuentaCorriente extends Cuenta { }
-double consultar(Cuenta cuenta) { return cuenta.saldo(); }
+abstract class Cuenta {
+  protected double saldo;
+  
+  Cuenta(double saldoInicial) {
+    this.saldo = saldoInicial;
+  }
+  
+  double saldo() {
+    return saldo;
+  }
+  
+  abstract double calcularInteres();
+}
+
+final class CuentaAhorros extends Cuenta {
+  CuentaAhorros(double saldoInicial) {
+    super(saldoInicial);
+  }
+  
+  @Override
+  double calcularInteres() {
+    return saldo * 0.04;
+  }
+}
+
+final class CuentaCorriente extends Cuenta {
+  CuentaCorriente(double saldoInicial) {
+    super(saldoInicial);
+  }
+  
+  @Override
+  double calcularInteres() {
+    return 0;
+  }
+}
+
+final class ConsultaSaldo {
+  double consultar(Cuenta cuenta) {
+    return cuenta.saldo();
+  }
+}
+
+public class EjemploL1 {
+  public static void main(String[] args) {
+    ConsultaSaldo consultor = new ConsultaSaldo();
+    
+    Cuenta ahorros = new CuentaAhorros(10000);
+    Cuenta corriente = new CuentaCorriente(10000);
+    
+    System.out.println("Saldo Ahorros: $" + consultor.consultar(ahorros));
+    System.out.println("Saldo Corriente: $" + consultor.consultar(corriente));
+  }
+}
 ```
 
+**Ejemplo 2 — Retiros respetando el contrato:**
+
 ```java
-interface Retirable { boolean retirar(double valor); }
+interface Retirable {
+  boolean retirar(double valor);
+}
+
 final class CuentaConSaldo implements Retirable {
   private double saldo = 100;
-  public boolean retirar(double valor) { if (valor > saldo) return false; saldo -= valor; return true; }
+  
+  @Override
+  public boolean retirar(double valor) {
+    if (valor <= 0) {
+      return false;
+    }
+    if (valor > saldo) {
+      return false;
+    }
+    saldo -= valor;
+    return true;
+  }
+  
+  double saldo() {
+    return saldo;
+  }
+}
+
+final class CuentaSobregirada implements Retirable {
+  private double saldo = 100;
+  private double limite = 500;
+  
+  @Override
+  public boolean retirar(double valor) {
+    if (valor <= 0) {
+      return false;
+    }
+    if (valor > saldo + limite) {
+      return false;
+    }
+    saldo -= valor;
+    return true;
+  }
+  
+  double saldo() {
+    return saldo;
+  }
+}
+
+public class EjemploL2 {
+  public static void main(String[] args) {
+    Retirable cuenta1 = new CuentaConSaldo();
+    Retirable cuenta2 = new CuentaSobregirada();
+    
+    System.out.println("Retiro $50: " + cuenta1.retirar(50));
+    System.out.println("Retiro $200: " + cuenta2.retirar(200));
+  }
 }
 ```
 
+**Ejemplo 3 — Capacidad de pago intercambiable:**
+
 ```java
-interface CuentaPagadora { boolean puedePagar(double valor); }
-final class Ahorros implements CuentaPagadora {
-  public boolean puedePagar(double valor) { return valor >= 0; }
+interface CuentaPagadora {
+  boolean puedePagar(double valor);
 }
+
+final class Ahorros implements CuentaPagadora {
+  private double saldo = 5000;
+  
+  @Override
+  public boolean puedePagar(double valor) {
+    return valor >= 0 && valor <= saldo;
+  }
+}
+
 final class Corriente implements CuentaPagadora {
-  public boolean puedePagar(double valor) { return valor >= 0; }
+  private double saldo = 3000;
+  private double limite = 2000;
+  
+  @Override
+  public boolean puedePagar(double valor) {
+    return valor >= 0 && valor <= (saldo + limite);
+  }
+}
+
+final class ProcesadorPagos {
+  boolean procesar(CuentaPagadora cuenta, double monto) {
+    return cuenta.puedePagar(monto);
+  }
+}
+
+public class EjemploL3 {
+  public static void main(String[] args) {
+    ProcesadorPagos proc = new ProcesadorPagos();
+    
+    CuentaPagadora ahorros = new Ahorros();
+    CuentaPagadora corriente = new Corriente();
+    
+    System.out.println("Ahorros puede pagar $2000: " + proc.procesar(ahorros, 2000));
+    System.out.println("Corriente puede pagar $4500: " + proc.procesar(corriente, 4500));
+  }
 }
 ```
 
@@ -963,30 +1286,173 @@ final class Corriente implements CuentaPagadora {
 
 Una interfaz debe representar un rol pequeño. Consultar una factura no debería obligar a implementar conciliación, auditoría y notificaciones.
 
-**Tres ejemplos Java:**
+**Ejemplo 1 — Interfaces segregadas de lectura y escritura:**
 
 ```java
-interface FacturaReader { Factura buscar(String id); }
-interface FacturaWriter { void guardar(Factura factura); }
+record Factura(String id, double total) {}
+
+interface FacturaReader {
+  Factura buscar(String id);
+}
+
+interface FacturaWriter {
+  void guardar(Factura factura);
+}
+
+final class FacturaRepositorio implements FacturaReader, FacturaWriter {
+  private java.util.Map<String, Factura> datos = new java.util.HashMap<>();
+  
+  @Override
+  public Factura buscar(String id) {
+    return datos.get(id);
+  }
+  
+  @Override
+  public void guardar(Factura factura) {
+    datos.put(factura.id(), factura);
+  }
+}
+
 final class FacturaConsulta implements FacturaReader {
-  public Factura buscar(String id) { return null; }
+  private final FacturaReader reader;
+  
+  FacturaConsulta(FacturaReader reader) {
+    this.reader = reader;
+  }
+  
+  @Override
+  public Factura buscar(String id) {
+    return reader.buscar(id);
+  }
+}
+
+public class EjemploI1 {
+  public static void main(String[] args) {
+    FacturaRepositorio repo = new FacturaRepositorio();
+    Factura f = new Factura("F001", 5000);
+    
+    repo.guardar(f);
+    
+    FacturaConsulta consulta = new FacturaConsulta(repo);
+    Factura encontrada = consulta.buscar("F001");
+    System.out.println("Factura: " + encontrada);
+  }
 }
 ```
 
+**Ejemplo 2 — Canales de notificación segregados:**
+
 ```java
-interface NotificadorEmail { void enviar(String destino, String mensaje); }
-interface NotificadorSms { void enviarSms(String telefono, String mensaje); }
+interface NotificadorEmail {
+  void enviar(String destino, String mensaje);
+}
+
+interface NotificadorSms {
+  void enviarSms(String telefono, String mensaje);
+}
+
 final class ClienteEmail implements NotificadorEmail {
-  public void enviar(String d, String m) { /* SMTP */ }
+  @Override
+  public void enviar(String destino, String mensaje) {
+    System.out.println("Email a " + destino + ": " + mensaje);
+  }
+}
+
+final class ClienteSms implements NotificadorSms {
+  @Override
+  public void enviarSms(String telefono, String mensaje) {
+    System.out.println("SMS a " + telefono + ": " + mensaje);
+  }
+}
+
+final class ConfirmacionPago {
+  private final NotificadorEmail email;
+  
+  ConfirmacionPago(NotificadorEmail email) {
+    this.email = email;
+  }
+  
+  void confirmar(String email, double monto) {
+    this.email.enviar(email, "Pago de $" + monto + " confirmado");
+  }
+}
+
+public class EjemploI2 {
+  public static void main(String[] args) {
+    NotificadorEmail email = new ClienteEmail();
+    NotificadorSms sms = new ClienteSms();
+    
+    ConfirmacionPago conf = new ConfirmacionPago(email);
+    conf.confirmar("user@email.com", 5000);
+    
+    sms.enviarSms("+573001234567", "Pago de $5000 confirmado");
+  }
 }
 ```
 
+**Ejemplo 3 — Interfaces específicas por capacidad:**
+
 ```java
-interface PuedeAhorrar { void depositar(double valor); }
-interface PuedeSobregirar { double cupoDisponible(); }
-final class CuentaCorrienteService implements PuedeAhorrar, PuedeSobregirar {
-  public void depositar(double v) { }
-  public double cupoDisponible() { return 500000; }
+interface PuedeAhorrar {
+  void depositar(double valor);
+}
+
+interface PuedeSobregirar {
+  double cupoDisponible();
+}
+
+interface PuedeConsultar {
+  double consultarSaldo();
+}
+
+final class CuentaAhorrosService implements PuedeAhorrar, PuedeConsultar {
+  private double saldo = 0;
+  
+  @Override
+  public void depositar(double valor) {
+    saldo += valor;
+    System.out.println("Depositado: $" + valor);
+  }
+  
+  @Override
+  public double consultarSaldo() {
+    return saldo;
+  }
+}
+
+final class CuentaCorrienteService implements PuedeAhorrar, PuedeSobregirar, PuedeConsultar {
+  private double saldo = 0;
+  private final double limite = 500000;
+  
+  @Override
+  public void depositar(double valor) {
+    saldo += valor;
+    System.out.println("Depositado: $" + valor);
+  }
+  
+  @Override
+  public double cupoDisponible() {
+    return limite - Math.max(0, -saldo);
+  }
+  
+  @Override
+  public double consultarSaldo() {
+    return saldo;
+  }
+}
+
+public class EjemploI3 {
+  public static void main(String[] args) {
+    PuedeAhorrar ahorros = new CuentaAhorrosService();
+    PuedeAhorrar corriente = new CuentaCorrienteService();
+    
+    ahorros.depositar(10000);
+    corriente.depositar(5000);
+    
+    if (corriente instanceof PuedeSobregirar) {
+      System.out.println("Cupo disponible: $" + ((PuedeSobregirar)corriente).cupoDisponible());
+    }
+  }
 }
 ```
 
@@ -994,31 +1460,157 @@ final class CuentaCorrienteService implements PuedeAhorrar, PuedeSobregirar {
 
 Las reglas de pago pertenecen al dominio; PostgreSQL, PSE o correo son detalles reemplazables. La inversión se logra definiendo puertos y pasando implementaciones por constructor.
 
-**Tres ejemplos Java:**
+**Ejemplo 1 — Desacoplamiento de persistencia:**
 
 ```java
-interface PagoRepository { void guardar(Pago pago); }
+record Pago(String id, double valor) {}
+
+interface PagoRepository {
+  void guardar(Pago pago);
+}
+
 final class PagoService {
-  private final PagoRepository pagos;
-  PagoService(PagoRepository pagos) { this.pagos = pagos; }
-  void registrar(Pago pago) { pagos.guardar(pago); }
+  private final PagoRepository repository;
+  
+  PagoService(PagoRepository repository) {
+    this.repository = repository;
+  }
+  
+  void registrar(Pago pago) {
+    repository.guardar(pago);
+  }
+}
+
+final class PagoRepositoryPostgres implements PagoRepository {
+  @Override
+  public void guardar(Pago pago) {
+    System.out.println("Guardando en PostgreSQL: " + pago);
+  }
+}
+
+final class PagoRepositoryMemoria implements PagoRepository {
+  private java.util.List<Pago> datos = new java.util.ArrayList<>();
+  
+  @Override
+  public void guardar(Pago pago) {
+    datos.add(pago);
+    System.out.println("Guardando en memoria: " + pago);
+  }
+}
+
+public class EjemploD1 {
+  public static void main(String[] args) {
+    PagoService servicioPostgres = new PagoService(new PagoRepositoryPostgres());
+    PagoService servicioMemoria = new PagoService(new PagoRepositoryMemoria());
+    
+    Pago p = new Pago("P001", 5000);
+    servicioPostgres.registrar(p);
+    servicioMemoria.registrar(p);
+  }
 }
 ```
 
+**Ejemplo 2 — Desacoplamiento de pasarela de pagos:**
+
 ```java
-interface Pasarela { String autorizar(double valor); }
+record Factura(String id, double total) {}
+
+interface Pasarela {
+  String autorizar(double valor);
+}
+
 final class PagarFactura {
   private final Pasarela pasarela;
-  PagarFactura(Pasarela pasarela) { this.pasarela = pasarela; }
-  String ejecutar(Factura f) { return pasarela.autorizar(f.total()); }
+  
+  PagarFactura(Pasarela pasarela) {
+    this.pasarela = pasarela;
+  }
+  
+  String ejecutar(Factura factura) {
+    return pasarela.autorizar(factura.total());
+  }
+}
+
+final class PasarelaPSE implements Pasarela {
+  @Override
+  public String autorizar(double valor) {
+    return "PSE autorizado: $" + valor;
+  }
+}
+
+final class PasarelaTarjeta implements Pasarela {
+  @Override
+  public String autorizar(double valor) {
+    return "Tarjeta autorizada: $" + valor;
+  }
+}
+
+public class EjemploD2 {
+  public static void main(String[] args) {
+    PagarFactura pagarConPse = new PagarFactura(new PasarelaPSE());
+    PagarFactura pagarConTarjeta = new PagarFactura(new PasarelaTarjeta());
+    
+    Factura f = new Factura("F001", 10000);
+    
+    System.out.println(pagarConPse.ejecutar(f));
+    System.out.println(pagarConTarjeta.ejecutar(f));
+  }
 }
 ```
 
+**Ejemplo 3 — Composición de dependencias inyectadas:**
+
 ```java
-final class PagoRepositoryMemoria implements PagoRepository {
-  public void guardar(Pago pago) { /* lista en memoria */ }
+interface PagoRepository {
+  void guardar(Pago pago);
 }
-record Pago(String id, double valor) {}
+
+interface Notificador {
+  void notificar(Pago pago);
+}
+
+final class PagoProcesado {
+  private final PagoRepository repository;
+  private final Notificador notificador;
+  
+  PagoProcesado(PagoRepository repository, Notificador notificador) {
+    this.repository = repository;
+    this.notificador = notificador;
+  }
+  
+  void procesar(Pago pago) {
+    repository.guardar(pago);
+    notificador.notificar(pago);
+  }
+}
+
+final class NotificadorConsola implements Notificador {
+  @Override
+  public void notificar(Pago pago) {
+    System.out.println("Pago procesado: " + pago);
+  }
+}
+
+final class PagoRepositoryMemoria implements PagoRepository {
+  private java.util.List<Pago> datos = new java.util.ArrayList<>();
+  
+  @Override
+  public void guardar(Pago pago) {
+    datos.add(pago);
+  }
+}
+
+public class EjemploD3 {
+  public static void main(String[] args) {
+    PagoProcesado procesador = new PagoProcesado(
+      new PagoRepositoryMemoria(),
+      new NotificadorConsola()
+    );
+    
+    Pago p = new Pago("P001", 5000);
+    procesador.procesar(p);
+  }
+}
 ```
 
 ### Actividad: SOLID en el sistema de pagos de servicios públicos
@@ -1059,11 +1651,61 @@ Los patrones GoF son soluciones de diseño nombradas para problemas recurrentes.
 Provee familias de objetos relacionados sin acoplar el cliente a clases concretas.
 
 ```java
-interface WidgetFactory { Boton boton(); Campo campo(); }
-record Boton(String estilo) {} record Campo(String estilo) {}
-final class WebFactory implements WidgetFactory { public Boton boton(){return new Boton("web");} public Campo campo(){return new Campo("web");} }
-final class MovilFactory implements WidgetFactory { public Boton boton(){return new Boton("movil");} public Campo campo(){return new Campo("movil");} }
-// Tres usos: WebFactory, MovilFactory y una factory de facturacion empresarial.
+record Boton(String estilo) {}
+record Campo(String estilo) {}
+
+interface WidgetFactory {
+  Boton boton();
+  Campo campo();
+}
+
+final class WebFactory implements WidgetFactory {
+  @Override
+  public Boton boton() {
+    return new Boton("web");
+  }
+  
+  @Override
+  public Campo campo() {
+    return new Campo("web");
+  }
+}
+
+final class MovilFactory implements WidgetFactory {
+  @Override
+  public Boton boton() {
+    return new Boton("movil");
+  }
+  
+  @Override
+  public Campo campo() {
+    return new Campo("movil");
+  }
+}
+
+final class ReporteFactory implements WidgetFactory {
+  @Override
+  public Boton boton() {
+    return new Boton("reporte");
+  }
+  
+  @Override
+  public Campo campo() {
+    return new Campo("reporte");
+  }
+}
+
+public class EjemploAbstractFactory {
+  public static void main(String[] args) {
+    WidgetFactory web = new WebFactory();
+    WidgetFactory movil = new MovilFactory();
+    WidgetFactory reporte = new ReporteFactory();
+    
+    System.out.println("Web: " + web.boton() + " | " + web.campo());
+    System.out.println("Móvil: " + movil.boton() + " | " + movil.campo());
+    System.out.println("Reporte: " + reporte.boton() + " | " + reporte.campo());
+  }
+}
 ```
 
 #### Builder
@@ -1071,13 +1713,72 @@ final class MovilFactory implements WidgetFactory { public Boton boton(){return 
 Construye objetos complejos paso a paso y evita constructores con muchos parámetros.
 
 ```java
-final class SolicitudPago { final String factura; final String cuenta; final boolean notificar;
-  private SolicitudPago(Builder b){factura=b.factura; cuenta=b.cuenta; notificar=b.notificar;}
-  static class Builder { String factura, cuenta; boolean notificar;
-    Builder factura(String v){factura=v;return this;} Builder cuenta(String v){cuenta=v;return this;}
-    Builder notificar(){notificar=true;return this;} SolicitudPago build(){return new SolicitudPago(this);} }
+final class SolicitudPago {
+  final String factura;
+  final String cuenta;
+  final boolean notificar;
+  
+  private SolicitudPago(Builder builder) {
+    this.factura = builder.factura;
+    this.cuenta = builder.cuenta;
+    this.notificar = builder.notificar;
+  }
+  
+  static class Builder {
+    String factura;
+    String cuenta;
+    boolean notificar = false;
+    
+    Builder factura(String factura) {
+      this.factura = factura;
+      return this;
+    }
+    
+    Builder cuenta(String cuenta) {
+      this.cuenta = cuenta;
+      return this;
+    }
+    
+    Builder notificar() {
+      this.notificar = true;
+      return this;
+    }
+    
+    SolicitudPago build() {
+      return new SolicitudPago(this);
+    }
+  }
+  
+  @Override
+  public String toString() {
+    return "SolicitudPago{" + "factura='" + factura + "'" +
+           ", cuenta='" + cuenta + "'" +
+           ", notificar=" + notificar + "}";
+  }
 }
-// Tres usos: construir solo factura, factura+cuenta y una solicitud con notificacion.
+
+public class EjemploBuilder {
+  public static void main(String[] args) {
+    SolicitudPago solo_factura = new SolicitudPago.Builder()
+      .factura("F001")
+      .build();
+    
+    SolicitudPago factura_cuenta = new SolicitudPago.Builder()
+      .factura("F001")
+      .cuenta("CTA001")
+      .build();
+    
+    SolicitudPago completa = new SolicitudPago.Builder()
+      .factura("F001")
+      .cuenta("CTA001")
+      .notificar()
+      .build();
+    
+    System.out.println(solo_factura);
+    System.out.println(factura_cuenta);
+    System.out.println(completa);
+  }
+}
 ```
 
 #### Factory Method
@@ -1085,11 +1786,50 @@ final class SolicitudPago { final String factura; final String cuenta; final boo
 Delega a subclases la creación del producto que el flujo necesita.
 
 ```java
-interface Validador { boolean valida(String dato); }
-abstract class Servicio { abstract Validador crearValidador(); boolean ejecutar(String d){return crearValidador().valida(d);} }
-final class ServicioFactura extends Servicio { Validador crearValidador(){return d -> d.startsWith("FAC-");} }
-final class ServicioPago extends Servicio { Validador crearValidador(){return d -> d.startsWith("PAG-");} }
-// Tres usos: ServicioFactura, ServicioPago y una futura subclase ServicioCliente.
+interface Validador {
+  boolean valida(String dato);
+}
+
+abstract class Servicio {
+  abstract Validador crearValidador();
+  
+  boolean ejecutar(String dato) {
+    return crearValidador().valida(dato);
+  }
+}
+
+final class ServicioFactura extends Servicio {
+  @Override
+  Validador crearValidador() {
+    return dato -> dato.startsWith("FAC-");
+  }
+}
+
+final class ServicioPago extends Servicio {
+  @Override
+  Validador crearValidador() {
+    return dato -> dato.startsWith("PAG-");
+  }
+}
+
+final class ServicioCliente extends Servicio {
+  @Override
+  Validador crearValidador() {
+    return dato -> dato.startsWith("CLI-");
+  }
+}
+
+public class EjemploFactoryMethod {
+  public static void main(String[] args) {
+    Servicio factura = new ServicioFactura();
+    Servicio pago = new ServicioPago();
+    Servicio cliente = new ServicioCliente();
+    
+    System.out.println("FAC-001 es factura: " + factura.ejecutar("FAC-001"));
+    System.out.println("PAG-001 es pago: " + pago.ejecutar("PAG-001"));
+    System.out.println("CLI-001 es cliente: " + cliente.ejecutar("CLI-001"));
+  }
+}
 ```
 
 #### Prototype
@@ -1098,9 +1838,22 @@ Crea objetos nuevos copiando una instancia configurada.
 
 ```java
 record PlantillaFactura(String empresa, double impuesto) {
-  PlantillaFactura copia(){return new PlantillaFactura(empresa, impuesto);}
+  PlantillaFactura copia() {
+    return new PlantillaFactura(empresa, impuesto);
+  }
 }
-// Tres usos: copia de plantilla de agua, energia y gas con configuraciones distintas.
+
+public class EjemploPrototype {
+  public static void main(String[] args) {
+    PlantillaFactura agua = new PlantillaFactura("Agua", 0.02);
+    PlantillaFactura energia = agua.copia();
+    PlantillaFactura gas = new PlantillaFactura("Gas", 0.03).copia();
+    
+    System.out.println("Agua: " + agua);
+    System.out.println("Energía (copia): " + energia);
+    System.out.println("Gas (copia): " + gas);
+  }
+}
 ```
 
 #### Singleton
@@ -1108,8 +1861,51 @@ record PlantillaFactura(String empresa, double impuesto) {
 Garantiza una única instancia controlada. Debe reservarse para un recurso realmente único y no para esconder dependencias globales.
 
 ```java
-enum RelojSistema { INSTANCIA; long ahora(){return System.currentTimeMillis();} }
-// Tres usos controlados: reloj, configuracion inmutable y registro de metricas.
+enum RelojSistema {
+  INSTANCIA;
+  
+  public long ahora() {
+    return System.currentTimeMillis();
+  }
+}
+
+final class Configuracion {
+  private static final Configuracion INSTANCIA = new Configuracion();
+  private String ambiente = "produccion";
+  
+  private Configuracion() {}
+  
+  static Configuracion instancia() {
+    return INSTANCIA;
+  }
+  
+  String ambiente() {
+    return ambiente;
+  }
+}
+
+final class Metricas {
+  static final Metricas INSTANCIA = new Metricas();
+  private int contador = 0;
+  
+  private Metricas() {}
+  
+  void contar(String evento) {
+    contador++;
+    System.out.println("Evento: " + evento + " (Total: " + contador + ")");
+  }
+}
+
+public class EjemploSingleton {
+  public static void main(String[] args) {
+    System.out.println("Hora actual: " + RelojSistema.INSTANCIA.ahora());
+    System.out.println("Ambiente: " + Configuracion.instancia().ambiente());
+    
+    Metricas.INSTANCIA.contar("pago");
+    Metricas.INSTANCIA.contar("consulta");
+    Metricas.INSTANCIA.contar("pago");
+  }
+}
 ```
 
 #### Adapter
@@ -1117,10 +1913,57 @@ enum RelojSistema { INSTANCIA; long ahora(){return System.currentTimeMillis();} 
 Convierte la interfaz de un proveedor en la interfaz que espera el dominio.
 
 ```java
-interface Pasarela { void cobrar(double valor); }
-final class ProveedorPse { void debitarEnPesos(double v){ } }
-final class PseAdapter implements Pasarela { private final ProveedorPse p=new ProveedorPse(); public void cobrar(double v){p.debitarEnPesos(v);} }
-// Tres usos: adaptar PSE, tarjeta legacy y billetera digital a Pasarela.
+interface Pasarela {
+  void cobrar(double valor);
+}
+
+final class ProveedorPse {
+  void debitarEnPesos(double pesos) {
+    System.out.println("PSE debitó: $" + pesos);
+  }
+}
+
+final class PseAdapter implements Pasarela {
+  private final ProveedorPse proveedor;
+  
+  PseAdapter(ProveedorPse proveedor) {
+    this.proveedor = proveedor;
+  }
+  
+  @Override
+  public void cobrar(double valor) {
+    proveedor.debitarEnPesos(valor);
+  }
+}
+
+final class TarjetaLegacy {
+  void chargeInCents(long cents) {
+    System.out.println("Tarjeta cargada: $" + (cents / 100.0));
+  }
+}
+
+final class TarjetaAdapter implements Pasarela {
+  private final TarjetaLegacy tarjeta;
+  
+  TarjetaAdapter(TarjetaLegacy tarjeta) {
+    this.tarjeta = tarjeta;
+  }
+  
+  @Override
+  public void cobrar(double valor) {
+    tarjeta.chargeInCents(Math.round(valor * 100));
+  }
+}
+
+public class EjemploAdapter {
+  public static void main(String[] args) {
+    Pasarela pse = new PseAdapter(new ProveedorPse());
+    Pasarela tarjeta = new TarjetaAdapter(new TarjetaLegacy());
+    
+    pse.cobrar(5000);
+    tarjeta.cobrar(3000);
+  }
+}
 ```
 
 #### Bridge
@@ -1128,10 +1971,63 @@ final class PseAdapter implements Pasarela { private final ProveedorPse p=new Pr
 Separa una abstracción de su implementación para que ambas evolucionen de forma independiente.
 
 ```java
-interface Canal { void enviar(String mensaje); }
-abstract class Aviso { protected final Canal canal; Aviso(Canal c){canal=c;} abstract void enviar(); }
-final class AvisoPago extends Aviso { AvisoPago(Canal c){super(c);} void enviar(){canal.enviar("Pago recibido");} }
-// Tres combinaciones: AvisoPago-Email, AvisoPago-SMS y AvisoFactura-Email.
+interface Canal {
+  void enviar(String mensaje);
+}
+
+final class EmailCanal implements Canal {
+  @Override
+  public void enviar(String mensaje) {
+    System.out.println("Email enviado: " + mensaje);
+  }
+}
+
+final class SmsCanal implements Canal {
+  @Override
+  public void enviar(String mensaje) {
+    System.out.println("SMS enviado: " + mensaje);
+  }
+}
+
+abstract class Aviso {
+  protected final Canal canal;
+  
+  Aviso(Canal canal) {
+    this.canal = canal;
+  }
+  
+  abstract void enviar();
+}
+
+final class AvisoPago extends Aviso {
+  AvisoPago(Canal canal) {
+    super(canal);
+  }
+  
+  @Override
+  void enviar() {
+    canal.enviar("Pago recibido");
+  }
+}
+
+final class AvisoFactura extends Aviso {
+  AvisoFactura(Canal canal) {
+    super(canal);
+  }
+  
+  @Override
+  void enviar() {
+    canal.enviar("Factura disponible");
+  }
+}
+
+public class EjemploBridge {
+  public static void main(String[] args) {
+    new AvisoPago(new EmailCanal()).enviar();
+    new AvisoPago(new SmsCanal()).enviar();
+    new AvisoFactura(new EmailCanal()).enviar();
+  }
+}
 ```
 
 #### Composite
@@ -1139,10 +2035,65 @@ final class AvisoPago extends Aviso { AvisoPago(Canal c){super(c);} void enviar(
 Trata objetos individuales y composiciones de forma uniforme.
 
 ```java
-interface Cargo { double total(); }
-record ServicioCargo(double valor) implements Cargo { public double total(){return valor;} }
-final class GrupoCargos implements Cargo { private final java.util.List<Cargo> items=new java.util.ArrayList<>(); void agregar(Cargo c){items.add(c);} public double total(){return items.stream().mapToDouble(Cargo::total).sum();} }
-// Tres usos: cargo individual, factura agrupada y cliente con varias facturas.
+interface Cargo {
+  double total();
+}
+
+record ServicioCargo(double valor) implements Cargo {
+  @Override
+  public double total() {
+    return valor;
+  }
+}
+
+final class GrupoCargos implements Cargo {
+  private final java.util.List<Cargo> items = new java.util.ArrayList<>();
+  
+  void agregar(Cargo cargo) {
+    items.add(cargo);
+  }
+  
+  @Override
+  public double total() {
+    return items.stream()
+      .mapToDouble(Cargo::total)
+      .sum();
+  }
+}
+
+final class FacturaCompuesta implements Cargo {
+  private final java.util.List<Cargo> cargos;
+  
+  FacturaCompuesta(java.util.List<Cargo> cargos) {
+    this.cargos = cargos;
+  }
+  
+  @Override
+  public double total() {
+    return cargos.stream()
+      .mapToDouble(Cargo::total)
+      .sum();
+  }
+}
+
+public class EjemploComposite {
+  public static void main(String[] args) {
+    GrupoCargos grupo = new GrupoCargos();
+    grupo.agregar(new ServicioCargo(1000));
+    grupo.agregar(new ServicioCargo(2000));
+    
+    FacturaCompuesta factura = new FacturaCompuesta(
+      java.util.List.of(
+        new ServicioCargo(1000),
+        new ServicioCargo(500),
+        grupo
+      )
+    );
+    
+    System.out.println("Total grupo: $" + grupo.total());
+    System.out.println("Total factura: $" + factura.total());
+  }
+}
 ```
 
 #### Decorator
@@ -1150,10 +2101,45 @@ final class GrupoCargos implements Cargo { private final java.util.List<Cargo> i
 Añade responsabilidades envolviendo un objeto, sin modificar su clase.
 
 ```java
-interface Cobro { double ejecutar(double v); }
-record CobroBase() implements Cobro { public double ejecutar(double v){return v;} }
-record CobroConAuditoria(Cobro interno) implements Cobro { public double ejecutar(double v){System.out.println("auditado");return interno.ejecutar(v);} }
-// Tres usos: cobro base, base+auditoria y base+auditoria+comision.
+interface Cobro {
+  double ejecutar(double valor);
+}
+
+record CobroBase() implements Cobro {
+  @Override
+  public double ejecutar(double valor) {
+    return valor;
+  }
+}
+
+record CobroConAuditoria(Cobro interno) implements Cobro {
+  @Override
+  public double ejecutar(double valor) {
+    System.out.println("Auditando cobro de: $" + valor);
+    return interno.ejecutar(valor);
+  }
+}
+
+record CobroConComision(Cobro interno, double comision) implements Cobro {
+  @Override
+  public double ejecutar(double valor) {
+    double total = interno.ejecutar(valor) + comision;
+    System.out.println("Aplicada comisión: $" + comision);
+    return total;
+  }
+}
+
+public class EjemploDecorator {
+  public static void main(String[] args) {
+    Cobro base = new CobroBase();
+    Cobro conAuditoria = new CobroConAuditoria(base);
+    Cobro conTodo = new CobroConComision(conAuditoria, 500);
+    
+    System.out.println("Cobro base: $" + base.ejecutar(5000));
+    System.out.println("Cobro con auditoria: $" + conAuditoria.ejecutar(5000));
+    System.out.println("Cobro con todo: $" + conTodo.ejecutar(5000));
+  }
+}
 ```
 
 #### Facade
@@ -1161,11 +2147,59 @@ record CobroConAuditoria(Cobro interno) implements Cobro { public double ejecuta
 Ofrece una entrada simple a un subsistema complejo.
 
 ```java
-final class PagoFacade { private final Pasarela p; PagoFacade(Pasarela p){this.p=p;}
-  void pagar(Factura f, Cuenta c){ if(f.total()>0 && c.saldo()>=f.total()) p.cobrar(f.total()); }
+record Factura(double total) {}
+record Cuenta(double saldo) {}
+
+interface Pasarela {
+  void cobrar(double valor);
 }
-interface Factura { double total(); } interface Cuenta { double saldo(); }
-// Tres usos: fachada para pagar, consultar estado y cancelar un pago.
+
+final class PagoFacade {
+  private final Pasarela pasarela;
+  
+  PagoFacade(Pasarela pasarela) {
+    this.pasarela = pasarela;
+  }
+  
+  void pagar(Factura factura, Cuenta cuenta) {
+    if (factura.total() <= 0) {
+      System.out.println("Factura inválida");
+      return;
+    }
+    if (cuenta.saldo() < factura.total()) {
+      System.out.println("Saldo insuficiente");
+      return;
+    }
+    pasarela.cobrar(factura.total());
+    System.out.println("Pago procesado: $" + factura.total());
+  }
+}
+
+final class ConsultaFacade {
+  String estado(Factura factura) {
+    return factura.total() > 0 ? "PENDIENTE" : "INVALIDA";
+  }
+}
+
+final class PasarelaSimple implements Pasarela {
+  @Override
+  public void cobrar(double valor) {
+    System.out.println("Cobrando: $" + valor);
+  }
+}
+
+public class EjemploFacade {
+  public static void main(String[] args) {
+    PagoFacade pago = new PagoFacade(new PasarelaSimple());
+    ConsultaFacade consulta = new ConsultaFacade();
+    
+    Factura f = new Factura(5000);
+    Cuenta c = new Cuenta(10000);
+    
+    System.out.println("Estado: " + consulta.estado(f));
+    pago.pagar(f, c);
+  }
+}
 ```
 
 #### Flyweight
@@ -1173,10 +2207,36 @@ interface Factura { double total(); } interface Cuenta { double saldo(); }
 Comparte estado intrínseco para reducir memoria cuando hay muchos objetos similares.
 
 ```java
-record Icono(String nombre) {}
-final class Iconos { private static final java.util.Map<String,Icono> cache=new java.util.HashMap<>();
-  static Icono obtener(String n){return cache.computeIfAbsent(n, Icono::new);} }
-// Tres usos: icono agua, icono energia e icono gas comparten instancias repetidas.
+record Icono(String nombre) {
+  @Override
+  public String toString() {
+    return "Icono(" + nombre + ")";
+  }
+}
+
+final class Iconos {
+  private static final java.util.Map<String, Icono> cache = 
+    new java.util.HashMap<>();
+  
+  static Icono obtener(String nombre) {
+    return cache.computeIfAbsent(nombre, Icono::new);
+  }
+}
+
+public class EjemploFlyweight {
+  public static void main(String[] args) {
+    Icono agua1 = Iconos.obtener("agua");
+    Icono agua2 = Iconos.obtener("agua");
+    Icono energia = Iconos.obtener("energia");
+    Icono gas = Iconos.obtener("gas");
+    
+    System.out.println("agua1: " + agua1);
+    System.out.println("agua2: " + agua2);
+    System.out.println("¿Están compartiendo instancia? " + (agua1 == agua2));
+    System.out.println("energia: " + energia);
+    System.out.println("gas: " + gas);
+  }
+}
 ```
 
 #### Proxy
@@ -1184,10 +2244,75 @@ final class Iconos { private static final java.util.Map<String,Icono> cache=new 
 Controla el acceso a otro objeto, por ejemplo con seguridad, cache o carga diferida.
 
 ```java
-interface Facturas { Factura buscar(String id); }
-final class FacturaProxy implements Facturas { private final Facturas real; FacturaProxy(Facturas r){real=r;}
-  public Factura buscar(String id){if(id==null||id.isBlank()) throw new IllegalArgumentException(); return real.buscar(id);} }
-// Tres usos: proxy de autorizacion, proxy de cache y proxy remoto.
+record Factura(String id, double total) {}
+
+interface Facturas {
+  Factura buscar(String id);
+}
+
+final class FacturaRepositorio implements Facturas {
+  private java.util.Map<String, Factura> datos = new java.util.HashMap<>();
+  
+  FacturaRepositorio() {
+    datos.put("F001", new Factura("F001", 5000));
+    datos.put("F002", new Factura("F002", 3000));
+  }
+  
+  @Override
+  public Factura buscar(String id) {
+    System.out.println("Consultando BD: " + id);
+    return datos.get(id);
+  }
+}
+
+final class FacturaProxySeguridad implements Facturas {
+  private final Facturas real;
+  private final String usuario;
+  
+  FacturaProxySeguridad(Facturas real, String usuario) {
+    this.real = real;
+    this.usuario = usuario;
+  }
+  
+  @Override
+  public Factura buscar(String id) {
+    if (usuario == null || usuario.isBlank()) {
+      throw new SecurityException("Usuario no autenticado");
+    }
+    return real.buscar(id);
+  }
+}
+
+final class FacturaProxyCache implements Facturas {
+  private final Facturas real;
+  private java.util.Map<String, Factura> cache = new java.util.HashMap<>();
+  
+  FacturaProxyCache(Facturas real) {
+    this.real = real;
+  }
+  
+  @Override
+  public Factura buscar(String id) {
+    if (cache.containsKey(id)) {
+      System.out.println("Obtenida de cache: " + id);
+      return cache.get(id);
+    }
+    Factura factura = real.buscar(id);
+    cache.put(id, factura);
+    return factura;
+  }
+}
+
+public class EjemploProxy {
+  public static void main(String[] args) {
+    Facturas repo = new FacturaRepositorio();
+    Facturas proxySeguro = new FacturaProxySeguridad(repo, "usuario1");
+    Facturas proxyCache = new FacturaProxyCache(proxySeguro);
+    
+    System.out.println("Primera consulta: " + proxyCache.buscar("F001"));
+    System.out.println("Segunda consulta: " + proxyCache.buscar("F001"));
+  }
+}
 ```
 
 #### Chain of Responsibility
@@ -1195,10 +2320,61 @@ final class FacturaProxy implements Facturas { private final Facturas real; Fact
 Pasa una solicitud por una cadena de manejadores hasta que uno la procesa.
 
 ```java
-abstract class Regla { Regla siguiente; Regla sigue(Regla r){siguiente=r;return r;} abstract boolean acepta(Pago p); }
 record Pago(double valor) {}
-final class ReglaMonto extends Regla { boolean acepta(Pago p){return p.valor()>0 || (siguiente!=null&&siguiente.acepta(p));} }
-// Tres usos: cadena de monto, saldo y fraude.
+
+abstract class Regla {
+  protected Regla siguiente;
+  
+  Regla sigue(Regla siguiente) {
+    this.siguiente = siguiente;
+    return siguiente;
+  }
+  
+  abstract boolean acepta(Pago pago);
+}
+
+final class ReglaMonto extends Regla {
+  @Override
+  boolean acepta(Pago pago) {
+    if (pago.valor() > 0 && pago.valor() <= 1000000) {
+      System.out.println("Monto válido: $" + pago.valor());
+      return true;
+    }
+    return siguiente != null && siguiente.acepta(pago);
+  }
+}
+
+final class ReglaSaldo extends Regla {
+  @Override
+  boolean acepta(Pago pago) {
+    if (pago.valor() <= 100000000) {
+      System.out.println("Saldo suficiente para: $" + pago.valor());
+      return true;
+    }
+    return siguiente != null && siguiente.acepta(pago);
+  }
+}
+
+final class ReglaFraude extends Regla {
+  @Override
+  boolean acepta(Pago pago) {
+    if (pago.valor() < 5000000) {
+      System.out.println("Sin fraude detectado");
+      return true;
+    }
+    return false;
+  }
+}
+
+public class EjemploChainOfResponsibility {
+  public static void main(String[] args) {
+    Regla cadena = new ReglaMonto();
+    cadena.sigue(new ReglaSaldo()).sigue(new ReglaFraude());
+    
+    cadena.acepta(new Pago(500000));
+    cadena.acepta(new Pago(5000000));
+  }
+}
 ```
 
 #### Command
@@ -1206,9 +2382,64 @@ final class ReglaMonto extends Regla { boolean acepta(Pago p){return p.valor()>0
 Encapsula una acción como objeto para ejecutar, registrar, encolar o deshacer.
 
 ```java
-interface Comando { void ejecutar(); }
-final class PagarCommand implements Comando { private final Runnable accion; PagarCommand(Runnable a){accion=a;} public void ejecutar(){accion.run();} }
-// Tres usos: boton de pagar, cola de pagos e historial de comandos.
+interface Comando {
+  void ejecutar();
+}
+
+record Pago(String id, double valor) {}
+
+final class PagarCommand implements Comando {
+  private final Runnable accion;
+  
+  PagarCommand(Runnable accion) {
+    this.accion = accion;
+  }
+  
+  @Override
+  public void ejecutar() {
+    accion.run();
+  }
+}
+
+final class ReversarCommand implements Comando {
+  private final Runnable accion;
+  
+  ReversarCommand(Runnable accion) {
+    this.accion = accion;
+  }
+  
+  @Override
+  public void ejecutar() {
+    System.out.println("Reversando...");
+    accion.run();
+  }
+}
+
+final class InvocadorDeComandos {
+  private java.util.List<Comando> comandos = new java.util.ArrayList<>();
+  
+  void agregar(Comando cmd) {
+    comandos.add(cmd);
+  }
+  
+  void ejecutarTodos() {
+    for (Comando cmd : comandos) {
+      cmd.ejecutar();
+    }
+  }
+}
+
+public class EjemploCommand {
+  public static void main(String[] args) {
+    InvocadorDeComandos invocador = new InvocadorDeComandos();
+    Pago pago = new Pago("P001", 5000);
+    
+    invocador.agregar(new PagarCommand(() -> System.out.println("Pago ejecutado: " + pago)));
+    invocador.agregar(new ReversarCommand(() -> System.out.println("Pago revertido")));
+    
+    invocador.ejecutarTodos();
+  }
+}
 ```
 
 #### Interpreter
@@ -1216,10 +2447,47 @@ final class PagarCommand implements Comando { private final Runnable accion; Pag
 Representa una gramática pequeña y evalúa expresiones de ese lenguaje.
 
 ```java
-interface Expresion { boolean evaluar(Cliente c); }
 record Cliente(String tipo) {}
-record EsTipo(String tipo) implements Expresion { public boolean evaluar(Cliente c){return c.tipo().equals(tipo);} }
-// Tres usos: regla hogar, regla empresarial y composicion AND de reglas.
+
+interface Expresion {
+  boolean evaluar(Cliente cliente);
+}
+
+record EsTipo(String tipo) implements Expresion {
+  @Override
+  public boolean evaluar(Cliente cliente) {
+    return cliente.tipo().equals(tipo);
+  }
+}
+
+record TieneDescuento() implements Expresion {
+  @Override
+  public boolean evaluar(Cliente cliente) {
+    return cliente.tipo().equals("preferencial");
+  }
+}
+
+record And(Expresion izquierda, Expresion derecha) implements Expresion {
+  @Override
+  public boolean evaluar(Cliente cliente) {
+    return izquierda.evaluar(cliente) && derecha.evaluar(cliente);
+  }
+}
+
+public class EjemploInterpreter {
+  public static void main(String[] args) {
+    Expresion esResidencial = new EsTipo("residencial");
+    Expresion tieneDescuento = new TieneDescuento();
+    Expresion ambas = new And(esResidencial, tieneDescuento);
+    
+    Cliente c1 = new Cliente("residencial");
+    Cliente c2 = new Cliente("preferencial");
+    
+    System.out.println("c1 es residencial: " + esResidencial.evaluar(c1));
+    System.out.println("c2 tiene descuento: " + tieneDescuento.evaluar(c2));
+    System.out.println("c1 es residencial Y tiene descuento: " + ambas.evaluar(c1));
+  }
+}
 ```
 
 #### Iterator
@@ -1227,9 +2495,47 @@ record EsTipo(String tipo) implements Expresion { public boolean evaluar(Cliente
 Recorre una colección sin exponer su representación interna.
 
 ```java
-final class FacturaCollection implements Iterable<Factura> { private final java.util.List<Factura> datos=new java.util.ArrayList<>();
-  void agregar(Factura f){datos.add(f);} public java.util.Iterator<Factura> iterator(){return datos.iterator();} }
-// Tres usos: recorrer facturas, pagos pendientes y clientes pagadores.
+record Factura(String id, double total) {}
+
+final class FacturaCollection implements Iterable<Factura> {
+  private final java.util.List<Factura> datos = new java.util.ArrayList<>();
+  
+  void agregar(Factura factura) {
+    datos.add(factura);
+  }
+  
+  @Override
+  public java.util.Iterator<Factura> iterator() {
+    return datos.iterator();
+  }
+}
+
+final class PagosCollection implements Iterable<Factura> {
+  private final java.util.List<Factura> pendientes = new java.util.ArrayList<>();
+  
+  void agregar(Factura factura) {
+    pendientes.add(factura);
+  }
+  
+  @Override
+  public java.util.Iterator<Factura> iterator() {
+    return pendientes.iterator();
+  }
+}
+
+public class EjemploIterator {
+  public static void main(String[] args) {
+    FacturaCollection facturas = new FacturaCollection();
+    facturas.agregar(new Factura("F001", 5000));
+    facturas.agregar(new Factura("F002", 3000));
+    facturas.agregar(new Factura("F003", 2000));
+    
+    System.out.println("Recorriendo facturas:");
+    for (Factura factura : facturas) {
+      System.out.println("  " + factura.id() + ": $" + factura.total());
+    }
+  }
+}
 ```
 
 #### Mediator
@@ -1237,9 +2543,56 @@ final class FacturaCollection implements Iterable<Factura> { private final java.
 Centraliza la comunicación entre objetos para reducir referencias directas entre colegas.
 
 ```java
-final class PagoMediator { void pagoRegistrado(Pago p, Notificador n, Auditor auditor){auditor.registrar(p);n.notificar(p);} }
-interface Notificador { void notificar(Pago p); } interface Auditor { void registrar(Pago p); }
-// Tres usos: coordinar pago-factura, pago-notificador y pago-auditoria.
+record Pago(String id, double valor) {}
+
+interface Notificador {
+  void notificar(Pago pago);
+}
+
+interface Auditor {
+  void registrar(Pago pago);
+}
+
+final class PagoMediator {
+  private final Notificador notificador;
+  private final Auditor auditor;
+  
+  PagoMediator(Notificador notificador, Auditor auditor) {
+    this.notificador = notificador;
+    this.auditor = auditor;
+  }
+  
+  void pagoRegistrado(Pago pago) {
+    auditor.registrar(pago);
+    notificador.notificar(pago);
+  }
+}
+
+final class NotificadorConsola implements Notificador {
+  @Override
+  public void notificar(Pago pago) {
+    System.out.println("Notificación: Pago " + pago.id() + " confirmado");
+  }
+}
+
+final class AuditorConsola implements Auditor {
+  @Override
+  public void registrar(Pago pago) {
+    System.out.println("Auditoria: Pago " + pago.id() + " registrado");
+  }
+}
+
+public class EjemploMediator {
+  public static void main(String[] args) {
+    PagoMediator mediador = new PagoMediator(
+      new NotificadorConsola(),
+      new AuditorConsola()
+    );
+    
+    Pago pago = new Pago("P001", 5000);
+    mediador.pagoRegistrado(pago);
+  }
+}
 ```
 
 #### Memento
@@ -1247,9 +2600,45 @@ interface Notificador { void notificar(Pago p); } interface Auditor { void regis
 Guarda el estado de un objeto sin exponer sus detalles para poder restaurarlo.
 
 ```java
-final class EstadoPago { private String estado="PENDIENTE"; String estado(){return estado;} void estado(String e){estado=e;}
-  record Memento(String valor) {} Memento guardar(){return new Memento(estado);} void restaurar(Memento m){estado=m.valor();} }
-// Tres usos: guardar antes de autorizar, conciliar y reintentar.
+final class EstadoPago {
+  private String estado = "PENDIENTE";
+  
+  record Memento(String valor) {}
+  
+  String estado() {
+    return estado;
+  }
+  
+  void estado(String nuevoEstado) {
+    this.estado = nuevoEstado;
+    System.out.println("Estado cambiado a: " + estado);
+  }
+  
+  Memento guardar() {
+    return new Memento(estado);
+  }
+  
+  void restaurar(Memento memento) {
+    estado = memento.valor();
+    System.out.println("Estado restaurado a: " + estado);
+  }
+}
+
+public class EjemploMemento {
+  public static void main(String[] args) {
+    EstadoPago pago = new EstadoPago();
+    System.out.println("Estado inicial: " + pago.estado());
+    
+    EstadoPago.Memento antesDeAutorizar = pago.guardar();
+    pago.estado("AUTORIZADO");
+    
+    EstadoPago.Memento antesDeAplicar = pago.guardar();
+    pago.estado("APLICADO");
+    
+    pago.restaurar(antesDeAplicar);
+    pago.restaurar(antesDeAutorizar);
+  }
+}
 ```
 
 #### Observer
@@ -1257,10 +2646,58 @@ final class EstadoPago { private String estado="PENDIENTE"; String estado(){retu
 Notifica automáticamente a suscriptores cuando cambia un sujeto.
 
 ```java
-interface Observador { void actualizar(Pago p); }
-final class Pagos { private final java.util.List<Observador> os=new java.util.ArrayList<>(); void suscribir(Observador o){os.add(o);}
-  void publicar(Pago p){os.forEach(o->o.actualizar(p));} }
-// Tres usos: observadores de correo, auditoria y analitica.
+record Pago(String id, double valor) {}
+
+interface Observador {
+  void actualizar(Pago pago);
+}
+
+final class ClienteNotificador implements Observador {
+  @Override
+  public void actualizar(Pago pago) {
+    System.out.println("Email: Pago " + pago.id() + " confirmado por $" + pago.valor());
+  }
+}
+
+final class AuditorObservador implements Observador {
+  @Override
+  public void actualizar(Pago pago) {
+    System.out.println("Auditoria: Pago " + pago.id() + " registrado");
+  }
+}
+
+final class AnaliticaObservador implements Observador {
+  @Override
+  public void actualizar(Pago pago) {
+    System.out.println("Analítica: Incrementando métrica de $" + pago.valor());
+  }
+}
+
+final class RegistroPagos {
+  private final java.util.List<Observador> observadores = new java.util.ArrayList<>();
+  
+  void suscribir(Observador observador) {
+    observadores.add(observador);
+  }
+  
+  void publicar(Pago pago) {
+    for (Observador obs : observadores) {
+      obs.actualizar(pago);
+    }
+  }
+}
+
+public class EjemploObserver {
+  public static void main(String[] args) {
+    RegistroPagos registro = new RegistroPagos();
+    registro.suscribir(new ClienteNotificador());
+    registro.suscribir(new AuditorObservador());
+    registro.suscribir(new AnaliticaObservador());
+    
+    Pago pago = new Pago("P001", 5000);
+    registro.publicar(pago);
+  }
+}
 ```
 
 #### State
@@ -1268,10 +2705,66 @@ final class Pagos { private final java.util.List<Observador> os=new java.util.Ar
 Permite que un objeto cambie su comportamiento al cambiar de estado interno.
 
 ```java
-interface Estado { String siguiente(); }
-record Pendiente() implements Estado { public String siguiente(){return "AUTORIZADO";} }
-record Autorizado() implements Estado { public String siguiente(){return "APLICADO";} }
-// Tres usos: estados pendiente, autorizado y rechazado.
+interface Estado {
+  String siguiente();
+}
+
+record Pendiente() implements Estado {
+  @Override
+  public String siguiente() {
+    return "AUTORIZADO";
+  }
+}
+
+record Autorizado() implements Estado {
+  @Override
+  public String siguiente() {
+    return "APLICADO";
+  }
+}
+
+record Aplicado() implements Estado {
+  @Override
+  public String siguiente() {
+    return "APLICADO";
+  }
+}
+
+record Rechazado() implements Estado {
+  @Override
+  public String siguiente() {
+    return "RECHAZADO";
+  }
+}
+
+final class PagoContext {
+  private Estado estado = new Pendiente();
+  
+  void avanzar() {
+    String siguiente = estado.siguiente();
+    System.out.println("Transición a: " + siguiente);
+    estado = switch(siguiente) {
+      case "AUTORIZADO" -> new Autorizado();
+      case "APLICADO" -> new Aplicado();
+      default -> estado;
+    };
+  }
+  
+  String estado() {
+    return estado.getClass().getSimpleName();
+  }
+}
+
+public class EjemploState {
+  public static void main(String[] args) {
+    PagoContext pago = new PagoContext();
+    System.out.println("Estado: " + pago.estado());
+    
+    pago.avanzar();
+    pago.avanzar();
+    pago.avanzar();
+  }
+}
 ```
 
 #### Strategy
@@ -1279,10 +2772,46 @@ record Autorizado() implements Estado { public String siguiente(){return "APLICA
 Encapsula algoritmos intercambiables bajo una misma interfaz.
 
 ```java
-interface CalculoComision { double calcular(double valor); }
-record SinComision() implements CalculoComision { public double calcular(double v){return 0;} }
-record ComisionFija() implements CalculoComision { public double calcular(double v){return 1500;} }
-// Tres usos: sin comision, fija y porcentual seleccionadas por configuracion.
+interface CalculoComision {
+  double calcular(double valor);
+}
+
+record SinComision() implements CalculoComision {
+  @Override
+  public double calcular(double valor) {
+    return 0;
+  }
+}
+
+record ComisionFija() implements CalculoComision {
+  @Override
+  public double calcular(double valor) {
+    return 1500;
+  }
+}
+
+record ComisionPorcentual(double tasa) implements CalculoComision {
+  @Override
+  public double calcular(double valor) {
+    return valor * tasa;
+  }
+}
+
+final class CalculadorTotal {
+  double total(double valor, CalculoComision estrategia) {
+    return valor + estrategia.calcular(valor);
+  }
+}
+
+public class EjemploStrategy {
+  public static void main(String[] args) {
+    CalculadorTotal calc = new CalculadorTotal();
+    
+    System.out.println("Sin comisión: $" + calc.total(5000, new SinComision()));
+    System.out.println("Comisión fija: $" + calc.total(5000, new ComisionFija()));
+    System.out.println("Comisión 5%: $" + calc.total(5000, new ComisionPorcentual(0.05)));
+  }
+}
 ```
 
 #### Template Method
@@ -1290,10 +2819,58 @@ record ComisionFija() implements CalculoComision { public double calcular(double
 Define el esqueleto de un algoritmo y deja pasos variables a las subclases.
 
 ```java
-abstract class ProcesarPago { final void procesar(Pago p){validar(p); autorizar(p); registrar(p);} abstract void autorizar(Pago p);
-  void validar(Pago p){} void registrar(Pago p){} }
-final class ProcesarPse extends ProcesarPago { void autorizar(Pago p){/* PSE */} }
-// Tres usos: flujo PSE, tarjeta y billetera.
+record Pago(String id, double valor) {}
+
+abstract class ProcesarPago {
+  final void procesar(Pago pago) {
+    validar(pago);
+    autorizar(pago);
+    registrar(pago);
+  }
+  
+  void validar(Pago pago) {
+    System.out.println("Validando pago " + pago.id());
+  }
+  
+  abstract void autorizar(Pago pago);
+  
+  void registrar(Pago pago) {
+    System.out.println("Registrando pago " + pago.id());
+  }
+}
+
+final class ProcesarPse extends ProcesarPago {
+  @Override
+  void autorizar(Pago pago) {
+    System.out.println("Autorizando por PSE: " + pago.valor());
+  }
+}
+
+final class ProcesarTarjeta extends ProcesarPago {
+  @Override
+  void autorizar(Pago pago) {
+    System.out.println("Autorizando por Tarjeta: " + pago.valor());
+  }
+}
+
+final class ProcesarBilletera extends ProcesarPago {
+  @Override
+  void autorizar(Pago pago) {
+    System.out.println("Autorizando por Billetera: " + pago.valor());
+  }
+}
+
+public class EjemploTemplateMethod {
+  public static void main(String[] args) {
+    Pago pago = new Pago("P001", 5000);
+    
+    new ProcesarPse().procesar(pago);
+    System.out.println();
+    new ProcesarTarjeta().procesar(pago);
+    System.out.println();
+    new ProcesarBilletera().procesar(pago);
+  }
+}
 ```
 
 #### Visitor
@@ -1301,10 +2878,77 @@ final class ProcesarPse extends ProcesarPago { void autorizar(Pago p){/* PSE */}
 Permite agregar operaciones a una estructura de objetos sin modificar sus clases.
 
 ```java
-interface ElementoFactura { void aceptar(Visitante v); }
-interface Visitante { void visitar(ServicioCargo cargo); }
-final class VisitanteImpuesto implements Visitante { public void visitar(ServicioCargo c){/* calcular impuesto */} }
-// Tres usos: visitante de impuesto, reporte y exportacion.
+record ServicioCargo(String nombre, double valor) {}
+
+interface ElementoFactura {
+  void aceptar(Visitante visitante);
+}
+
+final class Cargo implements ElementoFactura {
+  private final ServicioCargo servicio;
+  
+  Cargo(ServicioCargo servicio) {
+    this.servicio = servicio;
+  }
+  
+  @Override
+  public void aceptar(Visitante visitante) {
+    visitante.visitar(this);
+  }
+  
+  ServicioCargo servicio() {
+    return servicio;
+  }
+}
+
+interface Visitante {
+  void visitar(Cargo cargo);
+}
+
+final class VisitanteImpuesto implements Visitante {
+  @Override
+  public void visitar(Cargo cargo) {
+    double impuesto = cargo.servicio().valor() * 0.19;
+    System.out.println("Impuesto de " + cargo.servicio().nombre() + ": $" + impuesto);
+  }
+}
+
+final class VisitanteReporte implements Visitante {
+  @Override
+  public void visitar(Cargo cargo) {
+    System.out.println("Reporte: " + cargo.servicio().nombre() + " - $" + cargo.servicio().valor());
+  }
+}
+
+final class VisitanteExportacion implements Visitante {
+  @Override
+  public void visitar(Cargo cargo) {
+    System.out.println("CSV," + cargo.servicio().nombre() + "," + cargo.servicio().valor());
+  }
+}
+
+public class EjemploVisitor {
+  public static void main(String[] args) {
+    Cargo agua = new Cargo(new ServicioCargo("Agua", 5000));
+    Cargo energia = new Cargo(new ServicioCargo("Energía", 3000));
+    
+    Visitante impuesto = new VisitanteImpuesto();
+    Visitante reporte = new VisitanteReporte();
+    Visitante exportacion = new VisitanteExportacion();
+    
+    System.out.println("=== Cálculo de impuestos ===");
+    agua.aceptar(impuesto);
+    energia.aceptar(impuesto);
+    
+    System.out.println("\n=== Reporte ===");
+    agua.aceptar(reporte);
+    energia.aceptar(reporte);
+    
+    System.out.println("\n=== Exportación ===");
+    agua.aceptar(exportacion);
+    energia.aceptar(exportacion);
+  }
+}
 ```
 
 ### Ejemplos 2 y 3 de cada patrón GoF
