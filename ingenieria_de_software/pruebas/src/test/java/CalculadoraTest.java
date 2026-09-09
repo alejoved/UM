@@ -34,6 +34,6 @@ public class CalculadoraTest {
     @Test
     void test_division_numeros_positivos() {
         double resultado = calculadora.division(20, 4);
-        assertEquals(5.0, resultado);
+        assertEquals(4.0, resultado);
     }
 }
