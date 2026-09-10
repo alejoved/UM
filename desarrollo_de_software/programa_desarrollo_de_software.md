@@ -15,7 +15,6 @@
 - Modelo conceptual, entidades, objetos de valor e invariantes
 - Responsabilidades y patrones GRASP (experto, creador, controlador, cohesión, acoplamiento)
 - Diagramas de secuencia; capas, interfaces e inyección de dependencias; principios SOLID
-- Uso de IA como tutor socrático y para comparar alternativas de asignación de responsabilidades
 
 ---
 
@@ -30,7 +29,6 @@
 
 - Separación entre dominio y persistencia; repositorios, mapeo y transacciones
 - Integración con servicios externos: clientes HTTP, contratos, DTO, timeouts y manejo de errores
-- Uso de IA para completar código repetitivo y explicar errores, revisado línea por línea
 
 ---
 
@@ -40,11 +38,6 @@
 
 - Pruebas unitarias; dobles de prueba; ciclo TDD (rojo, verde, refactorización)
 - Pruebas de integración y de aceptación; técnicas de caja negra; automatización (Playwright/Selenium)
-
-### Desarrollo orientado a especificaciones con IA (Spec-Driven Development)
-
-- De la especificación al código y a la prueba; archivos de contexto del proyecto (`AGENTS.md` o equivalente)
-- Uso de IA para proponer casos límite y esqueletos, revisados por pertinencia y validados por pruebas
 
 ### Calidad interna
 
@@ -63,3 +56,17 @@
 
 - Gestión de un cambio no planificado: análisis de impacto, implementación y refactorización
 - Demostración funcional, defensa técnica individual y auditoría de comprensión
+
+
+- Juan Jose Giraldo
+- Isabela Alzate Pachon
+- Juan Manuel Moreno
+- Juan Florez
+- Juan Andres Usma Carmona
+- Andres Tabares
+- Nicole Rico Morales
+- Nicolas Londoño
+- Santiago Acevedo
+- Maria Alejandra Gonzalez
+- Salome Franco Arango
+- Juan Diego Bedoya Cardona
