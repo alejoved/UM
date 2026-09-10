@@ -815,6 +815,140 @@ Tomando los casos de uso redactados en el ejercicio anterior, se debe implementa
 
 ---
 
+#### Taller
+
+### Taller — Clases, herencia e interfaces en Java (Sistema de pagos de servicios públicos)
+
+**Duración estimada:** 90 minutos | **Modalidad:** individual o parejas
+
+#### Objetivos
+- Modelar con clases e interfaces las entidades del "Sistema de pagos de servicios públicos" descrito en el Ejercicio 1.
+- Aplicar herencia entre `Cuenta`, `CuentaAhorros` y `CuentaCorriente`.
+- Definir una interfaz `Pagable` que obligue a implementar el comportamiento de pago.
+- Leer datos por consola con `Scanner` y mostrar resultados con `System.out`.
+
+#### Contexto
+
+Retomando el dominio del Ejercicio 1 (Cuenta, Cuenta de Ahorros, Cuenta Corriente, Factura, Cliente y Pago), construyan una aplicación de consola en Java que permita registrar un cliente, crear su cuenta (de ahorros o corriente), registrar una factura y procesar un pago, validando el saldo disponible.
+
+#### Requisitos técnicos obligatorios
+
+1. **Interfaz `Pagable`** con el método `boolean procesarPago(double monto);`
+2. **Clase abstracta `Cuenta`** que implemente `Pagable` y contenga: `numeroCuenta`, `titular`, `saldo` (encapsulados con getters/setters) y el método abstracto `double calcularInteresOComision();`
+3. **`CuentaAhorros extends Cuenta`**: aplica una tasa de interés (ej. 2% mensual) y no permite saldo negativo.
+4. **`CuentaCorriente extends Cuenta`**: permite un cupo de sobregiro (ej. hasta -$50.000) y cobra una comisión fija por mantenimiento.
+5. **Clase `Cliente`**: nombre, documento y una lista de cuentas.
+6. **Clase `Factura`**: número, concepto, monto y estado (pendiente/pagada).
+7. **Clase `Main`** que use `Scanner` para:
+   - Pedir los datos del cliente.
+   - Pedir el tipo de cuenta a crear (1 = Ahorros, 2 = Corriente) y el saldo inicial.
+   - Pedir los datos de una factura (concepto y monto).
+   - Ejecutar `procesarPago()` sobre la cuenta y mostrar en consola si el pago fue aprobado o rechazado, junto con el saldo resultante.
+
+#### Esqueleto de partida
+
+```java
+public interface Pagable {
+    boolean procesarPago(double monto);
+}
+
+public abstract class Cuenta implements Pagable {
+    protected String numeroCuenta;
+    protected String titular;
+    protected double saldo;
+
+    public Cuenta(String numeroCuenta, String titular, double saldo) {
+        this.numeroCuenta = numeroCuenta;
+        this.titular = titular;
+        this.saldo = saldo;
+    }
+
+    public double getSaldo() { return saldo; }
+
+    public abstract double calcularInteresOComision();
+
+    @Override
+    public boolean procesarPago(double monto) {
+        if (monto <= 0) return false;
+        if (saldo - monto < limiteInferiorPermitido()) return false;
+        saldo -= monto;
+        return true;
+    }
+
+    protected double limiteInferiorPermitido() { return 0; }
+}
+
+public class CuentaCorriente extends Cuenta {
+    private final double sobregiroPermitido = -50000;
+
+    public CuentaCorriente(String numeroCuenta, String titular, double saldo) {
+        super(numeroCuenta, titular, saldo);
+    }
+
+    @Override
+    protected double limiteInferiorPermitido() { return sobregiroPermitido; }
+
+    @Override
+    public double calcularInteresOComision() { return 5000; } // comisión fija
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Nombre del cliente: ");
+        String nombre = sc.nextLine();
+
+        System.out.print("Tipo de cuenta (1=Ahorros, 2=Corriente): ");
+        int tipo = Integer.parseInt(sc.nextLine());
+
+        System.out.print("Saldo inicial: ");
+        double saldoInicial = Double.parseDouble(sc.nextLine());
+
+        Cuenta cuenta = (tipo == 1)
+                ? new CuentaAhorros("AH-001", nombre, saldoInicial)
+                : new CuentaCorriente("CC-001", nombre, saldoInicial);
+
+        System.out.print("Monto de la factura a pagar: ");
+        double monto = Double.parseDouble(sc.nextLine());
+
+        boolean aprobado = cuenta.procesarPago(monto);
+
+        System.out.println("--------------------------------------");
+        System.out.println("Pago " + (aprobado ? "APROBADO" : "RECHAZADO"));
+        System.out.println("Saldo resultante: " + cuenta.getSaldo());
+
+        sc.close();
+    }
+}
+```
+
+> El esqueleto omite `CuentaAhorros`, `Cliente` y `Factura` a propósito: son parte del entregable.
+
+#### Pasos a seguir
+
+1. Completa `CuentaAhorros` (herencia + comisión/interés distinto al de `CuentaCorriente`).
+2. Implementa `Cliente` con una `List<Cuenta>` y un método `mostrarResumen()` que imprima sus cuentas y saldos.
+3. Implementa `Factura` y vincúlala al pago: solo si `procesarPago()` retorna `true`, marca la factura como "PAGADA".
+4. En `Main`, agrega un menú con `Scanner` que repita el ciclo (crear cliente → crear cuenta → registrar factura → pagar) hasta que el usuario ingrese "salir".
+5. Imprime en consola una tabla final con: cliente, tipo de cuenta, saldo final y estado de la factura.
+
+#### Criterios de aceptación del taller
+
+- [ ] Compila y ejecuta sin errores (`javac` / `java`).
+- [ ] `Cuenta` es abstracta y ambas subclases sobrescriben `calcularInteresOComision()`.
+- [ ] `Pagable` se implementa en `Cuenta` (o en cada subclase) y se invoca de forma polimórfica.
+- [ ] Todo el ingreso de datos ocurre mediante `Scanner` (no valores fijos en el código).
+- [ ] La salida por consola es clara: muestra aprobación/rechazo del pago y saldo resultante.
+- [ ] Se valida que `CuentaAhorros` nunca quede con saldo negativo y que `CuentaCorriente` respete el sobregiro máximo.
+
+#### Preguntas de cierre
+- ¿Qué ventaja aporta declarar `Pagable` como interfaz en lugar de poner `procesarPago()` solo en `Cuenta`?
+- ¿Qué pasaría si mañana se agrega `CuentaNomina` con otra regla de sobregiro? ¿Qué clases hay que tocar?
+- ¿Cómo se relaciona este ejercicio con los requisitos funcionales redactados en el Ejercicio 1 (trazabilidad requisito → código)?
+
+---
+
 ### Clase 3 — Stakeholders y técnicas de elicitación
 
 #### Objetivos
