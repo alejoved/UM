@@ -9,7 +9,7 @@
 
 Una empresa necesita un prototipo para registrar clientes, generar facturas y recibir pagos por distintos medios. El proyecto de referencia contiene clases para representar clientes y cuentas, una interfaz `MedioPago`, implementaciones de `PagoPSE`, `PagoNequi` y `PagoTarjeta`, una clase `Ejecucion` que procesa pagos, una calculadora y ejemplos de herencia con `CuentaAhorros` y `CuentaCorriente`.
 
-El objetivo es transformar ese prototipo en una aplicación de dominio coherente. Antes de programar, se debe describir los casos de uso y las reglas del negocio. Después debe implementar el modelo, separar responsabilidades, aplicar polimorfismo y crear pruebas automatizadas.
+El objetivo es transformar ese prototipo en una aplicación de dominio coherente. Antes de programar, se debe describir los casos de uso y las reglas del negocio. Después debe implementar el modelo, separar responsabilidades, aplicar los principios SOLID y crear pruebas automatizadas.
 
 La solución no requiere base de datos ni interfaz gráfica. La información puede permanecer en memoria durante la ejecución.
 
@@ -117,7 +117,7 @@ Las opciones inválidas y los valores no numéricos deben mostrar un mensaje com
 ### Aplicación esperada de SOLID
 
 - **S — Responsabilidad única:** `Cliente` representa datos; `Factura` calcula sus valores; el servicio coordina; la interfaz de consola lee y muestra.
-- **O — Abierto/cerrado:** se debe poder agregar `PagoRappi` o `PagoBancario` creando una nueva implementación de `MedioPago` sin modificar la lógica central de `Ejecucion`.
+- **O — Abierto/cerrado:** se debe poder agregar `PagoTarjeta` o `PagoEfectivo` creando una nueva implementación de `MedioPago` sin modificar la lógica central de `Ejecucion`.
 - **L — Sustitución de Liskov:** cualquier implementación válida de `MedioPago` debe poder utilizarse donde se espera `MedioPago` sin romper el caso de uso.
 
 ## Casos de prueba mínimos
@@ -186,12 +186,12 @@ D. Que la interfaz `MedioPago` almacena el valor pagado.
 
 ### 5. Principio Open/Closed
 
-Se necesita agregar `PagoRappi` como nuevo medio de pago. ¿Qué opción respeta mejor el principio Open/Closed?
+Se necesita agregar `PagoTarjeta` como nuevo medio de pago. ¿Qué opción respeta mejor el principio Open/Closed?
 
-A. Crear `PagoRappi implements MedioPago` sin modificar `Ejecucion`.
+A. Crear `PagoTarjeta implements MedioPago` sin modificar `Ejecucion`.
 B. Agregar un nuevo `case` dentro de `Ejecucion` para cada pago.
 C. Eliminar la interfaz y copiar el método de pago en `Main`.
-D. Modificar todas las clases de pago existentes para reconocer `PagoRappi`.
+D. Modificar todas las clases de pago existentes para reconocer `PagoTarjeta`.
 
 ### 6. Herencia de cuentas
 
