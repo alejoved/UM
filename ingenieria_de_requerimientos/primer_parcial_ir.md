@@ -24,16 +24,22 @@ D. Ambas son requisitos de software porque serán implementadas por el sistema.
 E. La primera es un caso de uso y la segunda un criterio de aceptación.
 F. Ambas son reglas de negocio porque describen restricciones institucionales.
 
-### 2. Calidad de un requisito
+### 2. Interfaces y contrato en Java
 
-¿Cuál de las siguientes opciones transforma mejor el requisito vago “El sistema debe procesar las solicitudes rápidamente” en un requisito específico, medible y verificable?
+Considere la declaración:
 
-A. El sistema debe procesar las solicitudes de manera eficiente y amigable.
-B. El sistema debe procesar todas las solicitudes sin errores y con buena velocidad.
-C. El sistema debe procesar el 95 % de las solicitudes en menos de 2 segundos con hasta 100 usuarios simultáneos.
-D. El sistema debe usar una base de datos optimizada para procesar rápidamente las solicitudes.
-E. El sistema debe responder rápido, salvo cuando exista una gran cantidad de usuarios.
-F. El sistema debe garantizar que las solicitudes sean procesadas correctamente.
+```java
+public class Cuenta implements CuentaOperacion {
+```
+
+¿Qué garantiza el uso de la interfaz `CuentaOperacion` en este proyecto?
+
+A. Que `Cuenta` pueda heredar de `TarjetaCredito`.
+B. Que `Cuenta` deba implementar los métodos `retirar(double valor)` y `consignar(double valor)`.
+C. Que `Cuenta` almacene el saldo como una constante inmutable.
+D. Que `CuentaOperacion` pueda acceder directamente al atributo privado `saldo`.
+E. Que `Cuenta` sea una clase abstracta y no pueda instanciarse.
+F. Que `Main` no pueda crear objetos de tipo `Cuenta`.
 
 ### 3. Diagrama de contexto
 
@@ -68,16 +74,35 @@ D. Como base de datos, quiero recibir consultas para devolver resultados.
 E. Como administrador, quiero que el sistema sea moderno y fácil de usar.
 F. Como aplicación, quiero ejecutar el método `getSaldo()` cuando se presione un botón.
 
-### 6. Stakeholders y elicitación
+### 6. Flujo del menú en `Main`
 
-Una clínica necesita descubrir pasos tácitos y excepciones del proceso actual de asignación de turnos, porque la documentación está incompleta. ¿Qué técnica es la más adecuada como primera opción?
+En el programa principal, si el usuario ingresa la opción `3` en el menú, según el código actual ¿qué ocurre exactamente?
 
-A. Observación directa del trabajo de los administrativos.
-B. Encuesta cerrada a todos los pacientes.
-C. Revisión exclusiva del código fuente del sistema futuro.
-D. Prototipo visual sin participación de usuarios.
-E. Matriz de trazabilidad sin entrevistas ni observación.
-F. Reunión únicamente con el proveedor de correo electrónico.
+```java
+int opcion = 0;
+while(opcion != 3){
+    System.out.println("Menu: 1. Retirar. 2. Consignar 3. Salir");
+    opcion = scanner.nextInt();
+    if(opcion==1){
+        System.out.println("Cuanto quieres retirar");
+        double retirar = scanner.nextDouble();
+        cuenta.retirar(retirar);
+    }
+    if(opcion==2){
+        System.out.println("Cuanto quieres consignar");
+        double consignar = scanner.nextDouble();
+        cuenta.consignar(consignar);
+    }
+    System.out.println("Tienes en tu cuenta: "+cuenta.getSaldo());
+}
+```
+
+A. El programa sale inmediatamente sin imprimir el saldo final.
+B. El programa intenta retirar 3 pesos del saldo.
+C. El programa intenta consignar 3 pesos al saldo.
+D. El ciclo termina, pero se imprime una última vez el saldo en esa misma iteración.
+E. Se produce una excepción porque la opción `3` no está contemplada en ningún `if`.
+F. El ciclo continúa indefinidamente porque `opcion` nunca se actualiza.
 
 ### 7. Interfaces en Java
 
