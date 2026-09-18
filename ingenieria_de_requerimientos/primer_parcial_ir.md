@@ -69,7 +69,6 @@ D. Como base de datos, quiero recibir consultas para devolver resultados.
 ### 6. Flujo del menú en `Main`
 
 En el programa principal, si el usuario ingresa la opción `3` en el menú, según el código actual ¿qué ocurre exactamente?
-
 ```java
 int opcion = 0;
 while(opcion != 3){
@@ -88,18 +87,14 @@ while(opcion != 3){
     System.out.println("Tienes en tu cuenta: "+cuenta.getSaldo());
 }
 ```
-
 Referencia: `requerimientos/src/main/java/com/example/Main.java`.
-
 A. El programa sale inmediatamente sin imprimir el saldo final.
 B. El programa intenta retirar 3 pesos del saldo.
 C. El programa intenta consignar 3 pesos al saldo.
 D. El ciclo termina, pero se imprime una última vez el saldo en esa misma iteración.
 
 ### 7. Interfaces en Java
-
 Considere la declaración:
-
 ```java
 public class Cuenta implements CuentaOperacion {
 ```
@@ -115,25 +110,18 @@ public void consignar(double valor) {
     saldo = saldo + valor;
 }
 ```
-
-Referencia: `requerimientos/src/main/java/com/example/Cuenta.java` y `CuentaOperacion.java`.
-
 ¿Cuál afirmación es correcta respecto del código entregado?
-
 A. `CuentaOperacion` hereda de `Cuenta` y por eso puede crear objetos de `Cuenta`.
 B. `Cuenta` está obligada a implementar los métodos declarados en `CuentaOperacion`.
 C. `Cuenta` solo puede usar `retirar()` y `consignar()` desde dentro de la interfaz.
 D. La interfaz puede almacenar directamente el atributo privado `saldo` de `Cuenta`.
 
 ### 8. Encapsulamiento y comportamiento
-
 Un objeto `Cuenta` tiene `saldo = 1000`. Se ejecutan, en este orden:
-
 ```java
 cuenta.retirar(250);
 cuenta.consignar(100);
 ```
-
 ```java
 private double saldo;
 
@@ -145,11 +133,7 @@ public void consignar(double valor) {
     saldo = saldo + valor;
 }
 ```
-
-Referencia: `requerimientos/src/main/java/com/example/Cuenta.java`.
-
 ¿Cuál es el saldo final y qué característica del código permite modificarlo?
-
 A. `850`; el saldo se modifica mediante métodos públicos que encapsulan el atributo privado.
 B. `1150`; el saldo solo puede aumentar porque `CuentaOperacion` no permite retiros.
 C. `750`; el atributo privado impide que los métodos de la misma clase lo modifiquen.
@@ -176,8 +160,6 @@ while(opcion != 3){
     System.out.println("Tienes en tu cuenta: "+cuenta.getSaldo());
 }
 ```
-Referencia: `requerimientos/src/main/java/com/example/Main.java`.
-
 A. El programa sale inmediatamente y muestra siempre el saldo antes de terminar.
 B. El programa intenta retirar 3 pesos del saldo.
 C. El programa intenta consignar 3 pesos al saldo.
@@ -186,7 +168,6 @@ D. El ciclo termina, pero igual se imprime el saldo una vez más en esa iteraci�
 ### 10. Trazabilidad y diseño
 
 Se necesita agregar al sistema el requisito: “Una cuenta corriente puede permitir un sobregiro máximo y una tarjeta de crédito puede pagar consumos liberando cupo”. ¿Cuál cambio representa mejor una evolución coherente al programa?
-
 ```java
 public interface CuentaOperacion {
     public void retirar(double valor);
@@ -198,8 +179,6 @@ public interface TarjetaCreditoOperacion {
     public void liberarCupo(double valor);
 }
 ```
-
-Referencia: `requerimientos/src/main/java/com/example/CuentaOperacion.java` y `TarjetaCreditoOperacion.java`.
 
 A. Agregar todos los métodos como código dentro de `Main` y eliminar las interfaces.
 B. Colocar los métodos de tarjeta dentro de `Cuenta`, porque ambas manejan dinero.
