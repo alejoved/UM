@@ -240,8 +240,7 @@ cuenta.retirar(100);
 ```
 A. El cliente puede trabajar contra el contrato de operaciones y sustituir la implementación por otra compatible.
 B. La interfaz permite acceder directamente a los atributos privados de `CuentaBancaria`.
-C. La interfaz convierte automáticamente `retirar` y `consignar` en métodos estáticos.
-D. El uso de la interfaz elimina la necesidad de validar cualquier operación.
+C. El uso de la interfaz elimina la necesidad de validar cualquier operación.
 D. La clase queda obligada a heredar de todas las cuentas existentes.
 
 ### 20. Evaluación conjunta de SOLID
