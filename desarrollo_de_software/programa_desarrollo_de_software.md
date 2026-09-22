@@ -56,17 +56,3 @@
 
 - Gestión de un cambio no planificado: análisis de impacto, implementación y refactorización
 - Demostración funcional, defensa técnica individual y auditoría de comprensión
-
-
-- Juan Jose Giraldo
-- Isabela Alzate Pachon
-- Juan Manuel Moreno
-- Juan Florez
-- Juan Andres Usma Carmona
-- Andres Tabares
-- Nicole Rico Morales
-- Nicolas Londoño
-- Santiago Acevedo
-- Maria Alejandra Gonzalez
-- Salome Franco Arango
-- Juan Diego Bedoya Cardona
