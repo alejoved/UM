@@ -1,0 +1,146 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="DI6gUPAHleD-Kp8XYM89">
+    <mxGraphModel dx="1406" dy="733" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-1" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;strokeColor=default;fontSize=16;" value="CU-01 Registrar Cliente" vertex="1">
+          <mxGeometry height="690" width="770" x="40" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-2" parent="3-UMOmhkEuNXTupGRrpj-1" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="40" width="770" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-14" parent="3-UMOmhkEuNXTupGRrpj-2" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="ACTOR" vertex="1">
+          <mxGeometry height="40" width="183" as="geometry">
+            <mxRectangle height="40" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-3" parent="3-UMOmhkEuNXTupGRrpj-2" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;align=left;" value="Usuario" vertex="1">
+          <mxGeometry height="40" width="587" x="183" as="geometry">
+            <mxRectangle height="40" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-6" parent="3-UMOmhkEuNXTupGRrpj-1" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="40" width="770" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-15" parent="3-UMOmhkEuNXTupGRrpj-6" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="PRECONDICION" vertex="1">
+          <mxGeometry height="40" width="183" as="geometry">
+            <mxRectangle height="40" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-7" parent="3-UMOmhkEuNXTupGRrpj-6" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;align=left;" value="El sistema se debe estar ejecutando y mostrando el menu principal" vertex="1">
+          <mxGeometry height="40" width="587" x="183" as="geometry">
+            <mxRectangle height="40" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-10" parent="3-UMOmhkEuNXTupGRrpj-1" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="290" width="770" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-16" parent="3-UMOmhkEuNXTupGRrpj-10" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="FLUJO PRINCIPAL" vertex="1">
+          <mxGeometry height="290" width="183" as="geometry">
+            <mxRectangle height="290" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-11" parent="3-UMOmhkEuNXTupGRrpj-10" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;align=left;" value="&lt;ol&gt;&lt;li&gt;El usuario selecciona la opcion de registrar cliente.&lt;/li&gt;&lt;li&gt;El sistema le pide que ingrese el nombre del cliente&lt;/li&gt;&lt;li&gt;El usuario ingresa un nombre valido para el cliente&lt;/li&gt;&lt;li&gt;El sistema le pide que ingrese la identificacion del cliente&lt;/li&gt;&lt;li&gt;El usuario ingresa un numero valido para la identificacion del cliente&lt;/li&gt;&lt;li&gt;El sistema le pide que ingrese un correo electronico.&lt;/li&gt;&lt;li&gt;El usuario ingresa un correo valido para el cliente.&lt;/li&gt;&lt;li&gt;El sistema le pide que ingrese una direccion valida&lt;/li&gt;&lt;li&gt;El usuario ingresa una direccion valida para el cliente.&lt;/li&gt;&lt;li&gt;El sistema muestra un mensaje que el cliente fue registrado.&lt;/li&gt;&lt;/ol&gt;" vertex="1">
+          <mxGeometry height="290" width="587" x="183" as="geometry">
+            <mxRectangle height="290" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-17" parent="3-UMOmhkEuNXTupGRrpj-1" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" vertex="1">
+          <mxGeometry height="250" width="770" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-18" parent="3-UMOmhkEuNXTupGRrpj-17" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="FLUJOS ALTERNOS" vertex="1">
+          <mxGeometry height="250" width="183" as="geometry">
+            <mxRectangle height="250" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-19" parent="3-UMOmhkEuNXTupGRrpj-17" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;align=left;" value="&lt;div&gt;3.a. El usuario no ingresa ningun nombre para el cliente.&lt;/div&gt;&lt;div&gt;3.b. El sistema le muestra un mensaje de error que el nombre es obligatorio.&lt;/div&gt;&lt;div&gt;3.c. El usuario ingresa un nombre valido para el cliente.&lt;/div&gt;5.a El usuario ingreso contenido alfabetico o no ingreso contenido en la identificacion del cliente.&lt;div&gt;5.b El sistema le muestra un mensaje de error en la identificacion del cliente.&lt;/div&gt;&lt;div&gt;5.c El usuario corrige por una identificacion valida.&lt;/div&gt;&lt;div&gt;7.a. El usuario ingresa un correo sin el arroba o no ingresa ningun correo.&lt;/div&gt;&lt;div&gt;7.b El sistema le muestra un mensaje de error con referencia a utilizar arroba en el correo&lt;/div&gt;&lt;div&gt;7.c El usuario corrige con un correo valido con arroba.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="250" width="587" x="183" as="geometry">
+            <mxRectangle height="250" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-20" parent="3-UMOmhkEuNXTupGRrpj-1" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" vertex="1">
+          <mxGeometry height="40" width="770" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-21" parent="3-UMOmhkEuNXTupGRrpj-20" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="POSTCONDICION" vertex="1">
+          <mxGeometry height="40" width="183" as="geometry">
+            <mxRectangle height="40" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-22" parent="3-UMOmhkEuNXTupGRrpj-20" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="Se ha registrado un cliente satisfactoriamente en el sistema" vertex="1">
+          <mxGeometry height="40" width="587" x="183" as="geometry">
+            <mxRectangle height="40" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-23" parent="1" style="shape=table;startSize=30;container=1;collapsible=0;childLayout=tableLayout;strokeColor=default;fontSize=16;" value="CU-02 Registrar Producto" vertex="1">
+          <mxGeometry height="690" width="770" x="40" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-24" parent="3-UMOmhkEuNXTupGRrpj-23" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="40" width="770" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-25" parent="3-UMOmhkEuNXTupGRrpj-24" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="ACTOR" vertex="1">
+          <mxGeometry height="40" width="183" as="geometry">
+            <mxRectangle height="40" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-26" parent="3-UMOmhkEuNXTupGRrpj-24" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;align=left;" value="Usuario" vertex="1">
+          <mxGeometry height="40" width="587" x="183" as="geometry">
+            <mxRectangle height="40" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-27" parent="3-UMOmhkEuNXTupGRrpj-23" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="40" width="770" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-28" parent="3-UMOmhkEuNXTupGRrpj-27" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="PRECONDICION" vertex="1">
+          <mxGeometry height="40" width="183" as="geometry">
+            <mxRectangle height="40" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-29" parent="3-UMOmhkEuNXTupGRrpj-27" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;align=left;" value="El sistema se debe estar ejecutando y mostrando el menu principal" vertex="1">
+          <mxGeometry height="40" width="587" x="183" as="geometry">
+            <mxRectangle height="40" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-30" parent="3-UMOmhkEuNXTupGRrpj-23" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" value="" vertex="1">
+          <mxGeometry height="290" width="770" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-31" parent="3-UMOmhkEuNXTupGRrpj-30" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="FLUJO PRINCIPAL" vertex="1">
+          <mxGeometry height="290" width="183" as="geometry">
+            <mxRectangle height="290" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-32" parent="3-UMOmhkEuNXTupGRrpj-30" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;align=left;" value="&lt;ol&gt;&lt;li&gt;El usuario selecciona la opcion de crear producto.&lt;/li&gt;&lt;li&gt;El sistema le pide que ingrese un codigo de producto.&lt;/li&gt;&lt;li&gt;El usuario ingresa un codigo valido.&lt;/li&gt;&lt;li&gt;El sistema le pide que ingrese un nombre de producto&lt;/li&gt;&lt;li&gt;El usuario ingresa un nombre para el producto.&lt;/li&gt;&lt;li&gt;El sistema le pide que ingrese precio para el producto&lt;/li&gt;&lt;li&gt;El usuario ingresa un precio valido para el producto.&lt;/li&gt;&lt;li&gt;El sistema le pide que ingrese un stock para el producto.&lt;/li&gt;&lt;li&gt;El usuario ingresa una cantidad de stock valida para el producto.&lt;/li&gt;&lt;/ol&gt;" vertex="1">
+          <mxGeometry height="290" width="587" x="183" as="geometry">
+            <mxRectangle height="290" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-33" parent="3-UMOmhkEuNXTupGRrpj-23" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" vertex="1">
+          <mxGeometry height="250" width="770" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-34" parent="3-UMOmhkEuNXTupGRrpj-33" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="FLUJOS ALTERNOS" vertex="1">
+          <mxGeometry height="250" width="183" as="geometry">
+            <mxRectangle height="250" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-35" parent="3-UMOmhkEuNXTupGRrpj-33" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;align=left;" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;a. El usuario no ingreso información del codigo del producto, nombre del producto, precio del producto o stock del producto.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;b. El sistema le muestra un mensaje de error que estos campos son obligatorios&lt;/span&gt;&lt;/div&gt;&lt;div&gt;c. El usuario corrige ingresando informacion valida.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;6.a. El usuario ingresa contenido alfabetico en el precio.&lt;div&gt;6.b. El sistema le muestra un mensaje de error sobre el contenido alfabetico que es invalido para el precio.&lt;/div&gt;&lt;div&gt;6.c El usuario corrige con contenido numerico para el precio.&lt;/div&gt;&lt;div&gt;8.a. El usuario ingresa contenido alfabetico en el stock.&lt;/div&gt;&lt;div&gt;8.b. El sistema le muestra un mensaje de error sobre el contenido para el stock que es invalido.&lt;/div&gt;&lt;div&gt;8.c. El usuario ingresa una cantidad numerica para el stock.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="250" width="587" x="183" as="geometry">
+            <mxRectangle height="250" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-36" parent="3-UMOmhkEuNXTupGRrpj-23" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;strokeColor=inherit;top=0;left=0;bottom=0;right=0;collapsible=0;dropTarget=0;fillColor=none;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=16;" vertex="1">
+          <mxGeometry height="40" width="770" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-37" parent="3-UMOmhkEuNXTupGRrpj-36" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="POSTCONDICION" vertex="1">
+          <mxGeometry height="40" width="183" as="geometry">
+            <mxRectangle height="40" width="183" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3-UMOmhkEuNXTupGRrpj-38" parent="3-UMOmhkEuNXTupGRrpj-36" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;strokeColor=inherit;overflow=hidden;fillColor=none;top=0;left=0;bottom=0;right=0;pointerEvents=1;fontSize=16;" value="Se ha registrado un nuevo producto en el sistema" vertex="1">
+          <mxGeometry height="40" width="587" x="183" as="geometry">
+            <mxRectangle height="40" width="587" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
