@@ -2,8 +2,10 @@ package com.example.tiendavirtual.repositories.interf;
 
 import java.util.List;
 
-import com.example.tiendavirtual.models.Customer;
+import com.example.tiendavirtual.entitites.CustomerEntity;
 
 public interface ICustomerRepository {
-    public List<Customer> getAll();
+    public List<CustomerEntity> getAll();
+    public CustomerEntity getByIdentification(String identification);
+    public CustomerEntity create(CustomerEntity customerEntity);
 }

@@ -17,7 +17,6 @@ public class CustomerEntity {
     @Id
     @GeneratedValue 
     private UUID id;
-
     @Column 
     private String name;
     @Column 
@@ -27,5 +26,4 @@ public class CustomerEntity {
     @Column 
     private String address;
 
-    
 }
