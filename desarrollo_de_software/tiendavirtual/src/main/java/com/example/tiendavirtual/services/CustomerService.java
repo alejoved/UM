@@ -1,6 +1,7 @@
 package com.example.tiendavirtual.services;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,19 @@ public class CustomerService {
         CustomerEntity createCustomerEntity = customerRepository.create(customerEntity);
         Customer createCustomer = CustomerMapper.entityToModel(createCustomerEntity);
         return createCustomer;
+    }
+
+    public Customer update(UUID id, Customer customer){
+        CustomerEntity customerEntityExist = customerRepository.getById(id);
+        Customer customerExist = CustomerMapper.entityToModel(customerEntityExist);
+        customerExist.setName(customer.getName());
+        customerExist.setIdentification(customer.getIdentification());
+        customerExist.setEmail(customer.getEmail());
+        customerExist.setAddress(customer.getAddress());
+        CustomerEntity customerEntity = CustomerMapper.modelToEntity(customerExist);
+        CustomerEntity customerEntityUpdate = customerRepository.update(customerEntity);
+        Customer customerUpdate = CustomerMapper.entityToModel(customerEntityUpdate);
+        return customerUpdate;
     }
 
 }
