@@ -40,4 +40,8 @@ public class CustomerRepository {
         CustomerEntity customerUpdate = repository.save(customerEntity);
         return customerUpdate;
     }
+
+    public void delete(CustomerEntity customerEntity){
+        repository.delete(customerEntity);
+    }
 }

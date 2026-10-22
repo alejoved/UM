@@ -21,4 +21,8 @@ public class ClienteOperacion {
         }
         return null;
     }
+
+    public List<Cliente> listarClientes(){
+        return clientes;
+    }
 }

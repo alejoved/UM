@@ -23,5 +23,11 @@ public class CustomerService {
         List<Customer> customers = customersEntity.stream().map(CustomerMapper::entityToModel).toList();
         return customers;
     }
+
+    public Customer getByIdentification(String identification){
+        CustomerEntity customerEntity = customerRepository.getByIdentification(identification);
+        Customer customer = CustomerMapper.entityToModel(customerEntity);
+        return customer;
+    }
     
 }

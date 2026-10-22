@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,13 @@ public class CustomerController {
         List<Customer> customers = customerService.getAllCustomers();
         List<CustomerResponseDto> customersResponseDto = customers.stream().map(CustomerMapper::modelToDto).toList();
         return ResponseEntity.ok(customersResponseDto);
+    }
+
+    @GetMapping("/{identification}")
+    public ResponseEntity<CustomerResponseDto> getByIdentification(@PathVariable("identification") String identification){
+        Customer customer = customerService.getByIdentification(identification);
+        CustomerResponseDto customerResponseDto = CustomerMapper.modelToDto(customer);
+        return ResponseEntity.ok(customerResponseDto);
     }
 
 }

@@ -52,4 +52,9 @@ public class CustomerService {
         return customerUpdate;
     }
 
+    public void delete(UUID id){
+        CustomerEntity customerEntity = customerRepository.getById(id);
+        customerRepository.delete(customerEntity);
+    }
+
 }
