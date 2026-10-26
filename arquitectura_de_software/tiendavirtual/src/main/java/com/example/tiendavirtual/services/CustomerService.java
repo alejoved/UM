@@ -29,5 +29,12 @@ public class CustomerService {
         Customer customer = CustomerMapper.entityToModel(customerEntity);
         return customer;
     }
+
+    public Customer create(Customer customer){
+        CustomerEntity customerEntity = CustomerMapper.modelToEntity(customer);
+        CustomerEntity customerEntityCreate = customerRepository.create(customerEntity);
+        Customer customerCreate = CustomerMapper.entityToModel(customerEntityCreate);
+        return customerCreate;
+    }
     
 }

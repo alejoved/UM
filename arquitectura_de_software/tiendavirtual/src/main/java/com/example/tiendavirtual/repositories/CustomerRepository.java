@@ -24,4 +24,9 @@ public class CustomerRepository {
         CustomerEntity customerEntity = repository.findByIdentification(identification);
         return customerEntity;
     }
+
+    public CustomerEntity create(CustomerEntity customerEntity){
+        CustomerEntity customerCreate = repository.save(customerEntity);
+        return customerCreate;
+    }
 }
