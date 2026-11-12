@@ -42,7 +42,7 @@ public class Menu {
                 case 5 -> buscarProducto();
                 case 6 -> listarProductos();
                 case 7 -> registrarFactura();
-                //case 8 -> agregarCliente();
+                case 8 -> agregarCliente();
                 //case 9 -> agregarProducto();
                 //case 10 -> calcularImpuesto();
                 //case 11 -> calcularSubtotal();
@@ -158,5 +158,24 @@ public class Menu {
         } else {
             System.out.println("CLIENTE NO FUE ENCONTRADO");
         }
+    }
+
+    public void agregarCliente(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("AGREGAR CLIENTE");
+        System.out.println("Ingrese la identificacion del cliente");
+        int identificacion = Integer.parseInt(scanner.nextLine());
+        System.out.println("Ingrese el nombre del cliente");
+        String nombre = scanner.nextLine();
+        System.out.println("Ingrese el correo del cliente");
+        String correo = scanner.nextLine();
+        Cliente cliente = new Cliente(identificacion, nombre, correo);
+        clienteOperacion.agregarCliente(cliente);
+        System.out.println("CLIENTE AGREGADO EXITOSAMENTE");
+        System.out.println("Ingrese el consecutivo de factura");
+        int consecutivo = Integer.parseInt(scanner.nextLine());
+        Factura factura = facturaOperacion.buscarFactura(consecutivo);
+        factura.setCliente(cliente);
+        System.out.println("CLIENTE ASIGNADO A LA FACTURA EXITOSAMENTE");
     }
 }

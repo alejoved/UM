@@ -8,8 +8,8 @@ import lombok.Data;
 
 @Data 
 public class InvoiceCreateDto {
-    private LocalDate date;
     private String number;
+    private LocalDate date;
     private UUID customerId;
     private List<UUID> productIds;
 }
