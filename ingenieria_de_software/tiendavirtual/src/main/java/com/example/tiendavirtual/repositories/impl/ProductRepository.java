@@ -2,6 +2,7 @@ package com.example.tiendavirtual.repositories.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -28,6 +29,12 @@ public class ProductRepository implements IProductRepository {
     @Override
     public ProductEntity getByCode(String code) {
         Optional<ProductEntity> productEntity = repository.findByCode(code);
+        return productEntity.get();
+    }
+
+    @Override
+    public ProductEntity getById(UUID id) {
+        Optional<ProductEntity> productEntity = repository.findById(id);
         return productEntity.get();
     }
 

@@ -1,6 +1,7 @@
 package com.example.tiendavirtual.services.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,13 @@ public class CustomerService implements ICustomerService {
         return customer;
     }
 
+    @Override
+    public Customer getById(UUID id) {
+        CustomerEntity customerEntity = customerRepository.getById(id);
+        Customer customer = CustomerMapper.entityToModel(customerEntity);
+        return customer;
+    }
+
     @Override 
     public Customer create(Customer customer){
         CustomerEntity customerEntity = CustomerMapper.modelToEntity(customer);
@@ -38,5 +46,24 @@ public class CustomerService implements ICustomerService {
         Customer createCustomer = CustomerMapper.entityToModel(createCustomerEntity);
         return createCustomer;
 
+    }
+
+    @Override 
+    public Customer update(UUID id, Customer customer){
+        CustomerEntity customerEntityExist = customerRepository.getById(id);
+        Customer customerExist = CustomerMapper.entityToModel(customerEntityExist);
+        customerExist.setName(customer.getName());
+        customerExist.setIdentification(customer.getIdentification());
+        customerExist.setEmail(customer.getEmail());
+        customerExist.setAddress(customer.getAddress());
+        CustomerEntity customerEntity = CustomerMapper.modelToEntity(customerExist);
+        CustomerEntity customerEntityUpdate = customerRepository.update(customerEntity);
+        Customer customerUpdate = CustomerMapper.entityToModel(customerEntityUpdate);
+        return customerUpdate;
+    }
+
+    public void delete(UUID id){
+        CustomerEntity customerEntity = customerRepository.getById(id);
+        customerRepository.delete(customerEntity);
     }
 }

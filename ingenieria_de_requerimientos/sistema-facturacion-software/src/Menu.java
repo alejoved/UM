@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -39,7 +41,7 @@ public class Menu {
                 case 4 -> registrarProducto();
                 case 5 -> buscarProducto();
                 case 6 -> listarProductos();
-                //case 7 -> registrarFactura();
+                case 7 -> registrarFactura();
                 //case 8 -> agregarCliente();
                 //case 9 -> agregarProducto();
                 //case 10 -> calcularImpuesto();
@@ -124,6 +126,37 @@ public class Menu {
             System.out.println("Nombre: " + productos.get(i).getNombre());
             System.out.println("Precio: " + productos.get(i).getPrecio());
             System.out.println("Stock: " + productos.get(i).getStock());
+        }
+    }
+
+    public void registrarFactura(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("REGISTRAR FACTURA");
+        System.out.println("Ingrese la identificacion del cliente");
+        int identificacion = Integer.parseInt(scanner.nextLine());
+        Cliente cliente = clienteOperacion.buscarCliente(identificacion);
+        if(cliente != null){
+            System.out.println("Ingrese el codigo del producto");
+            String codigo = scanner.nextLine();
+            Producto producto = productoOperacion.buscarProducto(codigo);
+            if(producto != null){
+                System.out.println("Ingrese la cantidad");
+                int cantidad = Integer.parseInt(scanner.nextLine());
+                System.out.println("Ingrese el consecutivo");
+                int consecutivo = Integer.parseInt(scanner.nextLine());
+                System.out.println("Ingrese la fecha");
+                LocalDate fecha = LocalDate.parse(scanner.nextLine());
+                double impuesto = producto.getPrecio() * cantidad * 0.12;
+                double subtotal = producto.getPrecio() * cantidad;
+                double total = subtotal + impuesto;
+                List<Producto> productosFactura = new ArrayList<>();
+                productosFactura.add(producto);
+                facturaOperacion.registrarFactura(consecutivo, fecha, impuesto, subtotal, total, productosFactura, cliente);
+            } else {
+                System.out.println("PRODUCTO NO FUE ENCONTRADO");
+            }
+        } else {
+            System.out.println("CLIENTE NO FUE ENCONTRADO");
         }
     }
 }

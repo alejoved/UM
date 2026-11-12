@@ -2,6 +2,7 @@ package com.example.tiendavirtual.repositories.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -34,6 +35,23 @@ public class CustomerRepository implements ICustomerRepository{
     public CustomerEntity create(CustomerEntity customerEntity){
         CustomerEntity customerCreate = repository.save(customerEntity);
         return customerCreate;
+    }
+
+    @Override
+    public CustomerEntity getById(UUID id){
+        CustomerEntity customerEntity = repository.findById(id).get();
+        return customerEntity;
+    }
+
+    @Override 
+    public CustomerEntity update(CustomerEntity customerEntity){
+        CustomerEntity customerEntityUpdate = repository.save(customerEntity);
+        return customerEntityUpdate; 
+    }
+
+    @Override 
+    public void delete(CustomerEntity customerEntity){
+        repository.delete(customerEntity);
     }
     
 }

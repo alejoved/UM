@@ -2,6 +2,7 @@ package com.example.tiendavirtual.mappers;
 
 import com.example.tiendavirtual.dtos.CustomerCreateDto;
 import com.example.tiendavirtual.dtos.CustomerResponseDto;
+import com.example.tiendavirtual.dtos.CustomerUpdateDto;
 import com.example.tiendavirtual.entities.CustomerEntity;
 import com.example.tiendavirtual.models.Customer;
 
@@ -41,6 +42,15 @@ public class CustomerMapper {
         customer.setIdentification(customerCreateDto.getIdentification());
         customer.setEmail(customerCreateDto.getEmail());
         customer.setAddress(customerCreateDto.getAddress());
+        return customer;
+    }
+
+    public static Customer dtoTomodel(CustomerUpdateDto customerUpdateDto){
+        Customer customer = new Customer();
+        customer.setName(customerUpdateDto.getName());
+        customer.setIdentification(customerUpdateDto.getIdentification());
+        customer.setEmail(customerUpdateDto.getEmail());
+        customerUpdateDto.setAddress(customerUpdateDto.getAddress());
         return customer;
     }
 }

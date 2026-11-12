@@ -1,6 +1,7 @@
 package com.example.tiendavirtual.services.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,13 @@ public class ProductService implements IProductService {
     @Override
     public Product getByCode(String code) {
         ProductEntity productEntity = productRepository.getByCode(code);
+        Product product = ProductMapper.entityToModel(productEntity);
+        return product;
+    }
+
+    @Override
+    public Product getById(UUID id) {
+        ProductEntity productEntity = productRepository.getById(id);
         Product product = ProductMapper.entityToModel(productEntity);
         return product;
     }
